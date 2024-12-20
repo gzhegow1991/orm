@@ -674,10 +674,15 @@ $fn = function () use (
 
     _dump($modelImageResult);
     _dump($modelImageResult[ 0 ], $modelImageResult[ 0 ]->_imageable);
+    _dump('');
+
     _dump($modelPostResult);
     _dump($modelPostResult[ 0 ], $modelPostResult[ 0 ]->_demoImages[ 0 ]);
+    _dump('');
+
     _dump($modelUserResult);
     _dump($modelUserResult[ 0 ], $modelUserResult[ 0 ]->_demoImages[ 0 ]);
+    _dump('');
 
 
     $modelPost2 = \Gzhegow\Database\Demo\Model\DemoPostModel::new();
@@ -734,8 +739,12 @@ $fn = function () use (
     _dump($modelTagResult);
     _dump($modelTagResult[ 0 ], $modelTagResult[ 0 ]->_demoPosts[ 0 ], $modelTagResult[ 0 ]->_demoUsers[ 0 ]);
     _dump($modelTagResult[ 1 ], $modelTagResult[ 1 ]->_demoPosts[ 0 ], $modelTagResult[ 1 ]->_demoUsers[ 0 ]);
+    _dump('');
+
     _dump($modelPostResult);
     _dump($modelPostResult[ 1 ], $modelPostResult[ 1 ]->_demoTags[ 0 ], $modelPostResult[ 1 ]->_demoTags[ 1 ]);
+    _dump('');
+
     _dump($modelUserResult);
     _dump($modelUserResult[ 1 ], $modelUserResult[ 1 ]->_demoTags[ 0 ], $modelUserResult[ 1 ]->_demoTags[ 1 ]);
 
@@ -746,15 +755,20 @@ _assert_output($fn, <<<HEREDOC
 "[ TEST 5 ]"
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 { object # Gzhegow\Database\Demo\Model\DemoImageModel } | { object # Gzhegow\Database\Demo\Model\DemoPostModel }
+""
 { object(iterable countable(1)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 { object # Gzhegow\Database\Demo\Model\DemoPostModel } | { object # Gzhegow\Database\Demo\Model\DemoImageModel }
+""
 { object(iterable countable(1)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 { object # Gzhegow\Database\Demo\Model\DemoUserModel } | { object # Gzhegow\Database\Demo\Model\DemoImageModel }
+""
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 { object # Gzhegow\Database\Demo\Model\DemoTagModel } | { object # Gzhegow\Database\Demo\Model\DemoPostModel } | { object # Gzhegow\Database\Demo\Model\DemoUserModel }
 { object # Gzhegow\Database\Demo\Model\DemoTagModel } | { object # Gzhegow\Database\Demo\Model\DemoPostModel } | { object # Gzhegow\Database\Demo\Model\DemoUserModel }
+""
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 { object # Gzhegow\Database\Demo\Model\DemoPostModel } | { object # Gzhegow\Database\Demo\Model\DemoTagModel } | { object # Gzhegow\Database\Demo\Model\DemoTagModel }
+""
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 { object # Gzhegow\Database\Demo\Model\DemoUserModel } | { object # Gzhegow\Database\Demo\Model\DemoTagModel } | { object # Gzhegow\Database\Demo\Model\DemoTagModel }
 ""

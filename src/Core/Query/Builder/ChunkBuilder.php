@@ -1225,16 +1225,16 @@ class ChunkBuilder
 
         $generator = $this->doChunkPdoAfterForeach();
 
-        foreach ( $generator as $i => $chunk ) {
-            $stat = [
-                'items' => $chunk,
-                'pages' => [
-                    $this->page => count($chunk),
-                ],
-            ];
-
-            yield $i => $stat;
-        }
+        // foreach ( $generator as $i => $chunk ) {
+        //     $stat = [
+        //         'items' => $chunk,
+        //         'pages' => [
+        //             $this->page => count($chunk),
+        //         ],
+        //     ];
+        //
+        //     yield $i => $stat;
+        // }
 
         return $generator;
     }
