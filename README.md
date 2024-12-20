@@ -35,26 +35,26 @@ $collection->load([
 
 // ВЕРНО:
 $query->with([
-    Database::relation([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
-    Database::relation([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
-    Database::relation([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
 ]);
 $model->load([
-    Database::relation([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
-    Database::relation([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
-    Database::relation([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relation()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relation()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relation()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
 ]);
 $collection->load([
-    Database::relation([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
-    Database::relation([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
-    Database::relation([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
 ]);
 ```
 
 ## Установка
 
 ```
-composer require gzhegow/database;
+composer require gzhegow/orm;
 ```
 
 ## Пример
