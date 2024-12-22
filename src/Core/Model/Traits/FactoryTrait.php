@@ -2,7 +2,6 @@
 
 namespace Gzhegow\Database\Core\Model\Traits;
 
-use Gzhegow\Lib\Lib;
 use Gzhegow\Database\Core\Orm;
 use Illuminate\Database\Eloquent\Model;
 use Gzhegow\Database\Exception\LogicException;
@@ -17,111 +16,6 @@ use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuil
  */
 trait FactoryTrait
 {
-    /**
-     * @return static
-     */
-    public static function new(array $attributes = [], \Closure $fn = null)
-    {
-        $instance = new static($attributes);
-        $instance->recentlyCreated = true;
-
-        if (null !== $fn) {
-            $fn->call($instance, $instance);
-        }
-
-        return $instance;
-    }
-
-
-    /**
-     * @return static
-     */
-    public static function from($from, array $options = []) : self
-    {
-        /** @see Model::__construct() */
-        /** @see Model::newInstance() */
-        /** @see Model::newFromBuilder() */
-
-        $instance = static::tryFrom($from, $options, $error);
-
-        if (null === $instance) {
-            throw $error;
-        }
-
-        return $instance;
-    }
-
-    /**
-     * @return static|null
-     */
-    public static function tryFrom($from, array $options = [], \Throwable &$last = null) : ?self
-    {
-        $last = null;
-
-        Lib::php_errors_start($b);
-
-        $instance = null
-            ?? static::tryFromInstance($from, $options)
-            ?? static::tryFromArray($from, $options)
-            ?? static::tryFromStdClass($from, $options);
-
-        $errors = Lib::php_errors_end($b);
-
-        if (null === $instance) {
-            foreach ( $errors as $error ) {
-                $last = new LogicException($error, null, $last);
-            }
-        }
-
-        return $instance;
-    }
-
-
-    /**
-     * @return static|null
-     */
-    public static function tryFromInstance($from, array $options = []) : ?self
-    {
-        if (! is_a($from, static::class)) {
-            return Lib::php_error(
-                [ 'The `from` should be instance of: ' . static::class, $from ]
-            );
-        }
-
-        $instance = $from::new();
-
-        return $instance;
-    }
-
-    /**
-     * @return static|null
-     */
-    public static function tryFromArray($from, array $options = []) : ?self
-    {
-        if (! is_array($from)) {
-            return Lib::php_error([ 'The `from` should be array', $from ]);
-        }
-
-        $instance = static::new($from);
-
-        return $instance;
-    }
-
-    /**
-     * @return static|null
-     */
-    public static function tryFromStdClass($from, array $options = []) : ?self
-    {
-        if (! is_a($from, \stdClass::class)) {
-            return Lib::php_error([ 'The `from` should be \stdClass', $from ]);
-        }
-
-        $instance = static::new((array) $from);
-
-        return $instance;
-    }
-
-
     /**
      * @return static
      */
@@ -238,9 +132,8 @@ trait FactoryTrait
     {
         /** @see Model::newCollection() */
 
-        $collection = Orm::newEloquentModelCollection(
-            $models
-        );
+        $collection = Orm::newEloquentModelCollection($models);
+        $collection->setModelClass($this);
 
         return $collection;
     }

@@ -66,7 +66,7 @@ class EloquentPdoQueryBuilder extends EloquentPdoQueryBuilderBase
 
 
     /**
-     * @return EloquentSupportCollection<\stdClass>|\stdClass[]
+     * @return EloquentSupportCollection<\stdClass>
      */
     public function get($columns = [ '*' ])
     {
@@ -135,5 +135,47 @@ class EloquentPdoQueryBuilder extends EloquentPdoQueryBuilderBase
         }
 
         return $status;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function count($columns = '*')
+    {
+        $count = parent::count($columns);
+
+        return $count;
+    }
+
+    public function countExplain() : ?int
+    {
+        $rows = $this->explain();
+
+        $count = end($rows)->rows ?: null;
+
+        if (null !== $count) {
+            $count = (int) $count;
+        }
+
+        return $count;
+    }
+
+
+    /**
+     * @return \stdClass[]
+     */
+    public function explain() : array
+    {
+        $conn = $this->getConnection();
+
+        $sql = $this->toSql();
+        $bindings = $this->getBindings();
+
+        $explainSql = "EXPLAIN {$sql};";
+
+        $rows = $conn->select($explainSql, $bindings);
+
+        return $rows;
     }
 }

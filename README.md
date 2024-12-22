@@ -645,14 +645,14 @@ $fn = function () use (
     $modelClassDemoFoo = \Gzhegow\Database\Demo\Model\DemoFooModel::class;
 
     _dump('chunkModelNativeForeach');
-    foreach ( $modelClassDemoFoo::chunkModelNativeForeach(
+    foreach ( $modelClassDemoFoo::chunksModelNativeForeach(
         $limitChunk = 1, $limit = 2
     ) as $chunk ) {
         _dump($chunk);
     }
 
     _dump('chunkModelAfterForeach');
-    foreach ( $modelClassDemoFoo::chunkModelAfterForeach(
+    foreach ( $modelClassDemoFoo::chunksModelAfterForeach(
         $limitChunk = 1, $limit = null,
         $offsetColumn = 'id', $offsetOperator = '>', $offsetValue = 1, $includeOffsetValue = false
     ) as $chunk ) {

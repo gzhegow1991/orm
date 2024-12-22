@@ -4,12 +4,11 @@ namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations;
 
 use Illuminate\Database\Eloquent\Model;
 use Gzhegow\Database\Core\Relation\Traits\HasRelationNameTrait;
-use Illuminate\Database\Eloquent\Relations\BelongsTo as BaseBelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToBase;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
-class BelongsTo extends BaseBelongsTo implements
-    RelationInterface
+class BelongsTo extends BelongsToBase
 {
     use HasRelationNameTrait;
 
@@ -55,11 +54,13 @@ class BelongsTo extends BaseBelongsTo implements
     {
         /** @see parent::dissociate() */
 
-        $this->child->setAttribute($this->foreignKey, null);
+        $child = $this->child;
 
-        $this->child->setRelation($this->relationName, null);
+        $child->setAttribute($this->foreignKey, null);
 
-        return $this->child;
+        $child->setRelation($this->relationName, null);
+
+        return $child;
     }
 
 

@@ -4,11 +4,11 @@ namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations;
 
 use Gzhegow\Database\Core\Orm;
 use Gzhegow\Database\Core\Relation\Traits\HasRelationNameTrait;
-use Illuminate\Database\Eloquent\Relations\MorphMany as BaseMorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany as MorphManyBase;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
-class MorphMany extends BaseMorphMany implements
+class MorphMany extends MorphManyBase implements
     RelationInterface
 {
     use HasRelationNameTrait;

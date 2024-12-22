@@ -5,10 +5,10 @@ namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations;
 use Gzhegow\Database\Core\Orm;
 use Gzhegow\Database\Core\Relation\Traits\HasRelationNameTrait;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany as BaseBelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany as BelongsToManyBase;
 
 
-class BelongsToMany extends BaseBelongsToMany implements
+class BelongsToMany extends BelongsToManyBase implements
     RelationInterface
 {
     use HasRelationNameTrait;

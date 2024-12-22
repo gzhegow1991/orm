@@ -3,11 +3,13 @@
 namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent;
 
 use Gzhegow\Lib\Lib;
+use Gzhegow\Database\Exception\LogicException;
 use Gzhegow\Database\Exception\RuntimeException;
 use Gzhegow\Database\Core\Model\Traits\LoadTrait;
 use Gzhegow\Database\Core\Model\Traits\TableTrait;
 use Gzhegow\Database\Core\Model\Traits\QueryTrait;
 use Gzhegow\Database\Core\Model\Traits\ChunkTrait;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Gzhegow\Database\Core\Model\Traits\FactoryTrait;
 use Gzhegow\Database\Core\Model\Traits\CalendarTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,7 +19,6 @@ use Illuminate\Database\Eloquent\Model as EloquentModelBase;
 use Gzhegow\Database\Core\Model\Traits\Relation\RelationTrait;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Gzhegow\Database\Core\Model\Traits\Relation\RelationFactoryTrait;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\MorphTo;
 use Gzhegow\Database\Exception\Exception\Resource\ResourceNotFoundException;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\RelationInterface;
 
@@ -43,7 +44,9 @@ abstract class EloquentModel extends EloquentModelBase
     protected $tablePrefix;
     protected $tableNoPrefix;
     protected $primaryKey = 'id';
-    /** > список колонок БД, которые выбираются по-умолчанию: (NULL -> '*'; '' -> primaryKey, ['column' => true, 'column2' ] -> конкретные колонки) */
+    /**
+     * > список колонок БД, которые выбираются по-умолчанию: (NULL -> '*'; '' -> select($primaryKey), ['column' => true, 'column2' ] -> конкретные колонки)
+     */
     protected $columns = null;
 
     // >>> settings
@@ -51,11 +54,21 @@ abstract class EloquentModel extends EloquentModelBase
     public $timestamps   = false;
 
     // >>> strict mode
-    /** > ON __get(): `false|null` -> вернет null, `true` -> бросит исключение */
+    /**
+     * > позволяет отключить `casts` и динамические аттрибуты, то есть использовать только те, которые были получены из БД
+     * > `false|null` -> вернет null; `true` -> бросит исключение
+     */
     public $preventsLazyGet = true;
-    /** > ON __set(): `false|null` -> вернет null, `true` -> бросит исключение */
+    /**
+     * > позволяет гарантировать, что полученная из БД модель не будет изменяться напрямую с помощью __set()/__offsetSet()
+     * > модель нужно будет создавать со свойством `recentlyCreated = true` или использовать ->fill() для проставления значений
+     * > `false|null` -> действие будет пропущено; `true` -> бросит исключение
+     */
     public $preventsLazySet = true;
-    /** > ON getRelationValue(): `null` -> вернет null|default, `false` -> выполнит SQL SELECT, `true` -> бросит исключение */
+    /**
+     * > позволяет отключить ленивый запрос по связи, если связь не была запрошена явно через $query->with() или $model->load()
+     * > `null` -> вернет null|default; `false` -> выполнит SQL SELECT; `true` -> бросит исключение
+     */
     public $preventsLazyLoading = null;
 
     // >>> attributes
@@ -85,6 +98,119 @@ abstract class EloquentModel extends EloquentModelBase
     public $recentlyCreated = false;
     /** > INSERT/UPDATE был сделан в рамках этого скрипта, т.е. модель создана "недавно", `exists` тоже будет true */
     public $wasRecentlyCreated = false;
+
+
+    /**
+     * @return static
+     */
+    public static function new(array $attributes = null, \Closure $fnInitialize = null)
+    {
+        $attributes = $attributes ?? [];
+
+        $instance = new static($attributes);
+        $instance->recentlyCreated = true;
+
+        if (null !== $fnInitialize) {
+            $fnInitialize->call($instance, $instance);
+        }
+
+        return $instance;
+    }
+
+
+    /**
+     * @return static
+     */
+    public static function from($from, \Closure $fnInitialize = null) // : static
+    {
+        $instance = static::tryFrom($from, $fnInitialize, $error);
+
+        if (null === $instance) {
+            throw $error;
+        }
+
+        return $instance;
+    }
+
+    /**
+     * @return static|null
+     */
+    public static function tryFrom($from, \Closure $fnInitialize = null, \Throwable &$last = null) // : ?static
+    {
+        $last = null;
+
+        Lib::php_errors_start($b);
+
+        $instance = null
+            ?? static::tryFromInstance($from, $fnInitialize)
+            ?? static::tryFromArray($from, $fnInitialize)
+            ?? static::tryFromStd($from, $fnInitialize);
+
+        $errors = Lib::php_errors_end($b);
+
+        if (null === $instance) {
+            foreach ( $errors as $error ) {
+                $last = new LogicException($error, null, $last);
+            }
+        }
+
+        return $instance;
+    }
+
+
+    /**
+     * @return static|null
+     */
+    public static function tryFromInstance($from, \Closure $fnInitialize = null) // : ?static
+    {
+        if (! is_a($from, static::class)) {
+            return Lib::php_error(
+                [ 'The `from` should be instance of: ' . static::class, $from ]
+            );
+        }
+
+        $model = static::getModel();
+
+        $rawAttributes = $from->getRawAttributes();
+
+        foreach ( $rawAttributes as $key => $value ) {
+            if (! $model->isFillable($key)) {
+                unset($rawAttributes[ $key ]);
+            }
+        }
+
+        $instance = $from::new($rawAttributes, $fnInitialize);
+
+        return $instance;
+    }
+
+    /**
+     * @return static|null
+     */
+    public static function tryFromArray($from, \Closure $fnInitialize = null) // : ?static
+    {
+        if (! is_array($from)) {
+            return Lib::php_error([ 'The `from` should be array', $from ]);
+        }
+
+        $instance = static::new($from, $fnInitialize);
+
+        return $instance;
+    }
+
+    /**
+     * @return static|null
+     */
+    public static function tryFromStd($from, \Closure $fnInitialize = null) : ?self
+    {
+        if (! is_a($from, \stdClass::class)) {
+            return Lib::php_error([ 'The `from` should be \stdClass', $from ]);
+        }
+
+        $instance = static::new((array) $from, $fnInitialize);
+
+        return $instance;
+    }
 
 
     public function __isset($key)
@@ -117,7 +243,7 @@ abstract class EloquentModel extends EloquentModelBase
         }
 
         if ($this->isModelAttribute($offset)) {
-            $exists = $this->isModelAttributeExists($offset);
+            $exists = $this->isModelAttributeValueOrGetterExists($offset);
 
             return $exists;
         }
@@ -134,11 +260,19 @@ abstract class EloquentModel extends EloquentModelBase
         }
 
         if ($this->isModelAttribute($offset)) {
-            if ($this->exists) {
-                if (! $this->isModelAttributeExists($offset)) {
-                    throw new RuntimeException(
-                        'Missing attribute: ' . $offset
-                    );
+            if ($this->preventsLazyGet) {
+                if ($this->exists) {
+                    $existsAttribute = $this->isModelAttributeValueExists($offset);
+
+                    if (! $existsAttribute) {
+                        $existsGetter = $this->isModelAttributeGetterExists($offset);
+
+                        if (! $existsGetter) {
+                            throw new RuntimeException(
+                                'Unable to get attribute value due to model `preventsLazyGet` is enabled: ' . $offset
+                            );
+                        }
+                    }
                 }
             }
 
@@ -156,15 +290,13 @@ abstract class EloquentModel extends EloquentModelBase
             $this->setRelationAttribute($offset, $value);
         }
 
-
         if ($this->isModelAttribute($offset)) {
-            if ($this->preventsLazySet
-                && ! ($this->exists || $this->recentlyCreated)
-            ) {
-                throw new RuntimeException(
-                    'You have to create model using ::from() or get it by SELECT since you want to use __set(): '
-                    . $offset
-                );
+            if ($this->preventsLazySet) {
+                if (! $this->recentlyCreated) {
+                    throw new RuntimeException(
+                        'Unable to set attribute value due to model `preventsLazySet` is enabled: ' . $offset
+                    );
+                }
             }
 
             if ($this->getKeyName() === $offset) {
@@ -464,7 +596,7 @@ abstract class EloquentModel extends EloquentModelBase
 
 
     /**
-     * @return EloquentModelCollection<static>|static[]
+     * @return EloquentModelCollection<static>
      */
     public static function get(EloquentModelQueryBuilder $query, $columns = [ '*' ])
     {

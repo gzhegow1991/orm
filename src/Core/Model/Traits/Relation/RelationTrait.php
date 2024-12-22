@@ -4,13 +4,13 @@ namespace Gzhegow\Database\Core\Model\Traits\Relation;
 
 use Gzhegow\Database\Exception\LogicException;
 use Gzhegow\Database\Exception\RuntimeException;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\HasOne;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\MorphOne;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\RelationInterface;
 
@@ -76,6 +76,7 @@ trait RelationTrait
 
     protected function doGetRelationValue(string $key)
     {
+        // > gzhegow, если имя свойства не является связью - то бросаем исключение
         if (! $this->isRelation($key)) {
             throw new LogicException(
                 'Missing relation: ' . $key
@@ -131,15 +132,12 @@ trait RelationTrait
 
     protected function doGetRelationValueDefault(string $key) : ?EloquentCollection
     {
-        $default = null;
-
         if ($relation = $this->hasRelationshipMany($key)) {
             // > gzhegow, создаем пустую коллекцию
 
             $model = $relation->newModelInstance();
 
             $collection = $model->newCollection();
-            $collection->recentlyCreated = true;
 
             $this->setRelation($key, $collection);
 
@@ -148,7 +146,7 @@ trait RelationTrait
         } else {
             // } elseif ($relation = $this->hasRelationshipOne($key)) {
 
-            // возвращаем NULL в качестве значения по-умолчанию
+            // > gzhegow, возвращаем NULL в качестве значения по-умолчанию
 
             $default = null;
         }
@@ -164,6 +162,8 @@ trait RelationTrait
      */
     public function isRelation($key)
     {
+        /** @see HasAttributes::isRelation() */
+
         if (null === $this->hasRelation($key)) {
             return false;
         }
@@ -181,31 +181,40 @@ trait RelationTrait
      */
     public function hasRelation(string $key, string $relationClass = null) : ?string
     {
-        /** @see HasAttributes::isRelation() */
-
         if ('' === $key) {
             return false;
         }
 
-        if ('_' !== $key[ 0 ]) {
-            return false;
+        $resultRelationClass = null;
+
+        if (null === $resultRelationClass) {
+            $isEqualsPivot = ($key === 'pivot');
+
+            if ($isEqualsPivot) {
+                if (isset($this->relations[ 'pivot' ])) {
+                    $resultRelationClass = get_class($this->relations[ 'pivot' ]);
+                }
+            }
         }
 
-        $modelClass = static::class;
+        if (null === $resultRelationClass) {
+            $modelClass = static::class;
 
-        if (! isset(static::$cacheRelationClasses[ $modelClass ][ $key ])) {
-            return null;
+            $existsInRelationClassCache = isset(static::$cacheRelationClasses[ $modelClass ][ $key ]);
+            if (! $existsInRelationClassCache) {
+                return null;
+            }
+
+            $resultRelationClass = static::$cacheRelationClasses[ $modelClass ][ $key ];
         }
-
-        $cachedClass = static::$cacheRelationClasses[ $modelClass ][ $key ];
 
         if (null !== $relationClass) {
-            if (! is_a($cachedClass, $relationClass, true)) {
+            if (! is_a($resultRelationClass, $relationClass, true)) {
                 return null;
             }
         }
 
-        return $cachedClass;
+        return $resultRelationClass;
     }
 
     /**
@@ -355,11 +364,14 @@ trait RelationTrait
     }
 
 
+    /**
+     * @return array{0: string, 1: string}
+     */
     public function getMorphKeys(
         string $name,
         string $type = null,
         string $id = null
-    )
+    ) : array
     {
         return [
             $type ?? $name . '_type',

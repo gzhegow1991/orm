@@ -5,11 +5,12 @@ namespace Gzhegow\Database\Core;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Grammars\Grammar;
 use Illuminate\Database\Query\Processors\Processor;
-use Illuminate\Database\Schema\Builder as EloquentSchemaBuilder;
+use Gzhegow\Database\Core\Query\Chunks\ChunksProcessorInterface;
 use Gzhegow\Database\Core\Persistence\EloquentPersistenceInterface;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 use Gzhegow\Database\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 use Gzhegow\Database\Package\Illuminate\Database\Capsule\EloquentInterface;
+use Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBuilder;
 use Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
@@ -17,6 +18,12 @@ use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuil
 
 class Orm
 {
+    public static function newChunkProcessor() : ChunksProcessorInterface
+    {
+        return static::$facade->newChunkProcessor();
+    }
+
+
     public static function newEloquentSchemaBuilder(
         ConnectionInterface $connection
     ) : EloquentSchemaBuilder
@@ -107,6 +114,11 @@ class Orm
     )
     {
         return static::$facade->eloquentRelation($model);
+    }
+
+    public static function eloquentRelationPrefix() : string
+    {
+        return static::$facade->eloquentRelationPrefix();
     }
 
     /**

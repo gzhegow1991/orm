@@ -2,7 +2,6 @@
 
 namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent;
 
-use Gzhegow\Lib\Lib;
 use Gzhegow\Database\Exception\LogicException;
 use Gzhegow\Database\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Collection as EloquentModelCollectionBase;
@@ -13,114 +12,10 @@ use Illuminate\Database\Eloquent\Collection as EloquentModelCollectionBase;
  */
 class EloquentModelCollection extends EloquentModelCollectionBase
 {
-    // >>> state
-    /** > gzhegow, коллекция создана, чтобы выполнить INSERT в рамках текущего скрипта */
-    public $recentlyCreated = false;
-
     /**
      * @var class-string<T>
      */
     protected $modelClass;
-
-
-    /**
-     * @return static
-     */
-    public static function from($from, array $options = []) : self
-    {
-        /** @see parent::__construct() */
-        /** @see parent::make() */
-
-        $instance = static::tryFrom($from, $options, $error);
-
-        if (null === $instance) {
-            throw $error;
-        }
-
-        return $instance;
-    }
-
-    /**
-     * @return static|null
-     */
-    public static function tryFrom($from, array $options = [], \Throwable &$last = null) : ?self
-    {
-        /** @see parent::__construct() */
-        /** @see parent::make() */
-
-        $last = null;
-
-        Lib::php_errors_start($b);
-
-        $instance = null
-            ?? static::tryFromInstance($from, $options)
-            ?? static::tryFromModel($from, $options)
-            ?? static::tryFromArray($from, $options);
-
-        $errors = Lib::php_errors_end($b);
-
-        if (null === $instance) {
-            foreach ( $errors as $error ) {
-                $last = new LogicException($error, null, $last);
-            }
-        }
-
-        $isRecentlyCreated = $options[ 'recentlyCreated' ] ?? null;
-
-        $instance->recentlyCreated = (bool) $isRecentlyCreated;
-
-        return $instance;
-    }
-
-
-    /**
-     * @return static|null
-     */
-    protected static function tryFromInstance($from, array $options = []) : ?self
-    {
-        if (! is_a($from, static::class)) {
-            return Lib::php_error(
-                [ 'The `from` should be instance of: ' . static::class, $from ]
-            );
-        }
-
-        $instance = clone $from;
-
-        return $instance;
-    }
-
-    /**
-     * @return static|null
-     */
-    protected static function tryFromModel($from, array $options = []) : ?self
-    {
-        if (! is_a($from, EloquentModel::class)) {
-            return Lib::php_error(
-                [ 'The `from` should be instance of: ' . static::class, $from ]
-            );
-        }
-
-        $instance = $from->newCollection([ $from ]);
-
-        return $instance;
-    }
-
-    /**
-     * @return static|null
-     */
-    protected static function tryFromArray($from, array $options = []) : ?self
-    {
-        if (! is_array($from)) {
-            return Lib::php_error(
-                [ 'The `from` should be array of single class models', $from ]
-            );
-        }
-
-        $result = new static($from);
-
-        return $result;
-    }
-
 
     /**
      * @param T|class-string<T> $modelOrClass

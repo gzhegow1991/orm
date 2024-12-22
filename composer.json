@@ -1,6 +1,7 @@
 {
     "name": "gzhegow/orm",
     "type": "library",
+    "version": "1.0.0",
 
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -30,10 +31,6 @@
         "illuminate/database": "~8.0",
 
         "symfony/uid": "~5.0"
-    },
-    "require-dev": {
-        "illuminate/container": "~8.0",
-        "illuminate/events": "~8.0"
     },
 
     "config": {

@@ -5,10 +5,10 @@ namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations;
 use Gzhegow\Database\Core\Orm;
 use Gzhegow\Database\Core\Relation\Traits\HasRelationNameTrait;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
-use Illuminate\Database\Eloquent\Relations\MorphToMany as BaseMorphToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany as MorphToManyBase;
 
 
-class MorphToMany extends BaseMorphToMany implements
+class MorphToMany extends MorphToManyBase implements
     RelationInterface
 {
     use HasRelationNameTrait;
@@ -29,13 +29,15 @@ class MorphToMany extends BaseMorphToMany implements
     {
         /** @see parent::addWhereConstraints() */
 
-        $this->query->where(
+        $query = $this->query;
+
+        $query->where(
             $this->getQualifiedForeignPivotKeyName(),
             '=',
             $this->parent->getAttribute($this->parentKey)
         );
 
-        $this->query->where(
+        $query->where(
             $this->table . '.' . $this->morphType,
             $this->morphClass
         );

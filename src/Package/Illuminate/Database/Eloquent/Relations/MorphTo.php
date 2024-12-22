@@ -4,11 +4,11 @@ namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations;
 
 use Illuminate\Database\Eloquent\Model;
 use Gzhegow\Database\Core\Relation\Traits\HasRelationNameTrait;
-use Illuminate\Database\Eloquent\Relations\MorphTo as BaseMorphTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo as MorphToBase;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
-class MorphTo extends BaseMorphTo implements
+class MorphTo extends MorphToBase implements
     RelationInterface
 {
     use HasRelationNameTrait;
@@ -58,13 +58,15 @@ class MorphTo extends BaseMorphTo implements
     {
         /** @see parent::dissociate() */
 
-        $this->parent->setAttribute($this->foreignKey, null);
+        $parent = $this->parent;
 
-        $this->parent->setAttribute($this->morphType, null);
+        $parent->setAttribute($this->foreignKey, null);
 
-        $this->parent->setRelation($this->relationName, null);
+        $parent->setAttribute($this->morphType, null);
 
-        return $this->parent;
+        $parent->setRelation($this->relationName, null);
+
+        return $parent;
     }
 
 

@@ -2,6 +2,15 @@
 
 namespace Gzhegow\Database\Core\Relation\Traits;
 
+use Gzhegow\Database\Core\Orm;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\RelationInterface;
+
+
+/**
+ * @mixin Relation
+ * @mixin RelationInterface
+ */
 trait HasRelationNameTrait
 {
     /**
@@ -20,21 +29,17 @@ trait HasRelationNameTrait
      */
     public function setRelationName(?string $relationName) // : static
     {
-        if (null !== $relationName) {
-            if ('' === $relationName) {
-                throw new \LogicException(
-                    [
-                        'The `relationName` should be non-empty string',
-                    ]
-                );
-            }
+        if ('' === $relationName) {
+            throw new \LogicException(
+                [ 'The `relationName` should be non-empty string' ]
+            );
+        }
 
-            if ('_' !== $relationName[ 0 ]) {
+        $relationPrefix = Orm::eloquentRelationPrefix();
+        if ('' !== $relationPrefix) {
+            if (0 !== strpos($relationName, $relationPrefix)) {
                 throw new \LogicException(
-                    [
-                        'The `relationName` should begin with `_` symbol',
-                        $relationName,
-                    ]
+                    [ 'The `relationName` should start with `relationPrefix`: ' . $relationName, $relationPrefix ]
                 );
             }
         }

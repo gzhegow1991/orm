@@ -5,8 +5,8 @@ namespace Gzhegow\Database\Core\Model\Traits;
 use Gzhegow\Lib\Lib;
 use Gzhegow\Database\Core\Orm;
 use Gzhegow\Database\Exception\LogicException;
-use Illuminate\Database\Schema\Builder as EloquentSchemaBuilder;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBuilder;
 
 
 /**

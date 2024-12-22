@@ -2,7 +2,7 @@
 
 namespace Gzhegow\Database\Core\Query\PdoQuery\Traits;
 
-use Gzhegow\Database\Core\Query\Builder\ChunkBuilder;
+use Gzhegow\Database\Core\Query\Chunks\ChunksBuilder;
 use Illuminate\Support\Collection as EloquentSupportCollection;
 use Gzhegow\Database\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 
@@ -13,117 +13,92 @@ use Gzhegow\Database\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 trait ChunkTrait
 {
     /**
-     * @return ChunkBuilder
+     * @return ChunksBuilder
      */
-    public function chunkBuilder() : ChunkBuilder
+    public function chunks() : ChunksBuilder
     {
-        $builder = ChunkBuilder::from($this);
-
-        $builder
-            ->setModeFetch(ChunkBuilder::MODE_FETCH_PDO)
-            ->setModeYield(ChunkBuilder::MODE_YIELD_CHUNK)
-        ;
+        $builder = ChunksBuilder::from($this);
 
         return $builder;
     }
 
+
     /**
-     * @return \Generator<EloquentSupportCollection<\stdClass>|\stdClass[]>
+     * @return \Generator<EloquentSupportCollection<\stdClass>
      */
-    public function chunkNativeForeach(
+    public function chunksNativeForeach(
         int $limitChunk, int $limit = null,
         int $offset = null
     ) : \Generator
     {
-        $builder = ChunkBuilder::from($this);
+        $builder = ChunksBuilder::from($this);
 
         $builder
-            ->fetchPdo()
-            ->offsetNative($offset)
-            ->yieldChunk($limitChunk, $limit)
+            ->chunksPdoNativeForeach(
+                $limitChunk, $limit,
+                $offset
+            )
         ;
 
-        $generator = $builder->foreach();
+        $generator = $builder->chunksForeach();
 
         return $generator;
     }
 
     /**
-     * @return \Generator<int, EloquentSupportCollection<\stdClass>|\stdClass[]>
+     * @return \Generator<int, EloquentSupportCollection<\stdClass>
      */
-    public function chunkAfterForeach(
+    public function chunksAfterForeach(
         int $limitChunk, int $limit = null,
         string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
     ) : \Generator
     {
-        $builder = ChunkBuilder::from($this);
+        $builder = ChunksBuilder::from($this);
 
         $builder
-            ->fetchPdo()
-            ->offsetAfter($offsetColumn, $offsetOperator, $offsetValue, $includeOffsetValue)
-            ->yieldChunk($limitChunk, $limit)
+            ->chunksPdoAfterForeach(
+                $limitChunk, $limit,
+                $offsetColumn, $offsetOperator, $offsetValue, $includeOffsetValue
+            )
         ;
 
-        $generator = $builder->foreach();
+        $generator = $builder->chunksForeach();
 
         return $generator;
     }
 
 
-    /**
-     * @return ChunkBuilder
-     */
-    public function paginateBuilder() : ChunkBuilder
-    {
-        $builder = ChunkBuilder::from($this);
-
-        $builder
-            ->setModeFetch(ChunkBuilder::MODE_FETCH_PDO)
-            ->setModeYield(ChunkBuilder::MODE_YIELD_PAGE)
-        ;
-
-        return $builder;
-    }
-
-    /**
-     * @return \Generator<array>
-     */
     public function paginateNativeForeach(
-        int $perPage = null, int $page = null, int $pagesCount = null,
+        int $perPage = null, int $page = null, int $pagesDelta = null,
         int $offset = null
-    ) : \Generator
+    ) : ChunksBuilder
     {
-        $builder = ChunkBuilder::from($this);
+        $builder = ChunksBuilder::from($this);
 
         $builder
-            ->fetchPdo()
-            ->offsetNative($offset)
-            ->yieldPage($perPage, $page, $pagesCount)
+            ->paginatePdoNativeForeach(
+                $perPage, $page, $pagesDelta,
+                $offset
+            )
         ;
 
-        $generator = $builder->foreach();
-
-        return $generator;
+        return $builder;
     }
 
-    /**
-     * @return \Generator<array>
-     */
     public function paginateAfterForeach(
-        int $perPage = null, int $page = null, int $pagesCount = null,
+        int $perPage = null, int $page = null, int $pagesDelta = null,
         string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
-    ) : \Generator
+    ) : ChunksBuilder
     {
-        $builder = ChunkBuilder::from($this);
+        $builder = ChunksBuilder::from($this);
 
         $builder
-            ->fetchPdo()
-            ->offsetAfter($offsetColumn, $offsetOperator, $offsetValue, $includeOffsetValue)
-            ->yieldPage($perPage, $page, $pagesCount)
+            ->paginatePdoAfterForeach(
+                $perPage, $page, $pagesDelta,
+                $offsetColumn, $offsetOperator, $offsetValue, $includeOffsetValue
+            )
         ;
 
-        $generator = $builder->foreach();
-
-        return $generator;
+        return $builder;
     }
 }

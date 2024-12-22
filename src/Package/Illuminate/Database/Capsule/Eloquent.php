@@ -5,7 +5,7 @@ namespace Gzhegow\Database\Package\Illuminate\Database\Capsule;
 use Gzhegow\Database\Core\Orm;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Capsule\Manager as EloquentBase;
-use Illuminate\Database\Schema\Builder as EloquentSchemaBuilder;
+use Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBuilder;
 
 
 class Eloquent extends EloquentBase implements

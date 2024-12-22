@@ -5,14 +5,15 @@ namespace Gzhegow\Database\Core;
 use Illuminate\Database\ConnectionInterface;
 use Gzhegow\Database\Exception\LogicException;
 use Illuminate\Database\Query\Grammars\Grammar;
-use Gzhegow\Database\Core\Relation\Factory\RelationFactory;
 use Illuminate\Database\Query\Processors\Processor;
-use Gzhegow\Database\Core\Relation\Factory\RelationFactoryInterface;
-use Illuminate\Database\Schema\Builder as EloquentSchemaBuilder;
+use Gzhegow\Database\Core\Relation\Factory\RelationFactory;
+use Gzhegow\Database\Core\Query\Chunks\ChunksProcessorInterface;
 use Gzhegow\Database\Core\Persistence\EloquentPersistenceInterface;
+use Gzhegow\Database\Core\Relation\Factory\RelationFactoryInterface;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 use Gzhegow\Database\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 use Gzhegow\Database\Package\Illuminate\Database\Capsule\EloquentInterface;
+use Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBuilder;
 use Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
@@ -46,6 +47,12 @@ class OrmFacade implements OrmFacadeInterface
 
         $this->eloquent = $eloquent;
         $this->eloquentPersistence = $eloquentPersistence;
+    }
+
+
+    public function newChunkProcessor() : ChunksProcessorInterface
+    {
+        return $this->factory->newChunkProcessor();
     }
 
 
@@ -139,6 +146,11 @@ class OrmFacade implements OrmFacadeInterface
     ) : RelationFactoryInterface
     {
         return new RelationFactory($model);
+    }
+
+    public function eloquentRelationPrefix() : string
+    {
+        return '_';
     }
 
     /**

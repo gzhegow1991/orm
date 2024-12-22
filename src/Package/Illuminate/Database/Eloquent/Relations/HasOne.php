@@ -3,12 +3,12 @@
 namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations;
 
 use Gzhegow\Database\Core\Orm;
-use Illuminate\Database\Eloquent\Relations\HasOne as BaseHasOne;
+use Illuminate\Database\Eloquent\Relations\HasOne as HasOneBase;
 use Gzhegow\Database\Core\Relation\Traits\HasRelationNameTrait;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
-class HasOne extends BaseHasOne implements
+class HasOne extends HasOneBase implements
     RelationInterface
 {
     use HasRelationNameTrait;

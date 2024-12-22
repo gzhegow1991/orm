@@ -2,12 +2,15 @@
 
 namespace Gzhegow\Database\Core;
 
+use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Grammars\Grammar;
 use Illuminate\Database\Query\Processors\Processor;
-use Illuminate\Database\Schema\Builder as EloquentSchemaBuilder;
+use Gzhegow\Database\Core\Query\Chunks\ChunksProcessor;
+use Gzhegow\Database\Core\Query\Chunks\ChunksProcessorInterface;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 use Gzhegow\Database\Package\Illuminate\Database\EloquentPdoQueryBuilder;
+use Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBuilder;
 use Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
@@ -15,11 +18,19 @@ use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuil
 
 class OrmFactory implements OrmFactoryInterface
 {
+    public function newChunkProcessor() : ChunksProcessorInterface
+    {
+        return new ChunksProcessor();
+    }
+
+
     public function newEloquentSchemaBuilder(
         ConnectionInterface $connection
     ) : EloquentSchemaBuilder
     {
         $schema = $connection->getSchemaBuilder();
+
+        $schema = new EloquentSchemaBuilder($schema);
 
         $schema->blueprintResolver(
             function ($table, \Closure $callback = null, string $prefix = '') {

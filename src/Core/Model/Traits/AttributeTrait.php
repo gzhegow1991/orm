@@ -2,6 +2,7 @@
 
 namespace Gzhegow\Database\Core\Model\Traits;
 
+use Gzhegow\Database\Core\Orm;
 use Illuminate\Contracts\Support\Arrayable;
 use Gzhegow\Database\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
@@ -65,17 +66,50 @@ trait AttributeTrait
         return true;
     }
 
-    public function isModelAttributeExists(string $key) : bool
+    public function isModelAttributeValueExists(string $key) : bool
+    {
+        if (! $this->isModelAttribute($key)) {
+            return false;
+        }
+
+        if (array_key_exists($key, $this->attributes)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isModelAttributeGetterExists(string $key) : bool
     {
         if (! $this->isModelAttribute($key)) {
             return false;
         }
 
         if (
-            array_key_exists($key, $this->attributes)
-            || (! $this->preventsLazyGet && array_key_exists($key, $this->casts))
-            || (! $this->preventsLazyGet && $this->hasGetMutator($key))
-            || (! $this->preventsLazyGet && $this->isClassCastable($key))
+            array_key_exists($key, $this->casts)
+            || $this->hasGetMutator($key)
+            || $this->isClassCastable($key)
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isModelAttributeValueOrGetterExists(string $key) : bool
+    {
+        if (! $this->isModelAttribute($key)) {
+            return false;
+        }
+
+        if (array_key_exists($key, $this->attributes)) {
+            return true;
+        }
+
+        if (
+            array_key_exists($key, $this->casts)
+            || $this->hasGetMutator($key)
+            || $this->isClassCastable($key)
         ) {
             return true;
         }
@@ -90,7 +124,7 @@ trait AttributeTrait
             return null;
         }
 
-        if ($this->isModelAttributeExists($key)) {
+        if ($this->isModelAttributeValueOrGetterExists($key)) {
             $attributeValue = $this->getAttributeValue($key);
 
             return $attributeValue;
@@ -113,18 +147,11 @@ trait AttributeTrait
 
     public function isRelationAttribute(string $key) : bool
     {
-        if ('' === $key) {
-            return false;
+        if (null !== $this->hasRelation($key)) {
+            return true;
         }
 
-        // > gzhegow, our own magic that is very fast and very smart
-        $isStartsWithDash = ($key[ 0 ] === '_');
-        $isPivot = ($key === 'pivot');
-        if (! ($isStartsWithDash || $isPivot)) {
-            return false;
-        }
-
-        return true;
+        return false;
     }
 
     public function isRelationAttributeExists(string $key) : bool
@@ -133,11 +160,12 @@ trait AttributeTrait
             return false;
         }
 
-        if ($this->relationLoaded($key)) {
-            return true;
-        }
+        // > gzhegow, в новой созданной модели все связи считаются существующими, т.к. есть вероятность
+        // if (! $this->exists) {
+        //     return true;
+        // }
 
-        if (! $this->exists) {
+        if ($this->relationLoaded($key)) {
             return true;
         }
 
@@ -181,6 +209,11 @@ trait AttributeTrait
         return $this;
     }
 
+
+    public function getRawAttributes() : array
+    {
+        return $this->attributes;
+    }
 
     public function hasRawAttribute($key, &$result = null) : bool
     {

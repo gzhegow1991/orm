@@ -3,16 +3,14 @@
 namespace Gzhegow\Database\Core;
 
 use Illuminate\Database\ConnectionInterface;
-use Gzhegow\Database\Exception\LogicException;
 use Illuminate\Database\Query\Grammars\Grammar;
-use Gzhegow\Database\Core\Relation\Factory\RelationFactory;
 use Illuminate\Database\Query\Processors\Processor;
-use Gzhegow\Database\Core\Relation\Factory\RelationFactoryInterface;
-use Illuminate\Database\Schema\Builder as EloquentSchemaBuilder;
 use Gzhegow\Database\Core\Persistence\EloquentPersistenceInterface;
+use Gzhegow\Database\Core\Relation\Factory\RelationFactoryInterface;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 use Gzhegow\Database\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 use Gzhegow\Database\Package\Illuminate\Database\Capsule\EloquentInterface;
+use Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBuilder;
 use Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
@@ -71,6 +69,8 @@ interface OrmFacadeInterface
     public function eloquentRelation(
         EloquentModel $model
     ) : RelationFactoryInterface;
+
+    public function eloquentRelationPrefix() : string;
 
     /**
      * @template T of (\Closure(array|null $relationFn, string|null $fields) : T|string)

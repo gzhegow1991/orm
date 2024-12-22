@@ -3,10 +3,10 @@
 namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations;
 
 use Gzhegow\Database\Core\Relation\Traits\HasRelationNameTrait;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough as BaseHasOneThrough;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough as HasOneThroughBase;
 
 
-class HasOneThrough extends BaseHasOneThrough implements
+class HasOneThrough extends HasOneThroughBase implements
     RelationInterface
 {
     use HasRelationNameTrait;

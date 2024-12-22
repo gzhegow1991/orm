@@ -4,11 +4,11 @@ namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations;
 
 use Gzhegow\Database\Core\Orm;
 use Gzhegow\Database\Core\Relation\Traits\HasRelationNameTrait;
-use Illuminate\Database\Eloquent\Relations\HasMany as BaseHasMany;
+use Illuminate\Database\Eloquent\Relations\HasMany as HasManyBase;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
-class HasMany extends BaseHasMany implements
+class HasMany extends HasManyBase implements
     RelationInterface
 {
     use HasRelationNameTrait;

@@ -4,11 +4,11 @@ namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations;
 
 use Gzhegow\Database\Core\Orm;
 use Gzhegow\Database\Core\Relation\Traits\HasRelationNameTrait;
-use Illuminate\Database\Eloquent\Relations\MorphOne as BaseMorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne as MorphOneBase;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
-class MorphOne extends BaseMorphOne implements
+class MorphOne extends MorphOneBase implements
     RelationInterface
 {
     use HasRelationNameTrait;

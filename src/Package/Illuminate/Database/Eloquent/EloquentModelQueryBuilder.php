@@ -2,6 +2,7 @@
 
 namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent;
 
+use Illuminate\Support\Collection as EloquentSupportCollection;
 use Illuminate\Database\Eloquent\Model;
 use Gzhegow\Database\Exception\LogicException;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -41,6 +42,17 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
         parent::__construct($query);
 
         $this->setModel($model);
+    }
+
+
+    /**
+     * @return EloquentPdoQueryBuilder
+     */
+    public function getQuery()
+    {
+        $pdoQuery = parent::getQuery();
+
+        return $pdoQuery;
     }
 
 
@@ -152,7 +164,7 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
 
 
     /**
-     * @return EloquentModelCollection<T>|T[]
+     * @return EloquentModelCollection<T>
      */
     public function get($columns = [ '*' ])
     {
@@ -160,6 +172,7 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
         $modelKey = $model->getKeyName();
 
         $queryClone = $this->applyScopes();
+
         $pdoQueryClone = $queryClone->getQuery();
 
         if ($pdoQueryClone->columns && ! $pdoQueryClone->orders) {
@@ -185,13 +198,63 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
         return $collection;
     }
 
+    /**
+     * @return EloquentSupportCollection<\stdClass>
+     */
+    public function getStd($columns = [ '*' ])
+    {
+        $model = $this->getModel();
+        $modelKey = $model->getKeyName();
+
+        $queryClone = $this->applyScopes();
+
+        $pdoQueryClone = $queryClone->getQuery();
+
+        if ($pdoQueryClone->columns && ! $pdoQueryClone->orders) {
+            // > gzhegow, MariaDB
+            // > отдает всегда одно и то же, т.е. сортирует под капотом
+            // > но всегда разное в зависимости от числа полей в SELECT
+            // > select * from `w3j_user` limit 1; // = {id: 1}
+            // > select `id` from `w3j_user` limit 1; // = {id: 6}
+            // > select `id`, `uuid` from `w3j_user` limit 1; // = {id: 3}
+
+            // > gzhegow, MariaDB & PostgreSQL
+            $pdoQueryClone->orderBy($modelKey, 'ASC');
+        }
+
+        $collection = $pdoQueryClone->get($columns);
+
+        return $collection;
+    }
+
+    /**
+     * @return EloquentSupportCollection<int|string>
+     */
+    public function getKeys()
+    {
+        $model = $this->getModel();
+        $modelKey = $model->getKeyName();
+
+        $collection = $this->getStd([ $modelKey ]);
+
+        $collection = $collection->keys();
+
+        return $collection;
+    }
+
 
     /**
      * @return T|null
      */
     public function first($columns = [ '*' ])
     {
-        $model = static::first($columns);
+        /** @see parent::first() */
+
+        $this->take(1);
+
+        $collection = $this->get($columns);
+
+        $model = $collection->first();
 
         return $model;
     }
@@ -202,7 +265,7 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
      */
     public function firstOrFail($columns = [ '*' ])
     {
-        $model = static::first($columns);
+        $model = $this->first($columns);
 
         if (null === $model) {
             throw new ResourceNotFoundException(
@@ -215,6 +278,81 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
         }
 
         return $model;
+    }
+
+
+    /**
+     * @return \stdClass|null
+     */
+    public function firstStd($columns = [ '*' ])
+    {
+        $this->take(1);
+
+        $pdoQuery = $this->getQuery();
+
+        $collection = $pdoQuery->get($columns);
+
+        $row = $collection->first();
+
+        return $row;
+    }
+
+    /**
+     * @return \stdClass
+     * @throws ResourceNotFoundException
+     */
+    public function firstStdOrFail($columns = [ '*' ])
+    {
+        $model = $this->firstStd($columns);
+
+        if (null === $model) {
+            throw new ResourceNotFoundException(
+                [
+                    'Resource not found',
+                    get_class($this->model),
+                    $this,
+                ]
+            );
+        }
+
+        return $model;
+    }
+
+
+    /**
+     * @return T|null
+     */
+    public function firstKey()
+    {
+        $model = $this->getModel();
+        $modelKey = $model->getKeyName();
+
+        $collection = $this->getStd([ $modelKey ]);
+
+        $key = $collection->first();
+
+        return $key;
+    }
+
+    /**
+     * @return T
+     * @throws ResourceNotFoundException
+     */
+    public function firstKeyOrFail()
+    {
+        $key = $this->firstKey();
+
+        if (null === $key) {
+            throw new ResourceNotFoundException(
+                [
+                    'Resource not found',
+                    get_class($this->model),
+                    $this,
+                ]
+            );
+        }
+
+        return $key;
     }
 
 
@@ -247,6 +385,48 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
         }
 
         return $status;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function count($columns = '*')
+    {
+        $count = parent::count($columns);
+
+        return $count;
+    }
+
+    public function countExplain() : ?int
+    {
+        $rows = $this->explain();
+
+        $count = end($rows)->rows ?: null;
+
+        if (null !== $count) {
+            $count = (int) $count;
+        }
+
+        return $count;
+    }
+
+
+    /**
+     * @return \stdClass[]
+     */
+    public function explain() : array
+    {
+        $conn = $this->getConnection();
+
+        $sql = $this->toSql();
+        $bindings = $this->getBindings();
+
+        $explainSql = "EXPLAIN {$sql};";
+
+        $rows = $conn->select($explainSql, $bindings);
+
+        return $rows;
     }
 
 
