@@ -62,6 +62,7 @@ composer require gzhegow/orm;
 ```php
 <?php
 
+require_once getenv('COMPOSER_HOME') . '/vendor/autoload.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
 
@@ -111,16 +112,6 @@ set_exception_handler(function (\Throwable $e) {
 
 
 // > добавляем несколько функция для тестирования
-function _dump(...$values) : void
-{
-    $lines = [];
-    foreach ( $values as $value ) {
-        $lines[] = \Gzhegow\Lib\Lib::debug_value($value);
-    }
-
-    echo implode(' | ', $lines) . PHP_EOL;
-}
-
 function _debug(...$values) : void
 {
     $lines = [];
@@ -131,13 +122,32 @@ function _debug(...$values) : void
     echo implode(' | ', $lines) . PHP_EOL;
 }
 
+function _dump(...$values) : void
+{
+    $lines = [];
+    foreach ( $values as $value ) {
+        $lines[] = \Gzhegow\Lib\Lib::debug_value($value);
+    }
+
+    echo implode(' | ', $lines) . PHP_EOL;
+}
+
+function _dump_array($value, int $maxLevel = null, bool $multiline = false) : void
+{
+    $content = $multiline
+        ? \Gzhegow\Lib\Lib::debug_array_multiline($value, $maxLevel)
+        : \Gzhegow\Lib\Lib::debug_array($value, $maxLevel);
+
+    echo $content . PHP_EOL;
+}
+
 function _assert_output(
     \Closure $fn, string $expect = null
 ) : void
 {
     $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
 
-    \Gzhegow\Lib\Lib::assert_resource(STDOUT);
+    \Gzhegow\Lib\Lib::assert_resource_static(STDOUT);
     \Gzhegow\Lib\Lib::assert_output($trace, $fn, $expect);
 }
 
@@ -377,7 +387,7 @@ $schema->create(
 
 // >>> TEST
 // > рекомендуется в проекте указывать связи в виде callable, чтобы они менялись, когда применяешь `Refactor` в PHPStorm
-$fn = function () {
+$fn = function () use ($eloquent) {
     _dump('[ TEST 1 ]');
 
     $foo_hasMany_bars_hasMany_bazs = \Gzhegow\Database\Core\Orm::eloquentRelationDot()
@@ -464,16 +474,9 @@ HEREDOC
 );
 
 
-
 // >>> TEST
 // > используем рекурсивное сохранение для того, чтобы сохранить модели вместе со связями
-$fn = function () use (
-    $eloquent,
-    //
-    $tableDemoBar,
-    $tableDemoBaz,
-    $tableDemoFoo
-) {
+$fn = function () use ($eloquent) {
     _dump('[ TEST 2 ]');
 
 
@@ -547,13 +550,7 @@ HEREDOC
 // >>> TEST
 // > используем Persistence для сохранения ранее созданных моделей
 // > это нужно, чтобы уменьшить время транзакции - сохранение делаем в конце бизнес-действия
-$fn = function () use (
-    $eloquent,
-    //
-    $tableDemoBar,
-    $tableDemoBaz,
-    $tableDemoFoo
-) {
+$fn = function () use ($eloquent) {
     _dump('[ TEST 3 ]');
 
 
@@ -628,193 +625,138 @@ HEREDOC
 
 
 // >>> TEST
-// > используем механизм Chunk, чтобы считать данные из таблиц
-// > на базе механизма работает и пагинация, предлагается два варианта - нативный SQL LIMIT/OFFSET и COLUMN(>|>=|<|<=)VALUE
-$fn = function () use (
-    $eloquent,
-    //
-    $conn,
-    $schema,
-    $tableDemoBar,
-    $tableDemoBaz,
-    $tableDemoFoo
-) {
+// > тестирование связей (для примера взят Morph), у которых в этом пакете изменился интерфейс создания
+$fn = function () use ($eloquent) {
     _dump('[ TEST 4 ]');
 
 
-    $modelClassDemoFoo = \Gzhegow\Database\Demo\Model\DemoFooModel::class;
+    $modelDemoPost1 = \Gzhegow\Database\Demo\Model\DemoPostModel::new();
+    $modelDemoPost1->name = 'modelDemoPost1';
 
-    _dump('chunkModelNativeForeach');
-    foreach ( $modelClassDemoFoo::chunksModelNativeForeach(
-        $limitChunk = 1, $limit = 2
-    ) as $chunk ) {
-        _dump($chunk);
-    }
+    $modelDemoUser1 = \Gzhegow\Database\Demo\Model\DemoUserModel::new();
+    $modelDemoUser1->name = 'modelDemoUser1';
 
-    _dump('chunkModelAfterForeach');
-    foreach ( $modelClassDemoFoo::chunksModelAfterForeach(
-        $limitChunk = 1, $limit = null,
-        $offsetColumn = 'id', $offsetOperator = '>', $offsetValue = 1, $includeOffsetValue = false
-    ) as $chunk ) {
-        _dump($chunk);
-    }
+    $modelDemoImage1 = \Gzhegow\Database\Demo\Model\DemoImageModel::new();
+    $modelDemoImage1->name = 'modelDemoImage1';
+
+    $modelDemoImage2 = \Gzhegow\Database\Demo\Model\DemoImageModel::new();
+    $modelDemoImage2->name = 'modelDemoImage2';
+
+    $modelDemoImage1->_imageable = $modelDemoPost1;
+    $modelDemoImage2->_imageable = $modelDemoUser1;
+
+    $modelDemoPost1->_demoImages[] = $modelDemoImage1;
+
+    $modelDemoUser1->_demoImages[] = $modelDemoImage2;
+
+
+    $modelDemoImage1->persistForSaveRecursive();
+    $modelDemoImage2->persistForSaveRecursive();
+
+    \Gzhegow\Database\Core\Orm::getEloquentPersistence()->flush();
+
+
+    $modelDemoImageQuery = $modelDemoImage1::query()
+        ->with(
+            $modelDemoPost1::relationDot()([ $modelDemoImage1, '_imageable' ])()
+        )
+    ;
+    $modelDemoPostQuery = $modelDemoPost1::query()
+        ->with(
+            $modelDemoPost1::relationDot()([ $modelDemoPost1, '_demoImages' ])()
+        )
+    ;
+    $modelDemoUserQuery = $modelDemoUser1::query()
+        ->with(
+            $modelDemoUser1::relationDot()([ $modelDemoUser1, '_demoImages' ])()
+        )
+    ;
+
+    $modelDemoImageResult = \Gzhegow\Database\Demo\Model\DemoImageModel::get($modelDemoImageQuery);
+    $modelDemoPostResult = \Gzhegow\Database\Demo\Model\DemoPostModel::get($modelDemoPostQuery);
+    $modelDemoUserResult = \Gzhegow\Database\Demo\Model\DemoUserModel::get($modelDemoUserQuery);
+
+    _dump($modelDemoImageResult);
+    _dump($modelDemoImageResult[ 0 ], $modelDemoImageResult[ 0 ]->_imageable);
+    _dump('');
+
+    _dump($modelDemoPostResult);
+    _dump($modelDemoPostResult[ 0 ], $modelDemoPostResult[ 0 ]->_demoImages[ 0 ]);
+    _dump('');
+
+    _dump($modelDemoUserResult);
+    _dump($modelDemoUserResult[ 0 ], $modelDemoUserResult[ 0 ]->_demoImages[ 0 ]);
+    _dump('');
+
+
+    $modelDemoPost2 = \Gzhegow\Database\Demo\Model\DemoPostModel::new();
+    $modelDemoPost2->name = 'modelDemoPost2';
+
+    $modelDemoUser2 = \Gzhegow\Database\Demo\Model\DemoUserModel::new();
+    $modelDemoUser2->name = 'modelDemoUser2';
+
+    $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
+
+    $modelDemoTag1 = $modelClassDemoTag::new();
+    $modelDemoTag1->name = 'modelDemoTag1';
+
+    $modelDemoTag2 = $modelClassDemoTag::new();
+    $modelDemoTag2->name = 'modelDemoTag2';
+
+
+    $modelDemoPost2->persistForSave();
+    $modelDemoPost2->_demoTags()->persistForSaveMany([
+        $modelDemoTag1,
+        $modelDemoTag2,
+    ]);
+
+    $modelDemoUser2->persistForSave();
+    $modelDemoUser2->_demoTags()->persistForSaveMany([
+        $modelDemoTag1,
+        $modelDemoTag2,
+    ]);
+
+    \Gzhegow\Database\Core\Orm::getEloquentPersistence()->flush();
+
+
+    $modelDemoTagQuery = $modelClassDemoTag::query()
+        ->with([
+            $modelClassDemoTag::relationDot()([ $modelClassDemoTag, '_demoPosts' ])(),
+            $modelClassDemoTag::relationDot()([ $modelClassDemoTag, '_demoUsers' ])(),
+        ])
+    ;
+    $modelDemoPostQuery = $modelDemoPost2::query()
+        ->with(
+            $modelDemoPost2::relationDot()([ $modelDemoPost2, '_demoTags' ])()
+        )
+    ;
+    $modelDemoUserQuery = $modelDemoUser2::query()
+        ->with(
+            $modelDemoUser2::relationDot()([ $modelDemoUser2, '_demoTags' ])()
+        )
+    ;
+
+    $modelDemoTagResult = \Gzhegow\Database\Demo\Model\DemoTagModel::get($modelDemoTagQuery);
+    $modelDemoPostResult = \Gzhegow\Database\Demo\Model\DemoPostModel::get($modelDemoPostQuery);
+    $modelDemoUserResult = \Gzhegow\Database\Demo\Model\DemoUserModel::get($modelDemoUserQuery);
+
+    _dump($modelDemoTagResult);
+    _dump($modelDemoTagResult[ 0 ], $modelDemoTagResult[ 0 ]->_demoPosts[ 0 ], $modelDemoTagResult[ 0 ]->_demoUsers[ 0 ]);
+    _dump($modelDemoTagResult[ 1 ], $modelDemoTagResult[ 1 ]->_demoPosts[ 0 ], $modelDemoTagResult[ 1 ]->_demoUsers[ 0 ]);
+    _dump('');
+
+    _dump($modelDemoPostResult);
+    _dump($modelDemoPostResult[ 1 ], $modelDemoPostResult[ 1 ]->_demoTags[ 0 ], $modelDemoPostResult[ 1 ]->_demoTags[ 1 ]);
+    _dump('');
+
+    _dump($modelDemoUserResult);
+    _dump($modelDemoUserResult[ 1 ], $modelDemoUserResult[ 1 ]->_demoTags[ 0 ], $modelDemoUserResult[ 1 ]->_demoTags[ 1 ]);
 
 
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
 "[ TEST 4 ]"
-"chunkModelNativeForeach"
-{ object(iterable countable(1)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(iterable countable(1)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-"chunkModelAfterForeach"
-{ object(iterable countable(1)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(iterable countable(1)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(iterable countable(1)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-""
-HEREDOC
-);
-
-
-// >>> TEST
-// > тестирование связей (для примера взят Morph), у которых в этом пакете изменился интерфейс создания
-$fn = function () use (
-    $eloquent,
-    //
-    $tableDemoImage,
-    $tableDemoPost,
-    $tableDemoUser
-) {
-    _dump('[ TEST 5 ]');
-
-
-    $modelPost1 = \Gzhegow\Database\Demo\Model\DemoPostModel::new();
-    $modelPost1->name = 'modelPost1';
-
-    $modelUser1 = \Gzhegow\Database\Demo\Model\DemoUserModel::new();
-    $modelUser1->name = 'modelUser1';
-
-    $modelImage1 = \Gzhegow\Database\Demo\Model\DemoImageModel::new();
-    $modelImage1->name = 'modelImage1';
-
-    $modelImage2 = \Gzhegow\Database\Demo\Model\DemoImageModel::new();
-    $modelImage2->name = 'modelImage2';
-
-    $modelImage1->_imageable = $modelPost1;
-    $modelImage2->_imageable = $modelUser1;
-
-    $modelPost1->_demoImages[] = $modelImage1;
-
-    $modelUser1->_demoImages[] = $modelImage2;
-
-
-    $modelImage1->persistForSaveRecursive();
-    $modelImage2->persistForSaveRecursive();
-
-    \Gzhegow\Database\Core\Orm::getEloquentPersistence()->flush();
-
-
-    $modelImageQuery = $modelImage1::query()
-        ->with(
-            $modelPost1::relationDot()([ $modelImage1, '_imageable' ])()
-        )
-    ;
-    $modelPostQuery = $modelPost1::query()
-        ->with(
-            $modelPost1::relationDot()([ $modelPost1, '_demoImages' ])()
-        )
-    ;
-    $modelUserQuery = $modelUser1::query()
-        ->with(
-            $modelUser1::relationDot()([ $modelUser1, '_demoImages' ])()
-        )
-    ;
-
-    $modelImageResult = \Gzhegow\Database\Demo\Model\DemoImageModel::get($modelImageQuery);
-    $modelPostResult = \Gzhegow\Database\Demo\Model\DemoPostModel::get($modelPostQuery);
-    $modelUserResult = \Gzhegow\Database\Demo\Model\DemoUserModel::get($modelUserQuery);
-
-    _dump($modelImageResult);
-    _dump($modelImageResult[ 0 ], $modelImageResult[ 0 ]->_imageable);
-    _dump('');
-
-    _dump($modelPostResult);
-    _dump($modelPostResult[ 0 ], $modelPostResult[ 0 ]->_demoImages[ 0 ]);
-    _dump('');
-
-    _dump($modelUserResult);
-    _dump($modelUserResult[ 0 ], $modelUserResult[ 0 ]->_demoImages[ 0 ]);
-    _dump('');
-
-
-    $modelPost2 = \Gzhegow\Database\Demo\Model\DemoPostModel::new();
-    $modelPost2->name = 'modelPost2';
-
-    $modelUser2 = \Gzhegow\Database\Demo\Model\DemoUserModel::new();
-    $modelUser2->name = 'modelUser2';
-
-    $modelTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
-
-    $modelTag1 = $modelTag::new();
-    $modelTag1->name = 'modelTag1';
-
-    $modelTag2 = $modelTag::new();
-    $modelTag2->name = 'modelTag2';
-
-
-    $modelPost2->persistForSave();
-    $modelPost2->_demoTags()->persistForSaveMany([
-        $modelTag1,
-        $modelTag2,
-    ]);
-
-    $modelUser2->persistForSave();
-    $modelUser2->_demoTags()->persistForSaveMany([
-        $modelTag1,
-        $modelTag2,
-    ]);
-
-    \Gzhegow\Database\Core\Orm::getEloquentPersistence()->flush();
-
-
-    $modelTagQuery = $modelTag::query()
-        ->with([
-            $modelTag::relationDot()([ $modelTag, '_demoPosts' ])(),
-            $modelTag::relationDot()([ $modelTag, '_demoUsers' ])(),
-        ])
-    ;
-    $modelPostQuery = $modelPost2::query()
-        ->with(
-            $modelPost2::relationDot()([ $modelPost2, '_demoTags' ])()
-        )
-    ;
-    $modelUserQuery = $modelUser2::query()
-        ->with(
-            $modelUser2::relationDot()([ $modelUser2, '_demoTags' ])()
-        )
-    ;
-
-    $modelTagResult = \Gzhegow\Database\Demo\Model\DemoTagModel::get($modelTagQuery);
-    $modelPostResult = \Gzhegow\Database\Demo\Model\DemoPostModel::get($modelPostQuery);
-    $modelUserResult = \Gzhegow\Database\Demo\Model\DemoUserModel::get($modelUserQuery);
-
-    _dump($modelTagResult);
-    _dump($modelTagResult[ 0 ], $modelTagResult[ 0 ]->_demoPosts[ 0 ], $modelTagResult[ 0 ]->_demoUsers[ 0 ]);
-    _dump($modelTagResult[ 1 ], $modelTagResult[ 1 ]->_demoPosts[ 0 ], $modelTagResult[ 1 ]->_demoUsers[ 0 ]);
-    _dump('');
-
-    _dump($modelPostResult);
-    _dump($modelPostResult[ 1 ], $modelPostResult[ 1 ]->_demoTags[ 0 ], $modelPostResult[ 1 ]->_demoTags[ 1 ]);
-    _dump('');
-
-    _dump($modelUserResult);
-    _dump($modelUserResult[ 1 ], $modelUserResult[ 1 ]->_demoTags[ 0 ], $modelUserResult[ 1 ]->_demoTags[ 1 ]);
-
-
-    echo '';
-};
-_assert_output($fn, <<<HEREDOC
-"[ TEST 5 ]"
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 { object # Gzhegow\Database\Demo\Model\DemoImageModel } | { object # Gzhegow\Database\Demo\Model\DemoPostModel }
 ""
@@ -833,6 +775,231 @@ _assert_output($fn, <<<HEREDOC
 ""
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 { object # Gzhegow\Database\Demo\Model\DemoUserModel } | { object # Gzhegow\Database\Demo\Model\DemoTagModel } | { object # Gzhegow\Database\Demo\Model\DemoTagModel }
+""
+HEREDOC
+);
+
+
+// >>> TEST
+// > можно подсчитать количество записей в таблице используя EXPLAIN, к сожалению, будет показано число строк, которое придется обработать, а не число строк по результатам запроса
+// > но иногда этого достаточно, особенно если запрос покрыт должным числом индексов, чтобы отобразить "Всего: ~100 страниц"
+$fn = function () use (
+    $eloquent,
+    $schema
+) {
+    _dump('[ TEST 5 ]');
+
+
+    $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
+
+    $schema->disableForeignKeyConstraints();
+    $modelClassDemoTag::query()->truncate();
+    $schema->enableForeignKeyConstraints();
+
+    for ( $i = 0; $i < 100; $i++ ) {
+        $modelDemoTag = $modelClassDemoTag::new();
+        $modelDemoTag->name = 'modelDemoTag' . $i;
+        $modelDemoTag->save();
+    }
+
+
+    $query = $modelClassDemoTag::query()->where('name', 'modelDemoTag70');
+    _dump($cnt = $query->count(), $cnt === 1);
+
+    $cnt = $query->countExplain();
+    _dump($cnt > 1, $cnt <= 100);
+
+
+    echo '';
+};
+_assert_output($fn, <<<HEREDOC
+"[ TEST 5 ]"
+1 | TRUE
+TRUE | TRUE
+""
+HEREDOC
+);
+
+
+// >>> TEST
+// > используем механизм Chunk, чтобы считать данные из таблиц
+// > на базе механизма работает и пагинация, предлагается два варианта - нативный SQL LIMIT/OFFSET и COLUMN(>|>=|<|<=)VALUE
+$fn = function () use (
+    $eloquent,
+    $schema
+) {
+    _dump('[ TEST 6 ]');
+
+
+    $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
+
+    $schema->disableForeignKeyConstraints();
+    $modelClassDemoTag::query()->truncate();
+    $schema->enableForeignKeyConstraints();
+
+    for ( $i = 0; $i < 100; $i++ ) {
+        $modelDemoTag = $modelClassDemoTag::new();
+        $modelDemoTag->name = 'modelDemoTag' . $i;
+        $modelDemoTag->save();
+    }
+
+
+    _dump('chunkModelNativeForeach');
+    $builder = $modelClassDemoTag::chunks();
+    $builder->chunksModelNativeForeach(
+        $limitChunk = 25, $limit = null, $offset = null
+    );
+    foreach ( $builder->chunksForeach() as $chunk ) {
+        _dump($chunk);
+    }
+
+    _dump('chunkModelAfterForeach');
+    $builder = $modelClassDemoTag::chunks();
+    $builder = $builder->chunksModelAfterForeach(
+        $limitChunk = 25, $limit = null,
+        $offsetColumn = 'id', $offsetOperator = '>', $offsetValue = 1, $includeOffsetValue = true
+    );
+    foreach ( $builder->chunksForeach() as $chunk ) {
+        _dump($chunk);
+    }
+
+
+    echo '';
+};
+_assert_output($fn, <<<HEREDOC
+"[ TEST 6 ]"
+"chunkModelNativeForeach"
+{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+"chunkModelAfterForeach"
+{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+""
+HEREDOC
+);
+
+
+// >>> TEST
+// > используем механизм Chunk, чтобы считать данные из таблиц
+// > на базе механизма работает и пагинация, предлагается два варианта - нативный SQL LIMIT/OFFSET и COLUMN(>|>=|<|<=)VALUE
+$fn = function () use (
+    $eloquent,
+    $schema
+) {
+    _dump('[ TEST 7 ]');
+
+
+    $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
+
+    $schema->disableForeignKeyConstraints();
+    $modelClassDemoTag::query()->truncate();
+    $schema->enableForeignKeyConstraints();
+
+    for ( $i = 0; $i < 100; $i++ ) {
+        $modelDemoTag = $modelClassDemoTag::new();
+        $modelDemoTag->name = 'modelDemoTag' . $i;
+        $modelDemoTag->save();
+    }
+
+
+    _dump('paginateModelNativeForeach');
+    $builder = $modelClassDemoTag::chunks();
+    $builder
+        // ->setTotalItems(100)
+        // ->setTotalPages(8)
+        // ->withSelectCountNative()
+        // ->withSelectCountExplain()
+        ->paginatePdoNativeForeach(
+            $perPage = 13, $page = 7, $pagesDelta = 2,
+            $offset = null
+        )
+    ;
+
+    $result = $builder->paginateResult();
+    _dump_array((array) $result, 1, true);
+    _dump_array($result->pagesAbsolute, 1, true);
+    _dump_array($result->pagesRelative, 1, true);
+
+    _dump('paginateModelAfterForeach');
+    $builder = $modelClassDemoTag::chunks();
+    $builder
+        // ->setTotalItems(100)
+        // ->setTotalPages(8)
+        // ->withSelectCountNative()
+        // ->withSelectCountExplain()
+        ->paginatePdoAfterForeach(
+            $perPage = 13, $page = 7, $pagesDelta = 2,
+            $offsetColumn = 'id', $offsetOperator = '>', $offsetValue = 1, $includeOffsetValue = true
+        )
+    ;
+
+    $result = $builder->paginateResult();
+    _dump_array((array) $result, 1, true);
+    _dump_array($result->pagesAbsolute, 1, true);
+    _dump_array($result->pagesRelative, 1, true);
+
+    echo '';
+};
+_assert_output($fn, <<<HEREDOC
+"[ TEST 7 ]"
+"paginateModelNativeForeach"
+[
+  "totalItems" => 100,
+  "totalPages" => 8,
+  "page" => 7,
+  "perPage" => 13,
+  "pagesDelta" => 2,
+  "from" => 78,
+  "to" => 91,
+  "pagesAbsolute" => "{ array(5) }",
+  "pagesRelative" => "{ array(5) }",
+  "items" => "{ object(iterable countable(13)) # Illuminate\Support\Collection }"
+]
+[
+  1 => 13,
+  5 => 13,
+  6 => 13,
+  7 => 13,
+  8 => 9
+]
+[
+  "first" => 13,
+  "previous" => 13,
+  "current" => 13,
+  "next" => NULL,
+  "last" => 9
+]
+"paginateModelAfterForeach"
+[
+  "totalItems" => 100,
+  "totalPages" => 8,
+  "page" => 7,
+  "perPage" => 13,
+  "pagesDelta" => 2,
+  "from" => 78,
+  "to" => 91,
+  "pagesAbsolute" => "{ array(5) }",
+  "pagesRelative" => "{ array(5) }",
+  "items" => "{ object(iterable countable(13)) # Illuminate\Support\Collection }"
+]
+[
+  1 => 13,
+  5 => 13,
+  6 => 13,
+  7 => 13,
+  8 => 9
+]
+[
+  "first" => 13,
+  "previous" => 13,
+  "current" => 13,
+  "next" => NULL,
+  "last" => 9
+]
 ""
 HEREDOC
 );
