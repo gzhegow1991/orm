@@ -43,7 +43,7 @@ trait AttributeTrait
         return $this->doGetAttributeValue($key);
     }
 
-    protected function doGetAttributeValue(string $key)
+    private function doGetAttributeValue(string $key)
     {
         $value = $this->getAttributeFromArray($key);
 
@@ -248,6 +248,7 @@ trait AttributeTrait
         }
 
         $this->classCastCache = [];
+        $this->attributeCastCache = [];
 
         return $this;
     }

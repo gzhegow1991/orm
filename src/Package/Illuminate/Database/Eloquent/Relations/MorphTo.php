@@ -28,7 +28,7 @@ class MorphTo extends MorphToBase implements
         return $parent;
     }
 
-    protected function doAssociate(?EloquentModel $model) : EloquentModel
+    private function doAssociate(?EloquentModel $model) : EloquentModel
     {
         /** @var EloquentModel $parent */
 
@@ -52,11 +52,20 @@ class MorphTo extends MorphToBase implements
 
 
     /**
-     * @return Model
+     * @return EloquentModel
      */
     public function dissociate()
     {
         /** @see parent::dissociate() */
+
+        $parent = $this->doDissociate();
+
+        return $parent;
+    }
+
+    private function doDissociate() : EloquentModel
+    {
+        /** @var EloquentModel $parent */
 
         $parent = $this->parent;
 
@@ -68,7 +77,6 @@ class MorphTo extends MorphToBase implements
 
         return $parent;
     }
-
 
 
     public function addConstraints()

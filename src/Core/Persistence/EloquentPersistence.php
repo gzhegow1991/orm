@@ -4,7 +4,6 @@ namespace Gzhegow\Database\Core\Persistence;
 
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Gzhegow\Database\Exception\Runtime\DatabaseException;
@@ -485,7 +484,7 @@ class EloquentPersistence implements EloquentPersistenceInterface
         return $result;
     }
 
-    protected function doFlush() : array
+    private function doFlush() : array
     {
         $results = [];
 

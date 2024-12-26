@@ -86,7 +86,7 @@ class Orm
      *
      * @param iterable<T> $models
      *
-     * @return EloquentModelCollection<T>
+     * @return EloquentModelCollection<T>|T[]
      */
     public static function newEloquentModelCollection(
         iterable $models = []

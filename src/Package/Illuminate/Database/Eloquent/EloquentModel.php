@@ -6,16 +6,19 @@ use Gzhegow\Lib\Lib;
 use Gzhegow\Database\Exception\LogicException;
 use Gzhegow\Database\Exception\RuntimeException;
 use Gzhegow\Database\Core\Model\Traits\LoadTrait;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Gzhegow\Database\Core\Model\Traits\TableTrait;
 use Gzhegow\Database\Core\Model\Traits\QueryTrait;
 use Gzhegow\Database\Core\Model\Traits\ChunkTrait;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Gzhegow\Database\Core\Model\Traits\FactoryTrait;
+use Gzhegow\Database\Core\Model\Traits\ColumnsTrait;
 use Gzhegow\Database\Core\Model\Traits\CalendarTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Gzhegow\Database\Core\Model\Traits\AttributeTrait;
 use Gzhegow\Database\Core\Model\Traits\PersistenceTrait;
 use Illuminate\Database\Eloquent\Model as EloquentModelBase;
+use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 use Gzhegow\Database\Core\Model\Traits\Relation\RelationTrait;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Gzhegow\Database\Core\Model\Traits\Relation\RelationFactoryTrait;
@@ -30,6 +33,7 @@ abstract class EloquentModel extends EloquentModelBase
 
     use AttributeTrait;
     use ChunkTrait;
+    use ColumnsTrait;
     use FactoryTrait;
     use LoadTrait;
     use QueryTrait;
@@ -44,10 +48,6 @@ abstract class EloquentModel extends EloquentModelBase
     protected $tablePrefix;
     protected $tableNoPrefix;
     protected $primaryKey = 'id';
-    /**
-     * > список колонок БД, которые выбираются по-умолчанию: (NULL -> '*'; '' -> select($primaryKey), ['column' => true, 'column2' ] -> конкретные колонки)
-     */
-    protected $columns = null;
 
     // >>> settings
     public $incrementing = true;
@@ -75,19 +75,24 @@ abstract class EloquentModel extends EloquentModelBase
     protected $attributes = [];
     protected $casts      = [];
     protected $dates      = [];
+    /**
+     * > если в запрос не указать вручную ->select()/->addSelect() колонки, то будут выбраны указанные ниже
+     * > используйте алиасы '*' для `SELECT *` и '#' для `SELECT {primaryKey}`
+     * > запросы следует писать так, чтобы для PROD окружения было ['#'], но для DEV удобнее ['*']
+     */
+    protected $columns = [ '*' ];
     /** > автоматическое преобразование ключей в `snake_case` при вызове ->toArray() */
     public static $snakeAttributes = false;
 
     // >>> relations
     protected $relations = [];
-    /** > список связей модели для которых автоматически обновляются created_at/updated_at */
-    protected $touches = [];
+    protected $touches   = [];
 
     // >>> serialization
-    /** > список полей, которые принудительно скрываются при ->toArray(): ['column' => true, 'column2' ]) */
+    /** > список полей, которые принудительно скрываются при ->toArray() */
     protected $hidden       = [];
     protected $hiddenLoaded = false;
-    /** > список полей, которые принудительно отображаются при ->toArray(): ['column' => true, 'column2' ]) */
+    /** > список полей, которые принудительно отображаются при ->toArray() */
     protected $visible       = [];
     protected $visibleLoaded = false;
 
@@ -269,7 +274,8 @@ abstract class EloquentModel extends EloquentModelBase
 
                         if (! $existsGetter) {
                             throw new RuntimeException(
-                                'Unable to get attribute value due to model `preventsLazyGet` is enabled: ' . $offset
+                                'Attribute is missing: `' . $offset . '`.'
+                                . ' This message is shown because `preventsLazyGet` is set to TRUE'
                             );
                         }
                     }
@@ -294,7 +300,7 @@ abstract class EloquentModel extends EloquentModelBase
             if ($this->preventsLazySet) {
                 if (! $this->recentlyCreated) {
                     throw new RuntimeException(
-                        'Unable to set attribute value due to model `preventsLazySet` is enabled: ' . $offset
+                        'Unable to set attribute due to model `preventsLazySet` is enabled: ' . $offset
                     );
                 }
             }
@@ -333,9 +339,10 @@ abstract class EloquentModel extends EloquentModelBase
     {
         /** @see parent::getKey(); */
 
-        return $this->getAttribute(
-            $this->getKeyName()
-        );
+        $key = $this->getKeyName();
+        $value = $this->getAttribute($key);
+
+        return $value;
     }
 
     public function getKeyName()
@@ -346,6 +353,12 @@ abstract class EloquentModel extends EloquentModelBase
     }
 
 
+    /**
+     * @return string
+     *
+     * @deprecated
+     * @internal
+     */
     public function getForeignKey()
     {
         /** @see parent::getForeignKey(); */
@@ -356,9 +369,14 @@ abstract class EloquentModel extends EloquentModelBase
         return "{$table}_{$key}";
     }
 
+    /**
+     * @noinspection PhpDeprecationInspection
+     */
     public function getForeignKeyName()
     {
-        return $this->getForeignKey();
+        $key = $this->getForeignKey();
+
+        return $key;
     }
 
 
@@ -464,7 +482,7 @@ abstract class EloquentModel extends EloquentModelBase
         return true;
     }
 
-    protected function doSaveRecursive(array &$graph = null) : ?array
+    private function doSaveRecursive(array &$graph = null) : ?array
     {
         /** @var static $child */
 
@@ -550,7 +568,7 @@ abstract class EloquentModel extends EloquentModelBase
         return $graph;
     }
 
-    protected function doDeleteRecursive(array &$graph = null) : ?array
+    private function doDeleteRecursive(array &$graph = null) : ?array
     {
         /** @var static $model */
 
@@ -596,36 +614,38 @@ abstract class EloquentModel extends EloquentModelBase
 
 
     /**
-     * @return EloquentModelCollection<static>
+     * @return EloquentModelCollection<static>|static[]
      */
-    public static function get(EloquentModelQueryBuilder $query, $columns = [ '*' ])
+    public static function get(EloquentModelQueryBuilder $query, $columnsDefault = null)
     {
-        return $query->get($columns);
+        return $query->get($columnsDefault);
     }
 
     /**
      * @return static|null
      */
-    public static function first(EloquentModelQueryBuilder $query, $columns = [ '*' ])
+    public static function first(EloquentModelQueryBuilder $query, $columnsDefault = null)
     {
-        return $query->first($columns);
+        return $query->first($columnsDefault);
     }
 
     /**
      * @return static
      * @throws ResourceNotFoundException
      */
-    public static function firstOrFail(EloquentModelQueryBuilder $query, $columns = [ '*' ])
+    public static function firstOrFail(EloquentModelQueryBuilder $query, $columnsDefault = null)
     {
-        return $query->firstOrFail($columns);
+        return $query->firstOrFail($columnsDefault);
     }
 
 
     /**
      * > gzhegow, немного измененный вывод объекта в json, чтобы свойства со связями не перемешивались
      */
-    public function toArray()
+    public function jsonSerialize()
     {
+        /** @see parent::jsonSerialize() */
+
         $array = $this->attributesToArray();
 
         if ($relationsArray = $this->relationsToArray()) {
@@ -635,6 +655,86 @@ abstract class EloquentModel extends EloquentModelBase
         }
 
         return $array;
+    }
+
+
+    /**
+     * @return static|null
+     */
+    public function fresh($with = [])
+    {
+        /** @see parent::fresh() */
+
+        if (! $this->exists) {
+            return null;
+        }
+
+        $_with = is_string($with)
+            ? func_get_args()
+            : $with;
+
+        $query = $this->newModelQuery();
+
+        $query->with($this->with);
+        $query->with($_with);
+        $query->withCount($this->withCount);
+
+        $this->setKeysForSelectQuery($query);
+
+        $model = $query->first([ '*' ]);
+
+        return $model;
+    }
+
+    /**
+     * @return static
+     *
+     * @throws ResourceNotFoundException
+     */
+    public function refresh()
+    {
+        /** @see parent::refresh() */
+
+        if (! $this->exists) {
+            return $this;
+        }
+
+        $query = $this->newModelQuery();
+
+        $query->with($this->with);
+        $query->withCount($this->withCount);
+
+        $this->setKeysForSelectQuery($query);
+
+        $model = $query->firstOrFail([ '*' ]);
+
+        $this->setRawAttributes($model->getRawAttributes());
+
+        $with = [];
+        foreach ( $this->relations as $i => $relation ) {
+            if ($relation instanceof Pivot) {
+                continue;
+            }
+
+            if (is_object($relation)) {
+                $classUses = Lib::php_class_uses_with_parents(
+                    $relation,
+                    true
+                );
+
+                if (in_array(AsPivot::class, $classUses, true)) {
+                    continue;
+                }
+            }
+
+            $with[ $i ] = true;
+        }
+
+        $this->load(array_keys($with));
+
+        $this->syncOriginal();
+
+        return $this;
     }
 
 

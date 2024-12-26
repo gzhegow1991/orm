@@ -2,9 +2,11 @@
 
 namespace Gzhegow\Database\Core\Model\Traits;
 
+use Gzhegow\Lib\Lib;
 use Gzhegow\Database\Core\Orm;
 use Illuminate\Database\Eloquent\Model;
 use Gzhegow\Database\Exception\LogicException;
+use Gzhegow\Database\Exception\RuntimeException;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 use Gzhegow\Database\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
@@ -19,43 +21,35 @@ trait FactoryTrait
     /**
      * @return static
      */
-    public function newInstance($attributes = [], $exists = false)
+    public function newInstanceWithState(array $attributes = [], array $state = [])
     {
-        /** @see Model::newInstance() */
+        $instance = new static($attributes);
 
-        $attributes = $attributes ?? [];
-        $exists = (bool) ($exists ?? false);
+        $state[ 'connection' ] = $state[ 'connection' ] ?? $this->getConnectionName();
 
-        if (! (false
-            || is_array($attributes)
-            || is_a($attributes, \stdClass::class)
-        )) {
-            throw new LogicException(
-                [ 'The `attributes` should be array or \stdClass', $attributes ]
-            );
+        foreach ( $state as $key => $value ) {
+            if (! property_exists($this, $key)) {
+                throw new RuntimeException(
+                    [ 'Missing property: ' . $key, $this, $state ]
+                );
+            }
+
+            $instance->{$key} = $value;
         }
-
-        $instance = new static((array) $attributes);
-        $instance->exists = $exists;
-
-        $instance->setConnection($this->getConnectionName());
 
         return $instance;
     }
 
-
-    public function newInstanceByBuilder(array $attributes = [], string $connection = null)
+    /**
+     * @return static
+     */
+    public function newInstanceWithStateClosure(array $attributes = [], \Closure $fnSetState = null)
     {
-        $attributes = $attributes ?? [];
+        $instance = new static($attributes);
 
-        $instance = new static();
-        $instance->exists = true;
-
-        $instance->setRawAttributes($attributes, true);
-
-        $instance->setConnection($connection ?? $this->getConnectionName());
-
-        $instance->fireModelEvent('retrieved', false);
+        if (null !== $fnSetState) {
+            $fnSetState->call($instance, $instance);
+        }
 
         return $instance;
     }
@@ -66,7 +60,10 @@ trait FactoryTrait
      *
      * @return static
      */
-    public function newModelWithSameConnection(string $modelClass, array $attributes = [], bool $exists = false)
+    public function newModelWithState(
+        string $modelClass,
+        array $attributes = [], array $state = []
+    )
     {
         if (! is_subclass_of($modelClass, EloquentModel::class)) {
             throw new LogicException(
@@ -75,13 +72,89 @@ trait FactoryTrait
         }
 
         $instance = new $modelClass($attributes);
-        $instance->exists = $exists;
 
-        $instance->setConnection($this->getConnectionName());
+        foreach ( $state as $key => $value ) {
+            if (! property_exists($this, $key)) {
+                throw new RuntimeException(
+                    [ 'Missing property: ' . $key, $this, $state ]
+                );
+            }
+
+            $instance->{$key} = $value;
+        }
 
         return $instance;
     }
 
+    /**
+     * @param class-string<EloquentModel> $modelClass
+     *
+     * @return static
+     */
+    public function newModelWithStateClosure(
+        string $modelClass,
+        array $attributes = [], \Closure $fnSetState = null
+    )
+    {
+        if (! is_subclass_of($modelClass, EloquentModel::class)) {
+            throw new LogicException(
+                [ 'The `class` should be class-string of: ' . EloquentModel::class, $modelClass ]
+            );
+        }
+
+        $instance = new $modelClass($attributes);
+
+        if (null !== $fnSetState) {
+            $fnSetState->call($instance, $instance);
+        }
+
+        return $instance;
+    }
+
+
+    /**
+     * @return static
+     *
+     * @deprecated
+     * @internal
+     */
+    public function newInstance($attributes = [], $exists = false)
+    {
+        /** @see Model::newInstance() */
+
+        $_attributes = Lib::php_array($attributes);
+        $_exists = (bool) ($exists ?? false);
+
+        $instance = $this->newInstanceWithState(
+            $_attributes,
+            [
+                'connection' => $this->getConnectionName(),
+                'exists'     => $_exists,
+            ]
+        );
+
+        return $instance;
+    }
+
+    /**
+     * @return static
+     *
+     * @deprecated
+     * @internal
+     */
+    public function newRelatedInstance($class)
+    {
+        /** @see HasRelationships::newRelatedInstance() */
+
+        $instance = $this->newModelWithState(
+            $class,
+            [
+                'connection' => $this->getConnectionName(),
+            ]
+        );
+
+        return $instance;
+    }
 
     /**
      * @return static
@@ -93,40 +166,31 @@ trait FactoryTrait
     {
         /** @see Model::newFromBuilder() */
 
-        $attributes = $attributes ?? [];
+        $_attributes = Lib::php_array($attributes);
 
-        if (! (false
-            || is_array($attributes)
-            || is_a($attributes, \stdClass::class)
-        )) {
-            throw new LogicException(
-                [ 'The `attributes` should be array or \stdClass', $attributes ]
-            );
-        }
+        $instance = $this->newInstanceWithState(
+            [],
+            [
+                //
+                'connection'         => $connection ?? $this->getConnectionName(),
+                'exists'             => true,
+                //
+                // > sync()
+                'attributeCastCache' => [],
+                'attributes'         => $_attributes,
+                'classCastCache'     => [],
+                'original'           => $_attributes,
+            ]
+        );
 
-        $instance = $this->newInstanceByBuilder((array) $attributes, $connection);
-
-        return $instance;
-    }
-
-    /**
-     * @return static
-     *
-     * @deprecated
-     * @internal
-     */
-    protected function newRelatedInstance($class)
-    {
-        /** @see HasRelationships::newRelatedInstance() */
-
-        $instance = $this->newModelWithSameConnection($class);
+        $instance->fireModelEvent('retrieved', false);
 
         return $instance;
     }
 
 
     /**
-     * @return EloquentModelCollection<static>
+     * @return EloquentModelCollection<static>|static[]
      */
     public function newCollection(array $models = []) : EloquentModelCollection
     {
@@ -158,7 +222,7 @@ trait FactoryTrait
      * @deprecated
      * @internal
      */
-    protected function newBaseQueryBuilder()
+    public function newBaseQueryBuilder()
     {
         /** @see Model::newBaseQueryBuilder() */
 
@@ -240,13 +304,14 @@ trait FactoryTrait
      * @deprecated
      * @internal
      */
-    public function newQueryWithoutScope($scope)
+    public function newQueryWithoutScopes()
     {
-        /** @see Model::newQueryWithoutScope() */
+        /** @see Model::newQueryWithoutScopes() */
 
-        $modelQuery = $this->newQuery();
+        $modelQuery = $this->newModelQuery();
 
-        $modelQuery->withoutGlobalScope($scope);
+        $modelQuery->with($this->with);
+        $modelQuery->withCount($this->withCount);
 
         return $modelQuery;
     }
@@ -257,14 +322,13 @@ trait FactoryTrait
      * @deprecated
      * @internal
      */
-    public function newQueryWithoutScopes()
+    public function newQueryWithoutScope($scope)
     {
-        /** @see Model::newQueryWithoutScopes() */
+        /** @see Model::newQueryWithoutScope() */
 
-        $modelQuery = $this->newModelQuery();
+        $modelQuery = $this->newQuery();
 
-        $modelQuery->with($this->with);
-        $modelQuery->withCount($this->withCount);
+        $modelQuery->withoutGlobalScope($scope);
 
         return $modelQuery;
     }

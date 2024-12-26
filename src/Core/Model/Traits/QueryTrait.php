@@ -81,7 +81,7 @@ trait QueryTrait
     /**
      * @return EloquentPdoQueryBuilder
      */
-    public function queryPdoThis()
+    public function queryStdThis()
     {
         $query = $this->newQuery();
 
@@ -93,11 +93,11 @@ trait QueryTrait
     /**
      * @return EloquentPdoQueryBuilder
      */
-    public static function queryPdo()
+    public static function queryStd()
     {
         $model = static::getModel();
 
-        $query = $model->queryPdoThis();
+        $query = $model->queryStdThis();
 
         return $query;
     }
@@ -106,7 +106,7 @@ trait QueryTrait
     /**
      * @return EloquentPdoQueryBuilder
      */
-    public function queryPdoKeysThis()
+    public function queryStdKeysThis()
     {
         $query = $this->newQuery();
 
@@ -119,11 +119,11 @@ trait QueryTrait
     /**
      * @return EloquentPdoQueryBuilder
      */
-    public static function queryPdoKeys()
+    public static function queryStdKeys()
     {
         $model = static::getModel();
 
-        $query = $model->queryPdoKeysThis();
+        $query = $model->queryStdKeysThis();
 
         return $query;
     }
@@ -132,7 +132,7 @@ trait QueryTrait
     /**
      * @return EloquentPdoQueryBuilder
      */
-    public function queryPdoWhereThis(...$where)
+    public function queryStdWhereThis(...$where)
     {
         $query = $this->newQuery();
 
@@ -146,11 +146,11 @@ trait QueryTrait
     /**
      * @return EloquentPdoQueryBuilder
      */
-    public static function queryPdoWhere(...$where)
+    public static function queryStdWhere(...$where)
     {
         $model = static::getModel();
 
-        $queryPdo = $model->queryPdoWhereThis(...$where);
+        $queryPdo = $model->queryStdWhereThis(...$where);
 
         return $queryPdo;
     }
@@ -159,7 +159,7 @@ trait QueryTrait
     /**
      * @return EloquentPdoQueryBuilder
      */
-    public function queryPdoKeysWhereThis(...$where)
+    public function queryStdKeysWhereThis(...$where)
     {
         $query = $this->newQuery();
 
@@ -174,11 +174,11 @@ trait QueryTrait
     /**
      * @return EloquentPdoQueryBuilder
      */
-    public static function queryPdoKeysWhere(...$where)
+    public static function queryStdKeysWhere(...$where)
     {
         $model = static::getModel();
 
-        $queryPdo = $model->queryPdoKeysWhereThis(...$where);
+        $queryPdo = $model->queryStdKeysWhereThis(...$where);
 
         return $queryPdo;
     }

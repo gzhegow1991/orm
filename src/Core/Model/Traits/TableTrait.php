@@ -23,6 +23,15 @@ trait TableTrait
         return $schema;
     }
 
+    public static function schema() : EloquentSchemaBuilder
+    {
+        $model = static::getModel();
+
+        $connection = $model->schemaThis();
+
+        return $connection;
+    }
+
 
     public function getTable()
     {
@@ -37,16 +46,16 @@ trait TableTrait
     {
         /** @see Model::setTable() */
 
-        $this->setTableThis($table);
+        $this->setTableCurrent($table);
     }
 
 
-    public function getTableThis() : ?string
+    public function getTableCurrent() : ?string
     {
         return $this->table;
     }
 
-    public function setTableThis(string $table) : void
+    public function setTableCurrent(string $table) : void
     {
         if ('' === $table) {
             throw new LogicException(
@@ -58,12 +67,12 @@ trait TableTrait
     }
 
 
-    public function getTablePrefixThis() : string
+    public function getTablePrefix() : string
     {
         return $this->tablePrefix;
     }
 
-    public function setTablePrefixThis(string $tablePrefix) : void
+    public function setTablePrefix(string $tablePrefix) : void
     {
         if ('' === $tablePrefix) {
             throw new LogicException(
@@ -75,12 +84,12 @@ trait TableTrait
     }
 
 
-    public function getTableNoPrefixThis() : ?string
+    public function getTableNoPrefix() : ?string
     {
         return $this->tableNoPrefix;
     }
 
-    public function setTableNoPrefixThis(string $tableNoPrefix) : void
+    public function setTableNoPrefix(string $tableNoPrefix) : void
     {
         if ('' === $tableNoPrefix) {
             throw new LogicException(
@@ -95,6 +104,13 @@ trait TableTrait
     public function tablePrefixThis() : ?string
     {
         return $this->tablePrefix;
+    }
+
+    public static function tablePrefix() : string
+    {
+        $model = static::getModel();
+
+        return $model->tablePrefixThis();
     }
 
 
@@ -131,7 +147,7 @@ trait TableTrait
         return $tableNoPrefix;
     }
 
-    protected function tableDefaultThis(string $alias = null) : string
+    private function tableDefaultThis(string $alias = null) : string
     {
         // > gzhegow, Eloquent при подстановке в запрос оборачивает alias согласно Grammar
         // > а вот если пишете RAW запрос, передавайте $alias вместе с кавычками
@@ -145,6 +161,20 @@ trait TableTrait
         }
 
         return $tableDefault;
+    }
+
+    public static function table(string $alias = null) : string
+    {
+        $model = static::getModel();
+
+        return $model->tableThis($alias);
+    }
+
+    public static function tableNoPrefix(string $alias = null) : string
+    {
+        $model = static::getModel();
+
+        return $model->tableNoPrefixThis($alias);
     }
 
 
@@ -176,7 +206,7 @@ trait TableTrait
         return $tableNoPrefix;
     }
 
-    protected function tableMorphedByManyDefaultThis(string $morphTypeName, string $alias = null) : string
+    private function tableMorphedByManyDefaultThis(string $morphTypeName, string $alias = null) : string
     {
         // > gzhegow, Eloquent при подстановке в запрос оборачивает alias согласно Grammar
         // > а вот если пишете RAW запрос, передавайте $alias вместе с кавычками
@@ -189,40 +219,6 @@ trait TableTrait
 
         return $tableDefault;
     }
-
-
-    public static function schema() : EloquentSchemaBuilder
-    {
-        $model = static::getModel();
-
-        $connection = $model->schemaThis();
-
-        return $connection;
-    }
-
-
-    public static function tablePrefix() : string
-    {
-        $model = static::getModel();
-
-        return $model->tablePrefixThis();
-    }
-
-
-    public static function table(string $alias = null) : string
-    {
-        $model = static::getModel();
-
-        return $model->tableThis($alias);
-    }
-
-    public static function tableNoPrefix(string $alias = null) : string
-    {
-        $model = static::getModel();
-
-        return $model->tableNoPrefixThis($alias);
-    }
-
 
     public static function tableMorphedByMany(string $morphTypeName, string $alias = null) : string
     {

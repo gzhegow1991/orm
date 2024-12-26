@@ -1,6 +1,5 @@
 <?php
 
-require_once getenv('COMPOSER_HOME') . '/vendor/autoload.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
 
@@ -9,44 +8,11 @@ ini_set('memory_limit', '32M');
 
 
 // > настраиваем обработку ошибок
-error_reporting(E_ALL);
-set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-    if (error_reporting() & $errno) {
-        throw new \ErrorException($errstr, -1, $errno, $errfile, $errline);
-    }
-});
-set_exception_handler(function (\Throwable $e) {
-    // require_once getenv('COMPOSER_HOME') . '/vendor/autoload.php';
-    // dd();
-
-    $current = $e;
-    do {
-        echo PHP_EOL;
-
-        echo \Gzhegow\Lib\Lib::debug_var_dump($current) . PHP_EOL;
-
-        $message = $current->getMessage();
-        if (is_a($e, \PDOException::class)) {
-            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                $message = mb_convert_encoding($message, 'utf-8', 'cp1251');
-            }
-        }
-        echo $message . PHP_EOL;
-
-        $file = $current->getFile() ?? '{file}';
-        $line = $current->getLine() ?? '{line}';
-        echo "{$file} : {$line}" . PHP_EOL;
-
-        foreach ( $e->getTrace() as $traceItem ) {
-            $file = $traceItem[ 'file' ] ?? '{file}';
-            $line = $traceItem[ 'line' ] ?? '{line}';
-
-            echo "{$file} : {$line}" . PHP_EOL;
-        }
-    } while ( $current = $current->getPrevious() );
-
-    die();
-});
+(new \Gzhegow\Lib\Exception\ErrorHandler())
+    ->useErrorReporting()
+    ->useErrorHandler()
+    ->useExceptionHandler()
+;
 
 
 // > добавляем несколько функция для тестирования
@@ -324,97 +290,11 @@ $schema->create(
 
 
 // >>> TEST
-// > рекомендуется в проекте указывать связи в виде callable, чтобы они менялись, когда применяешь `Refactor` в PHPStorm
-$fn = function () use ($eloquent) {
-    _dump('[ TEST 1 ]');
-
-    $foo_hasMany_bars_hasMany_bazs = \Gzhegow\Database\Core\Orm::eloquentRelationDot()
-    ([ \Gzhegow\Database\Demo\Model\DemoFooModel::class, '_demoBars' ])
-    ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoBazs' ])
-    ();
-    _dump($foo_hasMany_bars_hasMany_bazs);
-
-    $bar_belongsTo_foo = \Gzhegow\Database\Demo\Model\DemoBarModel::relationDot()
-    ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoFoo' ])
-    ();
-    _dump($bar_belongsTo_foo);
-
-    $bar_hasMany_bazs = \Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
-    ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoBazs' ])
-    ();
-    _dump($bar_hasMany_bazs);
-
-    $bar_belongsTo_foo_only_id = \Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
-    ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoFoo' ], 'id')
-    ();
-    _dump($bar_belongsTo_foo_only_id);
-
-    $bar_hasMany_bazs_only_id = \Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
-    ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoBazs' ], 'id')
-    ();
-    _dump($bar_hasMany_bazs_only_id);
-
-    // > Делаем запрос со связями
-    // $query = \Gzhegow\Database\Demo\Model\DemoFooModel::query();
-    // $query->with($foo_hasMany_bars_hasMany_bazs);
-    // $query->with([
-    //     $foo_hasMany_bars_hasMany_bazs,
-    // ]);
-    // $query->with([
-    //     $foo_hasMany_bars_hasMany_bazs => static function ($query) { },
-    // ]);
-    //
-    // $query = \Gzhegow\Database\Demo\Model\DemoBarModel::query();
-    // $query->with($bar_belongsTo_foo);
-    // $query->with([
-    //     $bar_belongsTo_foo,
-    //     $bar_hasMany_bazs,
-    // ]);
-    // $query->with([
-    //     $bar_belongsTo_foo => static function ($query) { },
-    //     $bar_hasMany_bazs  => static function ($query) { },
-    // ]);
-
-    // > Подгружаем связи к уже полученным из базы моделям
-    // $query = \Gzhegow\Database\Demo\Model\DemoFooModel::query();
-    // $model = $query->firstOrFail();
-    // $model->load($foo_hasMany_bars_hasMany_bazs);
-    // $model->load([
-    //     $foo_hasMany_bars_hasMany_bazs,
-    // ]);
-    // $model->load([
-    //     $foo_hasMany_bars_hasMany_bazs => static function ($query) { },
-    // ]);
-    //
-    // $query = \Gzhegow\Database\Demo\Model\DemoBarModel::query();
-    // $model = $query->firstOrFail();
-    // $model->load($bar_belongsTo_foo);
-    // $model->load([
-    //     $bar_belongsTo_foo,
-    //     $bar_hasMany_bazs,
-    // ]);
-    // $model->load([
-    //     $bar_belongsTo_foo => static function ($query) { },
-    //     $bar_hasMany_bazs  => static function ($query) { },
-    // ]);
-
-    echo '';
-};
-_assert_output($fn, <<<HEREDOC
-"[ TEST 1 ]"
-"_demoBars._demoBazs"
-"_demoFoo"
-"_demoBazs"
-"_demoFoo:id"
-"_demoBazs:id"
-""
-HEREDOC
-);
-
-
-// >>> TEST
 // > используем рекурсивное сохранение для того, чтобы сохранить модели вместе со связями
-$fn = function () use ($eloquent) {
+$fn = function () use (
+    $eloquent,
+    $schema
+) {
     _dump('[ TEST 2 ]');
 
 
@@ -422,50 +302,56 @@ $fn = function () use ($eloquent) {
     $modelClassDemoBar = \Gzhegow\Database\Demo\Model\DemoBarModel::class;
     $modelClassDemoBaz = \Gzhegow\Database\Demo\Model\DemoBazModel::class;
 
-
-    $modelDemoFoo1 = $modelClassDemoFoo::new();
-    $modelDemoFoo1->name = 'modelDemoFoo1';
-    $modelDemoBar1 = $modelClassDemoBar::new();
-    $modelDemoBar1->name = 'modelDemoBar1';
-    $modelDemoBaz1 = $modelClassDemoBaz::new();
-    $modelDemoBaz1->name = 'modelDemoBaz1';
-
-    $modelDemoFoo2 = $modelClassDemoFoo::new();
-    $modelDemoFoo2->name = 'modelDemoFoo2';
-    $modelDemoBar2 = $modelClassDemoBar::new();
-    $modelDemoBar2->name = 'modelDemoBar2';
-    $modelDemoBaz2 = $modelClassDemoBaz::new();
-    $modelDemoBaz2->name = 'modelDemoBaz2';
+    $schema->disableForeignKeyConstraints();
+    $modelClassDemoFoo::query()->truncate();
+    $modelClassDemoBar::query()->truncate();
+    $modelClassDemoBaz::query()->truncate();
+    $schema->enableForeignKeyConstraints();
 
 
-    $modelDemoBar1->_demoFoo = $modelDemoFoo1;
-    $modelDemoBaz1->_demoBar = $modelDemoBar1;
+    $foo1 = $modelClassDemoFoo::new();
+    $foo1->name = 'foo1';
+    $bar1 = $modelClassDemoBar::new();
+    $bar1->name = 'bar1';
+    $baz1 = $modelClassDemoBaz::new();
+    $baz1->name = 'baz1';
 
-    $modelDemoBaz1->saveRecursive();
+    $foo2 = $modelClassDemoFoo::new();
+    $foo2->name = 'foo2';
+    $bar2 = $modelClassDemoBar::new();
+    $bar2->name = 'bar2';
+    $baz2 = $modelClassDemoBaz::new();
+    $baz2->name = 'baz2';
 
 
-    $modelDemoBar2->_demoFoo = $modelDemoFoo2;
-    $modelDemoBaz2->_demoBar = $modelDemoBar2;
-    $modelDemoBar2->_demoBazs[] = $modelDemoBaz2;
-    $modelDemoFoo2->_demoBars[] = $modelDemoBar2;
+    $bar1->_demoFoo = $foo1;
+    $baz1->_demoBar = $bar1;
 
-    $modelDemoFoo2->saveRecursive();
+    $baz1->saveRecursive();
 
 
-    $modelDemoFooResult = $modelClassDemoFoo::query()->get();
-    $modelDemoBarResult = $modelClassDemoBar::query()->get();
-    $modelDemoBazResult = $modelClassDemoBaz::query()->get();
+    $bar2->_demoFoo = $foo2;
+    $baz2->_demoBar = $bar2;
+    $bar2->_demoBazs[] = $baz2;
+    $foo2->_demoBars[] = $bar2;
 
-    _dump($modelDemoFooResult);
-    _dump($modelDemoFooResult[ 0 ]->id, $modelDemoFooResult[ 1 ]->id);
+    $foo2->saveRecursive();
 
-    _dump($modelDemoBarResult);
-    _dump($modelDemoBarResult[ 0 ]->id, $modelDemoBarResult[ 0 ]->demo_foo_id);
-    _dump($modelDemoBarResult[ 1 ]->id, $modelDemoBarResult[ 1 ]->demo_foo_id);
 
-    _dump($modelDemoBazResult);
-    _dump($modelDemoBazResult[ 0 ]->id, $modelDemoBazResult[ 0 ]->demo_bar_id);
-    _dump($modelDemoBazResult[ 1 ]->id, $modelDemoBazResult[ 1 ]->demo_bar_id);
+    $fooCollection = $modelClassDemoFoo::query()->get([ '*' ]);
+    $barCollection = $modelClassDemoBar::query()->get([ '*' ]);
+    $bazCollection = $modelClassDemoBaz::query()->get([ '*' ]);
+
+    _dump($fooCollection);
+    _dump($fooCollection[ 0 ]->id, $fooCollection[ 1 ]->id);
+
+    _dump($barCollection);
+    _dump($barCollection[ 0 ]->id, $barCollection[ 0 ]->demo_foo_id);
+    _dump($barCollection[ 1 ]->id, $barCollection[ 1 ]->demo_foo_id);
+
+    _dump($bazCollection);
+    _dump($bazCollection[ 0 ]->id, $bazCollection[ 0 ]->demo_bar_id);
+    _dump($bazCollection[ 1 ]->id, $bazCollection[ 1 ]->demo_bar_id);
 
 
     echo '';
@@ -488,7 +374,10 @@ HEREDOC
 // >>> TEST
 // > используем Persistence для сохранения ранее созданных моделей
 // > это нужно, чтобы уменьшить время транзакции - сохранение делаем в конце бизнес-действия
-$fn = function () use ($eloquent) {
+$fn = function () use (
+    $eloquent,
+    $schema
+) {
     _dump('[ TEST 3 ]');
 
 
@@ -496,67 +385,73 @@ $fn = function () use ($eloquent) {
     $modelClassDemoBar = \Gzhegow\Database\Demo\Model\DemoBarModel::class;
     $modelClassDemoBaz = \Gzhegow\Database\Demo\Model\DemoBazModel::class;
 
-
-    $modelDemoFoo3 = $modelClassDemoFoo::new();
-    $modelDemoFoo3->name = 'modelDemoFoo3';
-    $modelDemoBar3 = $modelClassDemoBar::new();
-    $modelDemoBar3->name = 'modelDemoBar3';
-    $modelDemoBaz3 = $modelClassDemoBaz::new();
-    $modelDemoBaz3->name = 'modelDemoBaz3';
-
-    $modelDemoFoo4 = $modelClassDemoFoo::new();
-    $modelDemoFoo4->name = 'modelDemoFoo4';
-    $modelDemoBar4 = $modelClassDemoBar::new();
-    $modelDemoBar4->name = 'modelDemoBar4';
-    $modelDemoBaz4 = $modelClassDemoBaz::new();
-    $modelDemoBaz4->name = 'modelDemoBaz4';
+    $schema->disableForeignKeyConstraints();
+    $modelClassDemoFoo::query()->truncate();
+    $modelClassDemoBar::query()->truncate();
+    $modelClassDemoBaz::query()->truncate();
+    $schema->enableForeignKeyConstraints();
 
 
-    $modelDemoBar3->_demoFoo = $modelDemoFoo3;
-    $modelDemoBaz3->_demoBar = $modelDemoBar3;
+    $foo3 = $modelClassDemoFoo::new();
+    $foo3->name = 'foo3';
+    $bar3 = $modelClassDemoBar::new();
+    $bar3->name = 'bar3';
+    $baz3 = $modelClassDemoBaz::new();
+    $baz3->name = 'baz3';
 
-    $modelDemoBaz3->persistForSaveRecursive();
+    $foo4 = $modelClassDemoFoo::new();
+    $foo4->name = 'foo4';
+    $bar4 = $modelClassDemoBar::new();
+    $bar4->name = 'bar4';
+    $baz4 = $modelClassDemoBaz::new();
+    $baz4->name = 'baz4';
 
 
-    $modelDemoBar4->_demoFoo = $modelDemoFoo4;
-    $modelDemoBaz4->_demoBar = $modelDemoBar4;
-    $modelDemoBar4->_demoBazs[] = $modelDemoBaz4;
-    $modelDemoFoo4->_demoBars[] = $modelDemoBar4;
+    $bar3->_demoFoo = $foo3;
+    $baz3->_demoBar = $bar3;
 
-    $modelDemoFoo4->persistForSaveRecursive();
+    $baz3->persistForSaveRecursive();
+
+
+    $bar4->_demoFoo = $foo4;
+    $baz4->_demoBar = $bar4;
+    $bar4->_demoBazs[] = $baz4;
+    $foo4->_demoBars[] = $bar4;
+
+    $foo4->persistForSaveRecursive();
 
 
     \Gzhegow\Database\Core\Orm::getEloquentPersistence()->flush();
 
 
-    $modelDemoFooResult = $modelClassDemoFoo::query()->get();
-    $modelDemoBarResult = $modelClassDemoBar::query()->get();
-    $modelDemoBazResult = $modelClassDemoBaz::query()->get();
+    $fooCollection = $modelClassDemoFoo::query()->get([ '*' ]);
+    $barCollection = $modelClassDemoBar::query()->get([ '*' ]);
+    $bazCollection = $modelClassDemoBaz::query()->get([ '*' ]);
 
-    _dump($modelDemoFooResult);
-    _dump($modelDemoFooResult[ 2 ]->id, $modelDemoFooResult[ 3 ]->id);
+    _dump($fooCollection);
+    _dump($fooCollection[ 0 ]->id, $fooCollection[ 1 ]->id);
 
-    _dump($modelDemoBarResult);
-    _dump($modelDemoBarResult[ 2 ]->id, $modelDemoBarResult[ 2 ]->demo_foo_id);
-    _dump($modelDemoBarResult[ 3 ]->id, $modelDemoBarResult[ 3 ]->demo_foo_id);
+    _dump($barCollection);
+    _dump($barCollection[ 0 ]->id, $barCollection[ 0 ]->demo_foo_id);
+    _dump($barCollection[ 1 ]->id, $barCollection[ 1 ]->demo_foo_id);
 
-    _dump($modelDemoBazResult);
-    _dump($modelDemoBazResult[ 2 ]->id, $modelDemoBazResult[ 2 ]->demo_bar_id);
-    _dump($modelDemoBazResult[ 3 ]->id, $modelDemoBazResult[ 3 ]->demo_bar_id);
+    _dump($bazCollection);
+    _dump($bazCollection[ 0 ]->id, $bazCollection[ 0 ]->demo_bar_id);
+    _dump($bazCollection[ 1 ]->id, $bazCollection[ 1 ]->demo_bar_id);
 
 
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
 "[ TEST 3 ]"
-{ object(iterable countable(4)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-3 | 4
-{ object(iterable countable(4)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-3 | 3
-4 | 4
-{ object(iterable countable(4)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-3 | 3
-4 | 4
+{ object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+1 | 2
+{ object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+1 | 1
+2 | 2
+{ object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+1 | 1
+2 | 2
 ""
 HEREDOC
 );
@@ -564,131 +459,146 @@ HEREDOC
 
 // >>> TEST
 // > тестирование связей (для примера взят Morph), у которых в этом пакете изменился интерфейс создания
-$fn = function () use ($eloquent) {
+$fn = function () use (
+    $eloquent,
+    $schema
+) {
     _dump('[ TEST 4 ]');
 
 
-    $modelDemoPost1 = \Gzhegow\Database\Demo\Model\DemoPostModel::new();
-    $modelDemoPost1->name = 'modelDemoPost1';
-
-    $modelDemoUser1 = \Gzhegow\Database\Demo\Model\DemoUserModel::new();
-    $modelDemoUser1->name = 'modelDemoUser1';
-
-    $modelDemoImage1 = \Gzhegow\Database\Demo\Model\DemoImageModel::new();
-    $modelDemoImage1->name = 'modelDemoImage1';
-
-    $modelDemoImage2 = \Gzhegow\Database\Demo\Model\DemoImageModel::new();
-    $modelDemoImage2->name = 'modelDemoImage2';
-
-    $modelDemoImage1->_imageable = $modelDemoPost1;
-    $modelDemoImage2->_imageable = $modelDemoUser1;
-
-    $modelDemoPost1->_demoImages[] = $modelDemoImage1;
-
-    $modelDemoUser1->_demoImages[] = $modelDemoImage2;
-
-
-    $modelDemoImage1->persistForSaveRecursive();
-    $modelDemoImage2->persistForSaveRecursive();
-
-    \Gzhegow\Database\Core\Orm::getEloquentPersistence()->flush();
-
-
-    $modelDemoImageQuery = $modelDemoImage1::query()
-        ->with(
-            $modelDemoPost1::relationDot()([ $modelDemoImage1, '_imageable' ])()
-        )
-    ;
-    $modelDemoPostQuery = $modelDemoPost1::query()
-        ->with(
-            $modelDemoPost1::relationDot()([ $modelDemoPost1, '_demoImages' ])()
-        )
-    ;
-    $modelDemoUserQuery = $modelDemoUser1::query()
-        ->with(
-            $modelDemoUser1::relationDot()([ $modelDemoUser1, '_demoImages' ])()
-        )
-    ;
-
-    $modelDemoImageResult = \Gzhegow\Database\Demo\Model\DemoImageModel::get($modelDemoImageQuery);
-    $modelDemoPostResult = \Gzhegow\Database\Demo\Model\DemoPostModel::get($modelDemoPostQuery);
-    $modelDemoUserResult = \Gzhegow\Database\Demo\Model\DemoUserModel::get($modelDemoUserQuery);
-
-    _dump($modelDemoImageResult);
-    _dump($modelDemoImageResult[ 0 ], $modelDemoImageResult[ 0 ]->_imageable);
-    _dump('');
-
-    _dump($modelDemoPostResult);
-    _dump($modelDemoPostResult[ 0 ], $modelDemoPostResult[ 0 ]->_demoImages[ 0 ]);
-    _dump('');
-
-    _dump($modelDemoUserResult);
-    _dump($modelDemoUserResult[ 0 ], $modelDemoUserResult[ 0 ]->_demoImages[ 0 ]);
-    _dump('');
-
-
-    $modelDemoPost2 = \Gzhegow\Database\Demo\Model\DemoPostModel::new();
-    $modelDemoPost2->name = 'modelDemoPost2';
-
-    $modelDemoUser2 = \Gzhegow\Database\Demo\Model\DemoUserModel::new();
-    $modelDemoUser2->name = 'modelDemoUser2';
-
+    $modelClassDemoPost = \Gzhegow\Database\Demo\Model\DemoPostModel::class;
+    $modelClassDemoUser = \Gzhegow\Database\Demo\Model\DemoUserModel::class;
+    $modelClassDemoImage = \Gzhegow\Database\Demo\Model\DemoImageModel::class;
     $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
 
-    $modelDemoTag1 = $modelClassDemoTag::new();
-    $modelDemoTag1->name = 'modelDemoTag1';
+    $schema->disableForeignKeyConstraints();
+    $modelClassDemoPost::query()->truncate();
+    $modelClassDemoUser::query()->truncate();
+    $modelClassDemoImage::query()->truncate();
+    $modelClassDemoTag::query()->truncate();
+    $schema->enableForeignKeyConstraints();
 
-    $modelDemoTag2 = $modelClassDemoTag::new();
-    $modelDemoTag2->name = 'modelDemoTag2';
+
+    $post1 = $modelClassDemoPost::new();
+    $post1->name = 'post1';
+
+    $user1 = $modelClassDemoUser::new();
+    $user1->name = 'user1';
+
+    $image1 = $modelClassDemoImage::new();
+    $image1->name = 'image1';
+
+    $image2 = $modelClassDemoImage::new();
+    $image2->name = 'image2';
+
+    $image1->_imageable = $post1;
+    $image2->_imageable = $user1;
+
+    $post1->_demoImages[] = $image1;
+
+    $user1->_demoImages[] = $image2;
 
 
-    $modelDemoPost2->persistForSave();
-    $modelDemoPost2->_demoTags()->persistForSaveMany([
-        $modelDemoTag1,
-        $modelDemoTag2,
+    $image1->persistForSaveRecursive();
+    $image2->persistForSaveRecursive();
+
+    \Gzhegow\Database\Core\Orm::getEloquentPersistence()->flush();
+
+
+    $imageQuery = $image1::query()
+        ->addColumns($image1->getMorphKeys('imageable'))
+        ->with(
+            $post1::relationDot()([ $image1, '_imageable' ])()
+        )
+    ;
+    $postQuery = $post1::query()
+        ->with(
+            $post1::relationDot()([ $post1, '_demoImages' ])()
+        )
+    ;
+    $userQuery = $user1::query()
+        ->with(
+            $user1::relationDot()([ $user1, '_demoImages' ])()
+        )
+    ;
+
+    $imageCollection = $modelClassDemoImage::get($imageQuery);
+    $postCollection = $modelClassDemoPost::get($postQuery);
+    $userCollection = $modelClassDemoUser::get($userQuery);
+
+    _dump($imageCollection);
+    _dump($imageCollection[ 0 ], $imageCollection[ 0 ]->_imageable);
+    _dump('');
+
+    _dump($postCollection);
+    _dump($postCollection[ 0 ], $postCollection[ 0 ]->_demoImages[ 0 ]);
+    _dump('');
+
+    _dump($userCollection);
+    _dump($userCollection[ 0 ], $userCollection[ 0 ]->_demoImages[ 0 ]);
+    _dump('');
+
+
+    $post2 = $modelClassDemoPost::new();
+    $post2->name = 'post2';
+
+    $user2 = $modelClassDemoUser::new();
+    $user2->name = 'user2';
+
+    $tag1 = $modelClassDemoTag::new();
+    $tag1->name = 'tag1';
+
+    $tag2 = $modelClassDemoTag::new();
+    $tag2->name = 'tag2';
+
+
+    $post2->persistForSave();
+    $post2->_demoTags()->persistForSaveMany([
+        $tag1,
+        $tag2,
     ]);
 
-    $modelDemoUser2->persistForSave();
-    $modelDemoUser2->_demoTags()->persistForSaveMany([
-        $modelDemoTag1,
-        $modelDemoTag2,
+    $user2->persistForSave();
+    $user2->_demoTags()->persistForSaveMany([
+        $tag1,
+        $tag2,
     ]);
 
     \Gzhegow\Database\Core\Orm::getEloquentPersistence()->flush();
 
 
-    $modelDemoTagQuery = $modelClassDemoTag::query()
+    $tagQuery = $modelClassDemoTag::query()
         ->with([
             $modelClassDemoTag::relationDot()([ $modelClassDemoTag, '_demoPosts' ])(),
             $modelClassDemoTag::relationDot()([ $modelClassDemoTag, '_demoUsers' ])(),
         ])
     ;
-    $modelDemoPostQuery = $modelDemoPost2::query()
+    $postQuery = $post2::query()
         ->with(
-            $modelDemoPost2::relationDot()([ $modelDemoPost2, '_demoTags' ])()
+            $post2::relationDot()([ $post2, '_demoTags' ])()
         )
     ;
-    $modelDemoUserQuery = $modelDemoUser2::query()
+    $userQuery = $user2::query()
         ->with(
-            $modelDemoUser2::relationDot()([ $modelDemoUser2, '_demoTags' ])()
+            $user2::relationDot()([ $user2, '_demoTags' ])()
         )
     ;
 
-    $modelDemoTagResult = \Gzhegow\Database\Demo\Model\DemoTagModel::get($modelDemoTagQuery);
-    $modelDemoPostResult = \Gzhegow\Database\Demo\Model\DemoPostModel::get($modelDemoPostQuery);
-    $modelDemoUserResult = \Gzhegow\Database\Demo\Model\DemoUserModel::get($modelDemoUserQuery);
+    $tagCollection = $modelClassDemoTag::get($tagQuery);
+    $postCollection = $modelClassDemoPost::get($postQuery);
+    $userCollection = $modelClassDemoUser::get($userQuery);
 
-    _dump($modelDemoTagResult);
-    _dump($modelDemoTagResult[ 0 ], $modelDemoTagResult[ 0 ]->_demoPosts[ 0 ], $modelDemoTagResult[ 0 ]->_demoUsers[ 0 ]);
-    _dump($modelDemoTagResult[ 1 ], $modelDemoTagResult[ 1 ]->_demoPosts[ 0 ], $modelDemoTagResult[ 1 ]->_demoUsers[ 0 ]);
+    _dump($tagCollection);
+    _dump($tagCollection[ 0 ], $tagCollection[ 0 ]->_demoPosts[ 0 ], $tagCollection[ 0 ]->_demoUsers[ 0 ]);
+    _dump($tagCollection[ 1 ], $tagCollection[ 1 ]->_demoPosts[ 0 ], $tagCollection[ 1 ]->_demoUsers[ 0 ]);
     _dump('');
 
-    _dump($modelDemoPostResult);
-    _dump($modelDemoPostResult[ 1 ], $modelDemoPostResult[ 1 ]->_demoTags[ 0 ], $modelDemoPostResult[ 1 ]->_demoTags[ 1 ]);
+    _dump($postCollection);
+    _dump($postCollection[ 1 ], $postCollection[ 1 ]->_demoTags[ 0 ], $postCollection[ 1 ]->_demoTags[ 1 ]);
     _dump('');
 
-    _dump($modelDemoUserResult);
-    _dump($modelDemoUserResult[ 1 ], $modelDemoUserResult[ 1 ]->_demoTags[ 0 ], $modelDemoUserResult[ 1 ]->_demoTags[ 1 ]);
+    _dump($userCollection);
+    _dump($userCollection[ 1 ], $userCollection[ 1 ]->_demoTags[ 0 ], $userCollection[ 1 ]->_demoTags[ 1 ]);
 
 
     echo '';
@@ -735,13 +645,13 @@ $fn = function () use (
     $schema->enableForeignKeyConstraints();
 
     for ( $i = 0; $i < 100; $i++ ) {
-        $modelDemoTag = $modelClassDemoTag::new();
-        $modelDemoTag->name = 'modelDemoTag' . $i;
-        $modelDemoTag->save();
+        $tag = $modelClassDemoTag::new();
+        $tag->name = 'tag' . $i;
+        $tag->save();
     }
 
 
-    $query = $modelClassDemoTag::query()->where('name', 'modelDemoTag70');
+    $query = $modelClassDemoTag::query()->where('name', 'tag77');
     _dump($cnt = $query->count(), $cnt === 1);
 
     $cnt = $query->countExplain();
@@ -776,9 +686,9 @@ $fn = function () use (
     $schema->enableForeignKeyConstraints();
 
     for ( $i = 0; $i < 100; $i++ ) {
-        $modelDemoTag = $modelClassDemoTag::new();
-        $modelDemoTag->name = 'modelDemoTag' . $i;
-        $modelDemoTag->save();
+        $tag = $modelClassDemoTag::new();
+        $tag->name = 'tag' . $i;
+        $tag->save();
     }
 
 
@@ -838,9 +748,9 @@ $fn = function () use (
     $schema->enableForeignKeyConstraints();
 
     for ( $i = 0; $i < 100; $i++ ) {
-        $modelDemoTag = $modelClassDemoTag::new();
-        $modelDemoTag->name = 'modelDemoTag' . $i;
-        $modelDemoTag->save();
+        $tag = $modelClassDemoTag::new();
+        $tag->name = 'tag' . $i;
+        $tag->save();
     }
 
 
@@ -938,6 +848,95 @@ _assert_output($fn, <<<HEREDOC
   "next" => NULL,
   "last" => 9
 ]
+""
+HEREDOC
+);
+
+
+// >>> TEST
+// > рекомендуется в проекте указывать связи в виде callable, чтобы они менялись, когда применяешь `Refactor` в PHPStorm
+$fn = function () use ($eloquent) {
+    _dump('[ TEST 1 ]');
+
+    $foo_hasMany_bars_hasMany_bazs = \Gzhegow\Database\Core\Orm::eloquentRelationDot()
+    ([ \Gzhegow\Database\Demo\Model\DemoFooModel::class, '_demoBars' ])
+    ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoBazs' ])
+    ();
+    _dump($foo_hasMany_bars_hasMany_bazs);
+
+    $bar_belongsTo_foo = \Gzhegow\Database\Demo\Model\DemoBarModel::relationDot()
+    ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoFoo' ])
+    ();
+    _dump($bar_belongsTo_foo);
+
+    $bar_hasMany_bazs = \Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
+    ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoBazs' ])
+    ();
+    _dump($bar_hasMany_bazs);
+
+    $bar_belongsTo_foo_only_id = \Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
+    ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoFoo' ], 'id')
+    ();
+    _dump($bar_belongsTo_foo_only_id);
+
+    $bar_hasMany_bazs_only_id = \Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
+    ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoBazs' ], 'id')
+    ();
+    _dump($bar_hasMany_bazs_only_id);
+
+    // > Делаем запрос со связями
+    // $query = \Gzhegow\Database\Demo\Model\DemoFooModel::query();
+    // $query->with($foo_hasMany_bars_hasMany_bazs);
+    // $query->with([
+    //     $foo_hasMany_bars_hasMany_bazs,
+    // ]);
+    // $query->with([
+    //     $foo_hasMany_bars_hasMany_bazs => static function ($query) { },
+    // ]);
+    //
+    // $query = \Gzhegow\Database\Demo\Model\DemoBarModel::query();
+    // $query->with($bar_belongsTo_foo);
+    // $query->with([
+    //     $bar_belongsTo_foo,
+    //     $bar_hasMany_bazs,
+    // ]);
+    // $query->with([
+    //     $bar_belongsTo_foo => static function ($query) { },
+    //     $bar_hasMany_bazs  => static function ($query) { },
+    // ]);
+
+    // > Подгружаем связи к уже полученным из базы моделям
+    // $query = \Gzhegow\Database\Demo\Model\DemoFooModel::query();
+    // $model = $query->firstOrFail();
+    // $model->load($foo_hasMany_bars_hasMany_bazs);
+    // $model->load([
+    //     $foo_hasMany_bars_hasMany_bazs,
+    // ]);
+    // $model->load([
+    //     $foo_hasMany_bars_hasMany_bazs => static function ($query) { },
+    // ]);
+    //
+    // $query = \Gzhegow\Database\Demo\Model\DemoBarModel::query();
+    // $model = $query->firstOrFail();
+    // $model->load($bar_belongsTo_foo);
+    // $model->load([
+    //     $bar_belongsTo_foo,
+    //     $bar_hasMany_bazs,
+    // ]);
+    // $model->load([
+    //     $bar_belongsTo_foo => static function ($query) { },
+    //     $bar_hasMany_bazs  => static function ($query) { },
+    // ]);
+
+    echo '';
+};
+_assert_output($fn, <<<HEREDOC
+"[ TEST 1 ]"
+"_demoBars._demoBazs"
+"_demoFoo"
+"_demoBazs"
+"_demoFoo:id"
+"_demoBazs:id"
 ""
 HEREDOC
 );

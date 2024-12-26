@@ -54,7 +54,7 @@ interface OrmFacadeInterface
      *
      * @param iterable<T> $models
      *
-     * @return EloquentModelCollection<T>
+     * @return EloquentModelCollection<T>|T[]
      */
     public function newEloquentModelCollection(
         iterable $models = []

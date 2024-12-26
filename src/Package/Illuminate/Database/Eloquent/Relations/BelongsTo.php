@@ -27,7 +27,7 @@ class BelongsTo extends BelongsToBase
         return $child;
     }
 
-    protected function doAssociate(?EloquentModel $model) : EloquentModel
+    private function doAssociate(?EloquentModel $model) : EloquentModel
     {
         /** @var EloquentModel $child */
 
@@ -48,11 +48,20 @@ class BelongsTo extends BelongsToBase
 
 
     /**
-     * @return Model
+     * @return EloquentModel
      */
     public function dissociate()
     {
         /** @see parent::dissociate() */
+
+        $child = $this->doDissociate();
+
+        return $child;
+    }
+
+    private function doDissociate() : EloquentModel
+    {
+        /** @var EloquentModel $child */
 
         $child = $this->child;
 

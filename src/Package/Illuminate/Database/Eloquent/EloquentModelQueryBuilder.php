@@ -2,12 +2,14 @@
 
 namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent;
 
-use Illuminate\Support\Collection as EloquentSupportCollection;
+use Gzhegow\Lib\Lib;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Scope;
 use Gzhegow\Database\Exception\LogicException;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Gzhegow\Database\Core\Query\ModelQuery\Traits\ChunkTrait;
+use Illuminate\Support\Collection as EloquentSupportCollection;
+use Gzhegow\Database\Core\Query\ModelQuery\Traits\ColumnsTrait;
 use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilder;
 use Gzhegow\Database\Core\Query\ModelQuery\Traits\PersistenceTrait;
 use Illuminate\Database\Eloquent\Builder as EloquentQueryBuilderBase;
@@ -20,6 +22,7 @@ use Gzhegow\Database\Exception\Exception\Resource\ResourceNotFoundException;
 class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
 {
     use ChunkTrait;
+    use ColumnsTrait;
     use PersistenceTrait;
 
 
@@ -78,7 +81,7 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
         return $this;
     }
 
-    protected function doSetModel(EloquentModel $model)
+    private function doSetModel(EloquentModel $model)
     {
         parent::setModel($model);
 
@@ -96,7 +99,7 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
         $connection = $this->query->getConnection();
         $connectionName = $connection->getName();
 
-        $instance = $this->model->newInstance($attributes);
+        $instance = $this->model->newInstanceWithState($attributes);
 
         $instance->setConnection($connectionName);
 
@@ -164,30 +167,30 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
 
 
     /**
-     * @return EloquentModelCollection<T>
+     * @return EloquentModelCollection<T>|T[]
+     *
+     * @noinspection PhpParameterNameChangedDuringInheritanceInspection
      */
-    public function get($columns = [ '*' ])
+    public function get($columnsDefault = null)
     {
-        $model = $this->getModel();
-        $modelKey = $model->getKeyName();
+        /** @see parent::get() */
 
-        $queryClone = $this->applyScopes();
+        $columnsDefault = $columnsDefault ?? [];
+        $columnsDefault = (array) $columnsDefault;
+
+        $queryClone = clone $this;
+        $queryClone = $this->applyScopesOnQuery($queryClone);
 
         $pdoQueryClone = $queryClone->getQuery();
 
-        if ($pdoQueryClone->columns && ! $pdoQueryClone->orders) {
-            // > gzhegow, MariaDB
-            // > отдает всегда одно и то же, т.е. сортирует под капотом
-            // > но всегда разное в зависимости от числа полей в SELECT
-            // > select * from `w3j_user` limit 1; // = {id: 1}
-            // > select `id` from `w3j_user` limit 1; // = {id: 6}
-            // > select `id`, `uuid` from `w3j_user` limit 1; // = {id: 3}
+        $model = $this->getModel();
+        $_columnsDefault = $columnsDefault ?: $model->columnsDefault();
+        $_columnsDefault = array_merge($_columnsDefault, $this->columnsDefaultAppend);
+        $_columnsDefault = $model->prepareColumns($_columnsDefault);
 
-            // > gzhegow, MariaDB & PostgreSQL
-            $pdoQueryClone->orderBy($modelKey, 'ASC');
-        }
+        $rowsCollection = $pdoQueryClone->get($_columnsDefault);
 
-        $models = $queryClone->getModels($columns);
+        $models = $this->hydrateArray($rowsCollection->all());
 
         if (count($models)) {
             $models = $queryClone->eagerLoadRelations($models);
@@ -199,36 +202,30 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
     }
 
     /**
-     * @return EloquentSupportCollection<\stdClass>
+     * @return EloquentSupportCollection<\stdClass>|\stdClass[]
      */
-    public function getStd($columns = [ '*' ])
+    public function getStd($columnsDefault = null)
     {
-        $model = $this->getModel();
-        $modelKey = $model->getKeyName();
+        $columnsDefault = $columnsDefault ?? [];
+        $columnsDefault = (array) $columnsDefault;
 
-        $queryClone = $this->applyScopes();
+        $queryClone = clone $this;
+        $queryClone = $this->applyScopesOnQuery($queryClone);
 
         $pdoQueryClone = $queryClone->getQuery();
 
-        if ($pdoQueryClone->columns && ! $pdoQueryClone->orders) {
-            // > gzhegow, MariaDB
-            // > отдает всегда одно и то же, т.е. сортирует под капотом
-            // > но всегда разное в зависимости от числа полей в SELECT
-            // > select * from `w3j_user` limit 1; // = {id: 1}
-            // > select `id` from `w3j_user` limit 1; // = {id: 6}
-            // > select `id`, `uuid` from `w3j_user` limit 1; // = {id: 3}
+        $model = $this->getModel();
+        $_columnsDefault = $columnsDefault ?: $model->columnsDefault();
+        $_columnsDefault = array_merge($_columnsDefault, $this->columnsDefaultAppend);
+        $_columnsDefault = $model->prepareColumns($_columnsDefault);
 
-            // > gzhegow, MariaDB & PostgreSQL
-            $pdoQueryClone->orderBy($modelKey, 'ASC');
-        }
-
-        $collection = $pdoQueryClone->get($columns);
+        $collection = $pdoQueryClone->get($_columnsDefault);
 
         return $collection;
     }
 
     /**
-     * @return EloquentSupportCollection<int|string>
+     * @return EloquentSupportCollection<int|string>|(int|string)[]
      */
     public function getKeys()
     {
@@ -245,14 +242,16 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
 
     /**
      * @return T|null
+     *
+     * @noinspection PhpParameterNameChangedDuringInheritanceInspection
      */
-    public function first($columns = [ '*' ])
+    public function first($columnsDefault = null)
     {
         /** @see parent::first() */
 
         $this->take(1);
 
-        $collection = $this->get($columns);
+        $collection = $this->get($columnsDefault);
 
         $model = $collection->first();
 
@@ -262,10 +261,12 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
     /**
      * @return T
      * @throws ResourceNotFoundException
+     *
+     * @noinspection PhpParameterNameChangedDuringInheritanceInspection
      */
-    public function firstOrFail($columns = [ '*' ])
+    public function firstOrFail($columnsDefault = null)
     {
-        $model = $this->first($columns);
+        $model = $this->first($columnsDefault);
 
         if (null === $model) {
             throw new ResourceNotFoundException(
@@ -284,13 +285,13 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
     /**
      * @return \stdClass|null
      */
-    public function firstStd($columns = [ '*' ])
+    public function firstStd($columnsDefault = null)
     {
         $this->take(1);
 
         $pdoQuery = $this->getQuery();
 
-        $collection = $pdoQuery->get($columns);
+        $collection = $pdoQuery->get($columnsDefault);
 
         $row = $collection->first();
 
@@ -301,9 +302,9 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
      * @return \stdClass
      * @throws ResourceNotFoundException
      */
-    public function firstStdOrFail($columns = [ '*' ])
+    public function firstStdOrFail($columnsDefault = null)
     {
-        $model = $this->firstStd($columns);
+        $model = $this->firstStd($columnsDefault);
 
         if (null === $model) {
             throw new ResourceNotFoundException(
@@ -431,98 +432,187 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
 
 
     /**
-     * todo-gzhegow, доделать, сейчас работает так же как из коробки Laravel, нужно поддержку "только айди"
+     * @return static
      *
-     * > gzhegow, по прежнему считаю, что экономия на выбираемых в SELECT полях - глупость
-     * > но коль скоро тему подняли, вот, подготавливаю к тому, чтобы принудительно запрашивать только ID
-     * > остальные поля задавать руками. Посмотри на doctrine. `оно` тянет целые агрегаты залпом - десятки таблиц
-     * > и ничего, считается быстрым. Стоит разделять запросы на `тяжелые` и `по айди` и вот в тяжелых писать RAW SQL,
-     * > а не издеваться над мозгами, ссылаясь на вероятный хайлоад. Кол-во запросов и отсутствие индексов будет лаг,
-     * > а если база висит всё равно - это должно быть масштабирование на несколько машин, а не выборкой "только айди"...
+     * @internal
+     * @deprecated
      */
+    public function applyScopes()
+    {
+        /** @see parent::applyScopes() */
+
+        $query = clone $this;
+
+        $query = $this->applyScopesOnQuery($query);
+
+        return $query;
+    }
+
+    public function applyScopesOnQuery(EloquentModelQueryBuilder $query)
+    {
+        if (! $this->scopes) {
+            return $query;
+        }
+
+        foreach ( $this->scopes as $identifier => $scope ) {
+            if (! isset($query->scopes[ $identifier ])) {
+                continue;
+            }
+
+            $query->callScope(function ($query) use ($scope) {
+                // If the scope is a Closure we will just go ahead and call the scope with the
+                // builder instance. The "callScope" method will properly group the clauses
+                // that are added to this query so "where" clauses maintain proper logic.
+                if ($scope instanceof \Closure) {
+                    $scope($query);
+                }
+
+                // If the scope is a scope object, we will call the apply method on this scope
+                // passing in the builder and the model instance. After we run all of these
+                // scopes we will return back the builder instance to the outside caller.
+                if ($scope instanceof Scope) {
+                    $scope->apply($query, $this->getModel());
+                }
+            });
+        }
+
+        return $query;
+    }
+
+
+    /**
+     * @return EloquentModelCollection<T>|T[]
+     *
+     * @deprecated
+     * @internal
+     */
+    public function hydrate(array $items)
+    {
+        /** @see parent::hydrate() */
+
+        $result = $this->hydrateArray($items);
+
+        $model = $this->getModel();
+        $collection = $model->newCollection($result);
+
+        return $collection;
+    }
+
+    /**
+     * @return T[]
+     *
+     * @noinspection PhpDeprecationInspection
+     */
+    public function hydrateArray(array $items)
+    {
+        $model = static::getModel();
+
+        $result = [];
+        foreach ( $items as $i => $item ) {
+            $attributes = Lib::php_array($item);
+
+            $result[ $i ] = $model->newFromBuilder($attributes);
+        }
+
+        return $result;
+    }
+
+
     protected function parseWithRelations(array $relations)
     {
         /** @see parent::parseWithRelations() */
 
-        $fnNull = static function () { };
+        $_relations = $this->parseWithRelations_prepareConstraints($relations);
+        $_relations = $this->parseWithRelations_prepareConstraintScopes($_relations);
 
-        $fnConstraints = static function ($columns, $fn) {
-            return static function ($query) use ($columns, $fn) {
-                $columns = array_filter($columns);
+        return $_relations;
+    }
 
-                if ($columns) {
-                    foreach ( $columns as $i => $column ) {
-                        if ($column === '@id') {
-                            unset($columns[ $i ]);
+    protected function parseWithRelations_prepareConstraints(array $relations) : array
+    {
+        $prepared = [];
 
-                            if ($query instanceof Relation) {
-                                foreach ( $query->getBaseQuery()->wheres as $where ) {
-                                    $columns[] = $where[ 'column' ];
-                                }
-                            }
-                        }
-                    }
+        foreach ( $relations as $relationConfig => $relationClosure ) {
+            if (is_int($relationConfig)) {
+                $relationConfig = $relationClosure;
+                $relationClosure = null;
+            }
 
-                    if ($query instanceof BelongsToMany) {
-                        $relatedTable = $query->getRelated()->getTable();
+            $relationPath = explode('.', $relationConfig);
 
-                        foreach ( $columns as $i => $column ) {
-                            if (false !== strpos($column, '.')) {
-                                continue;
-                            }
+            $relationNameCurrent = [];
+            $relationNameCurrentImplode = '';
+            foreach ( $relationPath as $chunk ) {
+                $explode = explode(':', $chunk);
+                $relationName = $explode[ 0 ];
+                $relationColumns = $explode[ 1 ] ?? '';
 
-                            $columns[ $i ] = "{$relatedTable}.{$column}";
-                        }
-                    }
+                $explode = strlen($relationColumns)
+                    ? explode(',', $relationColumns)
+                    : [];
+                $relationColumns = $explode;
 
-                    $query->select($columns);
-                }
+                $relationNameCurrent[] = $relationName;
+                $relationNameCurrentImplode = implode('.', $relationNameCurrent);
 
-                if ($fn) {
-                    $fn($query);
+                $prepared[ $relationNameCurrentImplode ] = [ $relationColumns, null ];
+            }
+
+            $relationNameLastImplode = $relationNameCurrentImplode;
+            $prepared[ $relationNameLastImplode ][ 1 ] = $relationClosure;
+        }
+
+        return $prepared;
+    }
+
+    protected function parseWithRelations_prepareConstraintScopes(array $constraints) : array
+    {
+        foreach ( $constraints as $relationDot => $constraint ) {
+            [ $constraintColumns, $constraintFn ] = $constraint;
+
+            $constraintFn = function ($query) use (
+                $constraintColumns,
+                $constraintFn
+            ) {
+                $this->parseWithRelations_scopePrepareColumns(
+                    $query,
+                    $constraintColumns
+                );
+
+                if (null !== $constraintFn) {
+                    $constraintFn($query);
                 }
             };
-        };
 
-        $results = [];
-
-        foreach ( $relations as $name => $constraints ) {
-            if (is_int($name)) {
-                $name = $constraints;
-                $constraints = $fnNull;
-            }
-
-            if (false !== strpos($name, '.')) {
-                $path = explode('.', $name);
-
-                while ( $path ) {
-                    $last = implode('.', $path);
-
-                    if (! isset($last)) {
-                        $results[ $last ] = $fnNull;
-                    }
-
-                    array_shift($path);
-                }
-            }
-
-            $results[ $name ] = $constraints;
+            $constraints[ $relationDot ] = $constraintFn;
         }
 
-        foreach ( $results as $name => $constraints ) {
-            if (false !== strpos($name, ':')) {
-                unset($results[ $name ]);
+        return $constraints;
+    }
 
-                [ $name, $columns ] = explode(':', $name);
+    protected function parseWithRelations_scopePrepareColumns(Relation $query, array $columnsUser = [])
+    {
+        /** @var EloquentPdoQueryBuilder $pdoQuery */
+        /** @var EloquentModel $relatedModel */
 
-                $columns = explode(',', $columns);
+        $columns = [];
 
-                $constraints = $fnConstraints($columns, $constraints);
-
-                $results[ $name ] = $constraints;
-            }
+        $pdoQuery = $query->getBaseQuery();
+        foreach ( $pdoQuery->wheres as $where ) {
+            $columns[] = $where[ 'column' ];
         }
 
-        return $results;
+        $relatedModel = $query->getRelated();
+        $_columnsUser = $columnsUser ?: $relatedModel->columnsDefault();
+        foreach ( $_columnsUser as $column ) {
+            $columns[] = $column;
+        }
+
+        $columns = $relatedModel->prepareColumns(
+            $columns,
+            true
+        );
+
+        $pdoQuery->select($columns);
     }
 }

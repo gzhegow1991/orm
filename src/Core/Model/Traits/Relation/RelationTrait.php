@@ -71,10 +71,12 @@ trait RelationTrait
     {
         /** @see HasAttributes::getRelationValue() */
 
-        return $this->doGetRelationValue($key);
+        $value = $this->doGetRelationValue($key);
+
+        return $value;
     }
 
-    protected function doGetRelationValue(string $key)
+    private function doGetRelationValue(string $key)
     {
         // > gzhegow, если имя свойства не является связью - то бросаем исключение
         if (! $this->isRelation($key)) {
@@ -130,7 +132,7 @@ trait RelationTrait
         }
     }
 
-    protected function doGetRelationValueDefault(string $key) : ?EloquentCollection
+    private function doGetRelationValueDefault(string $key) : ?EloquentCollection
     {
         if ($relation = $this->hasRelationshipMany($key)) {
             // > gzhegow, создаем пустую коллекцию

@@ -218,7 +218,7 @@ class RelationFactory implements RelationFactoryInterface
 
         $spec->thisModel = $thisModel;
 
-        $remoteModel = $thisModel->newModelWithSameConnection($_remoteModelClassOrTableName);
+        $remoteModel = $this->newModelWithSameConnection($_remoteModelClassOrTableName, $thisModel);
         $remoteModelQuery = $remoteModel->newQuery();
 
         $spec->remoteModel = $remoteModel;
@@ -263,7 +263,7 @@ class RelationFactory implements RelationFactoryInterface
 
         $spec->thisModel = $thisModel;
 
-        $remoteModel = $thisModel->newModelWithSameConnection($_remoteModelClassOrTableName);
+        $remoteModel = $this->newModelWithSameConnection($_remoteModelClassOrTableName, $thisModel);
         $remoteModelQuery = $remoteModel->newQuery();
 
         $spec->remoteModel = $remoteModel;
@@ -277,9 +277,11 @@ class RelationFactory implements RelationFactoryInterface
 
         if (null === $spec->remoteTableLeftKey) {
             $remoteModelTable = $remoteModel->getTable();
-            $remoteModelKey = $remoteModel->getKeyName();
 
-            $spec->remoteTableLeftKey = "{$remoteModelTable}_{$remoteModelKey}";
+            $thisModelTable = $thisModel->getTable();
+            $thisModelKey = $thisModel->getKeyName();
+
+            $spec->remoteTableLeftKey = "{$remoteModelTable}.{$thisModelTable}_{$thisModelKey}";
         }
 
         $relationship = $this->newHasOne($spec);
@@ -309,7 +311,7 @@ class RelationFactory implements RelationFactoryInterface
 
         $spec->thisModel = $thisModel;
 
-        $remoteModel = $thisModel->newModelWithSameConnection($_remoteModelClassOrTableName);
+        $remoteModel = $this->newModelWithSameConnection($_remoteModelClassOrTableName, $thisModel);
         $remoteModelQuery = $remoteModel->newQuery();
 
         $spec->remoteModel = $remoteModel;
@@ -323,9 +325,11 @@ class RelationFactory implements RelationFactoryInterface
 
         if (null === $spec->remoteTableLeftKey) {
             $remoteModelTable = $remoteModel->getTable();
-            $remoteModelKey = $remoteModel->getKeyName();
 
-            $spec->remoteTableLeftKey = "{$remoteModelTable}_{$remoteModelKey}";
+            $thisModelTable = $thisModel->getTable();
+            $thisModelKey = $thisModel->getKeyName();
+
+            $spec->remoteTableLeftKey = "{$remoteModelTable}.{$thisModelTable}_{$thisModelKey}";
         }
 
         $relationship = $this->newHasMany($spec);
@@ -365,7 +369,7 @@ class RelationFactory implements RelationFactoryInterface
 
         $spec->thisModel = $thisModel;
 
-        $remoteModel = $thisModel->newModelWithSameConnection($_remoteModelClassOrTableName);
+        $remoteModel = $this->newModelWithSameConnection($_remoteModelClassOrTableName, $thisModel);
         $remoteModelQuery = $remoteModel->newQuery();
 
         $spec->remoteModel = $remoteModel;
@@ -429,7 +433,7 @@ class RelationFactory implements RelationFactoryInterface
 
         $spec->thisModel = $thisModel;
 
-        $remoteModel = $thisModel->newModelWithSameConnection($remoteModelClassOrTableName);
+        $remoteModel = $this->newModelWithSameConnection($_remoteModelClassOrTableName, $thisModel);
         $remoteModelQuery = $remoteModel->newQuery();
 
         $spec->remoteModel = $remoteModel;
@@ -496,7 +500,7 @@ class RelationFactory implements RelationFactoryInterface
 
         $spec->thisModel = $thisModel;
 
-        $remoteModel = $thisModel->newModelWithSameConnection($remoteModelClassOrTableName);
+        $remoteModel = $this->newModelWithSameConnection($_remoteModelClassOrTableName, $thisModel);
         $remoteModelQuery = $remoteModel->newQuery();
 
         $spec->remoteModel = $remoteModel;
@@ -559,7 +563,7 @@ class RelationFactory implements RelationFactoryInterface
 
         $spec->thisModel = $thisModel;
 
-        $remoteModel = $thisModel->newModelWithSameConnection($remoteModelClassOrTableName);
+        $remoteModel = $this->newModelWithSameConnection($_remoteModelClassOrTableName, $thisModel);
         $remoteModelQuery = $remoteModel->newQuery();
 
         $spec->remoteModel = $remoteModel;
@@ -613,7 +617,7 @@ class RelationFactory implements RelationFactoryInterface
 
         $spec->thisModel = $thisModel;
 
-        $remoteModel = $thisModel->newModelWithSameConnection($remoteModelClassOrTableName);
+        $remoteModel = $this->newModelWithSameConnection($_remoteModelClassOrTableName, $thisModel);
         $remoteModelQuery = $remoteModel->newQuery();
 
         $spec->remoteModel = $remoteModel;
@@ -673,7 +677,7 @@ class RelationFactory implements RelationFactoryInterface
 
         if ($thisModel->hasRawAttribute($morphTypeKey, $result)) {
             $morphClass = $result;
-            $morphModel = $thisModel->newModelWithSameConnection($morphClass);
+            $morphModel = $this->newModelWithSameConnection($morphClass, $thisModel);
             $morphModelQuery = $morphModel->newQuery();
 
             if (null !== $spec->remoteTableLeftKey) {
@@ -683,7 +687,9 @@ class RelationFactory implements RelationFactoryInterface
         } else {
             $morphClass = null;
             $morphModel = null;
-            $morphModelQuery = $thisModel->newQuery()->setEagerLoads([]);
+            $morphModelQuery = $thisModel->newQuery();
+
+            $morphModelQuery->setEagerLoads([]);
         }
 
         $spec->morphClass = $morphClass;
@@ -698,7 +704,7 @@ class RelationFactory implements RelationFactoryInterface
 
     public function morphToMany(
         string $relationName,
-        string $remoteClassNameOrTableName, string $morphTypeName, string $morphTable = null,
+        string $remoteModelClassOrTableName, string $morphTypeName, string $morphTable = null,
         string $pivotTableLeftKey = null, string $pivotTableRightKey = null,
         string $thisTableRightKey = null, string $remoteTableLeftKey = null,
         bool $inverse = null
@@ -710,7 +716,7 @@ class RelationFactory implements RelationFactoryInterface
 
         $spec = new MorphToManySpec();
         $spec->relationName = $relationName;
-        $spec->remoteClassNameOrTableName = $remoteClassNameOrTableName;
+        $spec->remoteModelClassOrTableName = $remoteModelClassOrTableName;
         $spec->morphTypeName = $morphTypeName;
         $spec->morphTable = $morphTable;
         $spec->thisTableRightKey = $thisTableRightKey;
@@ -719,11 +725,13 @@ class RelationFactory implements RelationFactoryInterface
         $spec->remoteTableLeftKey = $remoteTableLeftKey;
         $spec->inverse = $inverse;
 
+        $_remoteModelClassOrTableName = $this->assertModelClassOrTableName($remoteModelClassOrTableName);
+
         $thisModel = $this->model;
 
         $spec->thisModel = $thisModel;
 
-        $remoteModel = $thisModel->newModelWithSameConnection($remoteClassNameOrTableName);
+        $remoteModel = $this->newModelWithSameConnection($_remoteModelClassOrTableName, $thisModel);
         $remoteModelQuery = $remoteModel->newQuery();
 
         $spec->remoteModel = $remoteModel;
@@ -759,7 +767,7 @@ class RelationFactory implements RelationFactoryInterface
 
     public function morphedByMany(
         string $relationName,
-        string $remoteClassNameOrTableName, string $morphTypeName, string $morphTable = null,
+        string $remoteModelClassOrTableName, string $morphTypeName, string $morphTable = null,
         string $pivotTableLeftKey = null, string $pivotTableRightKey = null,
         string $thisTableRightKey = null, string $remoteTableLeftKey = null,
         bool $inverse = null
@@ -771,7 +779,7 @@ class RelationFactory implements RelationFactoryInterface
 
         $spec = new MorphToManySpec();
         $spec->relationName = $relationName;
-        $spec->remoteClassNameOrTableName = $remoteClassNameOrTableName;
+        $spec->remoteModelClassOrTableName = $remoteModelClassOrTableName;
         $spec->morphTypeName = $morphTypeName;
         $spec->morphTable = $morphTable;
         $spec->thisTableRightKey = $thisTableRightKey;
@@ -780,11 +788,13 @@ class RelationFactory implements RelationFactoryInterface
         $spec->remoteTableLeftKey = $remoteTableLeftKey;
         $spec->inverse = $inverse;
 
+        $_remoteModelClassOrTableName = $this->assertModelClassOrTableName($remoteModelClassOrTableName);
+
         $thisModel = $this->model;
 
         $spec->thisModel = $thisModel;
 
-        $remoteModel = $thisModel->newModelWithSameConnection($remoteClassNameOrTableName);
+        $remoteModel = $this->newModelWithSameConnection($_remoteModelClassOrTableName, $thisModel);
         $remoteModelQuery = $remoteModel->newQuery();
 
         $spec->remoteModel = $remoteModel;
@@ -816,6 +826,17 @@ class RelationFactory implements RelationFactoryInterface
         $relationship = $this->newMorphToMany($spec);
 
         return $relationship;
+    }
+
+
+    protected function newModelWithSameConnection(string $modelClass, EloquentModel $modelSource) : EloquentModel
+    {
+        $instance = $modelSource->newModelWithState(
+            $modelClass,
+            [ 'connection' => $modelSource->getConnectionName() ]
+        );
+
+        return $instance;
     }
 
 

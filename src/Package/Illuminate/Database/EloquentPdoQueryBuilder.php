@@ -70,7 +70,10 @@ class EloquentPdoQueryBuilder extends EloquentPdoQueryBuilderBase
      */
     public function get($columns = [ '*' ])
     {
-        $collection = parent::get($columns);
+        $_columns = $columns ?: [ '*' ];
+        $_columns = (array) $_columns;
+
+        $collection = parent::get($_columns);
 
         return $collection;
     }
@@ -143,7 +146,9 @@ class EloquentPdoQueryBuilder extends EloquentPdoQueryBuilderBase
      */
     public function count($columns = '*')
     {
-        $count = parent::count($columns);
+        $_columns = $columns ?: '*';
+
+        $count = parent::count($_columns);
 
         return $count;
     }

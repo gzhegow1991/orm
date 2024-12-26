@@ -13,7 +13,7 @@ use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuil
  * @property EloquentModel                      $remoteModel
  * @property EloquentModelQueryBuilder          $remoteModelQuery
  *
- * @property string|class-string<EloquentModel> $remoteClassNameOrTableName
+ * @property string|class-string<EloquentModel> $remoteModelClassOrTableName
  *
  * @property  string                            $morphTypeName
  * @property  string|null                       $morphTable
@@ -48,7 +48,7 @@ class MorphToManySpec extends AbstractSpec
     /**
      * @var string|class-string<EloquentModel>
      */
-    protected $remoteClassNameOrTableName = _UNDEFINED;
+    protected $remoteModelClassOrTableName = _UNDEFINED;
 
     /**
      * @var string
