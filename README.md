@@ -82,7 +82,7 @@ function _debug(...$values) : void
 {
     $lines = [];
     foreach ( $values as $value ) {
-        $lines[] = \Gzhegow\Lib\Lib::debug_type_id($value);
+        $lines[] = \Gzhegow\Lib\Lib::debug()->type_id($value);
     }
 
     echo implode(' | ', $lines) . PHP_EOL;
@@ -92,7 +92,7 @@ function _dump(...$values) : void
 {
     $lines = [];
     foreach ( $values as $value ) {
-        $lines[] = \Gzhegow\Lib\Lib::debug_value($value);
+        $lines[] = \Gzhegow\Lib\Lib::debug()->value($value);
     }
 
     echo implode(' | ', $lines) . PHP_EOL;
@@ -101,8 +101,8 @@ function _dump(...$values) : void
 function _dump_array($value, int $maxLevel = null, bool $multiline = false) : void
 {
     $content = $multiline
-        ? \Gzhegow\Lib\Lib::debug_array_multiline($value, $maxLevel)
-        : \Gzhegow\Lib\Lib::debug_array($value, $maxLevel);
+        ? \Gzhegow\Lib\Lib::debug()->array_multiline($value, $maxLevel)
+        : \Gzhegow\Lib\Lib::debug()->array($value, $maxLevel);
 
     echo $content . PHP_EOL;
 }
@@ -113,8 +113,8 @@ function _assert_output(
 {
     $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
 
-    \Gzhegow\Lib\Lib::assert_resource_static(STDOUT);
-    \Gzhegow\Lib\Lib::assert_output($trace, $fn, $expect);
+    \Gzhegow\Lib\Lib::assert()->resource_static(STDOUT);
+    \Gzhegow\Lib\Lib::assert()->output($trace, $fn, $expect);
 }
 
 

@@ -18,8 +18,8 @@ trait HasUuidTrait
     public function getUuid() : string
     {
         $uuid = null
-            ?? Lib::parse_int_positive($this->attributes[ 'uuid' ] ?? null)
-            ?? Lib::parse_string_not_empty($this->attributes[ 'uuid' ] ?? null);
+            ?? Lib::parse()->int_positive($this->attributes[ 'uuid' ] ?? null)
+            ?? Lib::parse()->string_not_empty($this->attributes[ 'uuid' ] ?? null);
 
         if (null === $uuid) {
             throw new RuntimeException(
@@ -39,7 +39,7 @@ trait HasUuidTrait
     public function setUuid($uuid) : void
     {
         $_uuid = null
-            ?? Lib::parse_string_not_empty($uuid);
+            ?? Lib::parse()->string_not_empty($uuid);
 
         if (null === $_uuid) {
             throw new RuntimeException(
@@ -56,7 +56,7 @@ trait HasUuidTrait
 
         if (! $current) {
             $_uuid = null
-                ?? Lib::parse_string_not_empty($uuid)
+                ?? Lib::parse()->string_not_empty($uuid)
                 ?? new UuidV4();
 
             $this->attributes[ 'uuid' ] = $_uuid;

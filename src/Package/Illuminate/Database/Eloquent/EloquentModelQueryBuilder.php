@@ -509,7 +509,7 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
 
         $result = [];
         foreach ( $items as $i => $item ) {
-            $attributes = Lib::php_array($item);
+            $attributes = Lib::php()->toArray($item);
 
             $result[ $i ] = $model->newFromBuilder($attributes);
         }

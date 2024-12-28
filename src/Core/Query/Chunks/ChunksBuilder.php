@@ -244,7 +244,7 @@ class ChunksBuilder
     {
         $last = null;
 
-        Lib::php_errors_start($b);
+        Lib::php()->errors_start($b);
 
         $instance = null
             ?? static::tryFromInstance($from)
@@ -253,7 +253,7 @@ class ChunksBuilder
             ?? static::tryFromModelClass($from)
             ?? static::tryFromPdoQuery($from);
 
-        $errors = Lib::php_errors_end($b);
+        $errors = Lib::php()->errors_end($b);
 
         if (null === $instance) {
             foreach ( $errors as $error ) {
@@ -271,7 +271,7 @@ class ChunksBuilder
     public static function tryFromInstance($from) // : ?static
     {
         if (! is_a($from, static::class)) {
-            return Lib::php_error(
+            return Lib::php()->error(
                 [
                     'The `from` should be instance of: ' . static::class,
                     $from,
@@ -288,7 +288,7 @@ class ChunksBuilder
     public static function tryFromModelQuery($from) // : ?static
     {
         if (! is_a($from, EloquentModelQueryBuilder::class)) {
-            return Lib::php_error(
+            return Lib::php()->error(
                 [
                     'The `from` should be instance of: ' . EloquentModelQueryBuilder::class,
                     $from,
@@ -318,7 +318,7 @@ class ChunksBuilder
     public static function tryFromPdoQuery($from) // : ?static
     {
         if (! is_a($from, EloquentPdoQueryBuilder::class)) {
-            return Lib::php_error(
+            return Lib::php()->error(
                 [
                     'The `from` should be instance of: ' . EloquentPdoQueryBuilder::class,
                     $from,
@@ -340,7 +340,7 @@ class ChunksBuilder
     public static function tryFromModel($from) // : ?static
     {
         if (! is_a($from, EloquentModel::class)) {
-            return Lib::php_error(
+            return Lib::php()->error(
                 [
                     'The `from` should be instance of: ' . EloquentModel::class,
                     $from,
@@ -370,7 +370,7 @@ class ChunksBuilder
     public static function tryFromModelClass($from) // : ?static
     {
         if (! is_subclass_of($from, EloquentModel::class)) {
-            return Lib::php_error(
+            return Lib::php()->error(
                 [
                     'The `from` should be class-string of: ' . EloquentModel::class,
                     $from,

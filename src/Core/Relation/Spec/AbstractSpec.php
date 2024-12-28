@@ -14,7 +14,7 @@ abstract class AbstractSpec
             return false;
         }
 
-        if (Lib::is_undefined($this->{$name})) {
+        if (Lib::bool()->is_undefined($this->{$name})) {
             return false;
         }
 
@@ -29,7 +29,7 @@ abstract class AbstractSpec
 
         $value = $this->{$name};
 
-        if (Lib::is_undefined($value)) {
+        if (Lib::bool()->is_undefined($value)) {
             throw new RuntimeException([ 'Value is undefined', $name ]);
         }
 

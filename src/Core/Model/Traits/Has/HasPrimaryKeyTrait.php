@@ -20,8 +20,8 @@ trait HasPrimaryKeyTrait
         $field = $this->getKeyName();
 
         $pk = null
-            ?? Lib::parse_int_positive($this->attributes[ $field ] ?? null)
-            ?? Lib::parse_string_not_empty($this->attributes[ $field ] ?? null);
+            ?? Lib::parse()->int_positive($this->attributes[ $field ] ?? null)
+            ?? Lib::parse()->string_not_empty($this->attributes[ $field ] ?? null);
 
         if (null === $pk) {
             throw new RuntimeException(
@@ -40,8 +40,8 @@ trait HasPrimaryKeyTrait
         $field = $this->getKeyName();
 
         $pk = null
-            ?? Lib::parse_int_positive($this->attributes[ $field ] ?? null)
-            ?? Lib::parse_string_not_empty($this->attributes[ $field ] ?? null);
+            ?? Lib::parse()->int_positive($this->attributes[ $field ] ?? null)
+            ?? Lib::parse()->string_not_empty($this->attributes[ $field ] ?? null);
 
         if (null === $pk) {
             return null;

@@ -20,8 +20,8 @@ trait HasIdTrait
     public function getId()
     {
         $id = null
-            ?? Lib::parse_int_positive($this->attributes[ 'id' ] ?? null)
-            ?? Lib::parse_string_not_empty($this->attributes[ 'id' ] ?? null);
+            ?? Lib::parse()->int_positive($this->attributes[ 'id' ] ?? null)
+            ?? Lib::parse()->string_not_empty($this->attributes[ 'id' ] ?? null);
 
         if (null === $id) {
             throw new RuntimeException(
@@ -38,8 +38,8 @@ trait HasIdTrait
     public function hasId()
     {
         $id = null
-            ?? Lib::parse_int_positive($this->attributes[ 'id' ] ?? null)
-            ?? Lib::parse_string_not_empty($this->attributes[ 'id' ] ?? null);
+            ?? Lib::parse()->int_positive($this->attributes[ 'id' ] ?? null)
+            ?? Lib::parse()->string_not_empty($this->attributes[ 'id' ] ?? null);
 
         if (null === $id) {
             return null;

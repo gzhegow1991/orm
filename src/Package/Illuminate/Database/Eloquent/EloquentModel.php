@@ -144,14 +144,14 @@ abstract class EloquentModel extends EloquentModelBase
     {
         $last = null;
 
-        Lib::php_errors_start($b);
+        Lib::php()->errors_start($b);
 
         $instance = null
             ?? static::tryFromInstance($from, $fnInitialize)
             ?? static::tryFromArray($from, $fnInitialize)
             ?? static::tryFromStd($from, $fnInitialize);
 
-        $errors = Lib::php_errors_end($b);
+        $errors = Lib::php()->errors_end($b);
 
         if (null === $instance) {
             foreach ( $errors as $error ) {
@@ -169,7 +169,7 @@ abstract class EloquentModel extends EloquentModelBase
     public static function tryFromInstance($from, \Closure $fnInitialize = null) // : ?static
     {
         if (! is_a($from, static::class)) {
-            return Lib::php_error(
+            return Lib::php()->error(
                 [ 'The `from` should be instance of: ' . static::class, $from ]
             );
         }
@@ -195,7 +195,7 @@ abstract class EloquentModel extends EloquentModelBase
     public static function tryFromArray($from, \Closure $fnInitialize = null) // : ?static
     {
         if (! is_array($from)) {
-            return Lib::php_error([ 'The `from` should be array', $from ]);
+            return Lib::php()->error([ 'The `from` should be array', $from ]);
         }
 
         $instance = static::new($from, $fnInitialize);
@@ -209,7 +209,7 @@ abstract class EloquentModel extends EloquentModelBase
     public static function tryFromStd($from, \Closure $fnInitialize = null) : ?self
     {
         if (! is_a($from, \stdClass::class)) {
-            return Lib::php_error([ 'The `from` should be \stdClass', $from ]);
+            return Lib::php()->error([ 'The `from` should be \stdClass', $from ]);
         }
 
         $instance = static::new((array) $from, $fnInitialize);
@@ -408,7 +408,7 @@ abstract class EloquentModel extends EloquentModelBase
      */
     public function fillPassed(array $attributes)
     {
-        $_attributes = Lib::passed($attributes);
+        $_attributes = Lib::bool()->passed($attributes);
 
         $this->fill($_attributes);
 
@@ -717,7 +717,7 @@ abstract class EloquentModel extends EloquentModelBase
             }
 
             if (is_object($relation)) {
-                $classUses = Lib::php_class_uses_with_parents(
+                $classUses = Lib::php()->class_uses_with_parents(
                     $relation,
                     true
                 );

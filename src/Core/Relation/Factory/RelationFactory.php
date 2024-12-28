@@ -867,7 +867,7 @@ class RelationFactory implements RelationFactoryInterface
     protected function assertModelClassOrTableName(string $modelClassOrTableName) : string
     {
         if (false
-            || ! Lib::parse_struct_class($modelClassOrTableName)
+            || ! Lib::parse()->struct_class($modelClassOrTableName)
             || is_subclass_of($modelClassOrTableName, EloquentModel::class)
         ) {
             return $modelClassOrTableName;
