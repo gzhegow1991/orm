@@ -44,7 +44,7 @@ abstract class AbstractModel extends \Gzhegow\Database\Package\Illuminate\Databa
  * @property int            $demo_foo_id
  * @property DemoFooModel   $_demoFoo
  */
-class MyModel extends \Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel
+class MyModel extends AbstractModel
 {
     protected static function relationClasses() : array
     {
