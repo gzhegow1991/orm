@@ -1,19 +1,68 @@
 # Database
 
-Пакет на основе `illuminate/database` (Laravel Eloquent), доработанный с помощью функционала очереди (EloquentPersistence) и некоторыми другими полезными функциями
-
-Требования при работе с Eloquent, чтобы уменьшить число неприятностей в будущем проекта
-
-- не создавать модели в коде используя `new ModelClass()`, использовать для этого `ModelClass::new()`;
-- перед именем связи в коде класса модели ставить символ `_` - от этого будет зависеть проверка и "значение по-умолчанию" для свойства, а также будут пропущены запросы заведомо выбирающие пустую выборку, также будет выдано сообщение, если вы пытаетесь сделать неявный запрос;
-- для пагинации и выборки большого числа записей пользуйтесь инструментом ModelClass::chunk() или $query->chunkBuilder(), предоставляемым этим пакетом, где это делается с помощью генераторов, распределяя по времени нагрузку на обмен данных между базой и приложением;
-- при записи данных пользоваться Persistence, чтобы все запросы выполнялись после того, как логика действия была выполнена - это уменьшит время транзакции, а значит и количество блокировок;
-- указывая связи для загрузки использовать инструмент ModelClass::relationDot() передавая туда callable (в этом случае, если вы переименуете метод связи - оно будет переименовано во всем коде, как callable)
+Пакет на основе `illuminate/database` (Laravel Eloquent, в простонародье "ёлка"), доработанный с помощью функционала Persistence и некоторыми другими полезными функциями
 
 ```
 PS. Использование `symfony/doctrine` это конечно хорошо. Но человека нужно ему учить, долго учить, потом он сам должен много учить, а потом эта штука будет работать медленнее, чем обычные запросы к PDO, поэтому лучше использовать "ёлку"
 PS2. Можно использовать PDO и встроенный в PHP способ работы с базами данных. К сожалению, этот метод недостаточно прост в использовании, а также требует постоянной проверки на SQL-иньекции вручную либо подсчета биндов для запроса... Это можно (и, по-хорошему) нужно делать, но далеко не все специалисты на рынке имеют достаточно опыта, чтобы делать это без подготовки и набитых шишек. И потом, бизнес-задачи имеют свойство "наращиваться", а вот собирать из кусков SQL запрос это тот ещё ад, сильно проще использовать для этого ёлковский билдер
 ```
+
+Рекомендации при работе с ORM:
+
+- не создавать модели в коде используя `new ModelClass()`, использовать для этого `ModelClass::new()`;
+
+```
+Это позволит работать проверкам в __get()/__set() на возможность проставления и получения данных.
+Так, в ёлке метод __get() может выполнить запрос, если свойство является связью. Разумно включить блокировку ленивых запросов в классе модели.
+Также добавлена возможность блокировки ленивого чтения, чтобы была возможность оперировать ровно теми данными, что получены из БД, без применения магических атрибутов, которые могут возвращать значение по-умоланию, если оно там было.
+Так, в ёлке метод __set() может проставить свойства, которые являются ID, при клонировании существующей модели.
+Также добавлена возможность блокировки ленивой записи, что позволяет работать с таблицами с историческими данными, которые не должны меняться вручную.
+```
+
+- добавлена возможность указывать префикс для связей (по умолчанию символ `_`);
+
+```
+Это сильно упрощает чтение кода, разделяя связи и свойства, а также ускоряет проверку при считывании свойства на предмет "нужно ли интерпретировать свойство как связь"
+```
+
+- для пагинации и выборки большого числа записей пользуйтесь инструментом выборки по чанкам;
+
+```
+Это делается с помощью \Generator, распределяя по времени нагрузку на обмен данных между базой и приложением
+
+$builder = MyModel::chunks();
+$builder->chunksModelNativeForeach(
+    $limitChunk = 25, $limit = null, $offset = null
+);
+foreach ( $builder->chunksForeach() as $chunk ) {
+    _dump($chunk);
+}
+
+$builder = MyModel::chunks();
+$builder
+    // ->setTotalItems(100)
+    // ->setTotalPages(8)
+    // ->withSelectCountNative()
+    // ->withSelectCountExplain()
+    ->paginatePdoNativeForeach(
+        $perPage = 13, $page = 7, $pagesDelta = 2,
+        $offset = null
+    )
+;
+$result = $builder->paginateResult();
+```
+
+- при записи данных пользоваться Persistence, чтобы все запросы выполнялись после того, как логика действия была выполнена - это уменьшит время транзакции, а значит и количество блокировок;
+
+```
+$my = MyModel::new();
+$my->name = 'any_data';
+$my->persistForSaveRecursive();
+
+\Gzhegow\Database\Core\Orm::getEloquentPersistence()->flush();
+```
+
+- указывая связи для загрузки использовать инструмент `ModelClass::relationDot()` передавая туда callable (в этом случае, если вы переименуете метод связи - оно будет переименовано во всем коде, как callable)
 
 ```
 // НЕ ВЕРНО:
@@ -357,7 +406,7 @@ $fn = function () use (
     $eloquent,
     $schema
 ) {
-    _dump('[ TEST 2 ]');
+    _dump('[ TEST 1 ]');
 
 
     $modelClassDemoFoo = \Gzhegow\Database\Demo\Model\DemoFooModel::class;
@@ -419,7 +468,7 @@ $fn = function () use (
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
-"[ TEST 2 ]"
+"[ TEST 1 ]"
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 1 | 2
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
@@ -440,7 +489,7 @@ $fn = function () use (
     $eloquent,
     $schema
 ) {
-    _dump('[ TEST 3 ]');
+    _dump('[ TEST 2 ]');
 
 
     $modelClassDemoFoo = \Gzhegow\Database\Demo\Model\DemoFooModel::class;
@@ -505,7 +554,7 @@ $fn = function () use (
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
-"[ TEST 3 ]"
+"[ TEST 2 ]"
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 1 | 2
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
@@ -525,7 +574,7 @@ $fn = function () use (
     $eloquent,
     $schema
 ) {
-    _dump('[ TEST 4 ]');
+    _dump('[ TEST 3 ]');
 
 
     $modelClassDemoPost = \Gzhegow\Database\Demo\Model\DemoPostModel::class;
@@ -666,7 +715,7 @@ $fn = function () use (
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
-"[ TEST 4 ]"
+"[ TEST 3 ]"
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 { object # Gzhegow\Database\Demo\Model\DemoImageModel } | { object # Gzhegow\Database\Demo\Model\DemoPostModel }
 ""
@@ -697,7 +746,7 @@ $fn = function () use (
     $eloquent,
     $schema
 ) {
-    _dump('[ TEST 5 ]');
+    _dump('[ TEST 4 ]');
 
 
     $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
@@ -723,7 +772,7 @@ $fn = function () use (
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
-"[ TEST 5 ]"
+"[ TEST 4 ]"
 1 | TRUE
 TRUE | TRUE
 ""
@@ -738,7 +787,7 @@ $fn = function () use (
     $eloquent,
     $schema
 ) {
-    _dump('[ TEST 6 ]');
+    _dump('[ TEST 5 ]');
 
 
     $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
@@ -777,7 +826,7 @@ $fn = function () use (
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
-"[ TEST 6 ]"
+"[ TEST 5 ]"
 "chunkModelNativeForeach"
 { object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 { object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
@@ -800,7 +849,7 @@ $fn = function () use (
     $eloquent,
     $schema
 ) {
-    _dump('[ TEST 7 ]');
+    _dump('[ TEST 6 ]');
 
 
     $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
@@ -855,7 +904,7 @@ $fn = function () use (
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
-"[ TEST 7 ]"
+"[ TEST 6 ]"
 "paginateModelNativeForeach"
 [
   "totalItems" => 100,
@@ -918,7 +967,7 @@ HEREDOC
 // >>> TEST
 // > рекомендуется в проекте указывать связи в виде callable, чтобы они менялись, когда применяешь `Refactor` в PHPStorm
 $fn = function () use ($eloquent) {
-    _dump('[ TEST 1 ]');
+    _dump('[ TEST 7 ]');
 
     $foo_hasMany_bars_hasMany_bazs = \Gzhegow\Database\Core\Orm::eloquentRelationDot()
     ([ \Gzhegow\Database\Demo\Model\DemoFooModel::class, '_demoBars' ])
@@ -993,7 +1042,7 @@ $fn = function () use ($eloquent) {
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
-"[ TEST 1 ]"
+"[ TEST 7 ]"
 "_demoBars._demoBazs"
 "_demoFoo"
 "_demoBazs"

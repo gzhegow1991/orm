@@ -295,7 +295,7 @@ $fn = function () use (
     $eloquent,
     $schema
 ) {
-    _dump('[ TEST 2 ]');
+    _dump('[ TEST 1 ]');
 
 
     $modelClassDemoFoo = \Gzhegow\Database\Demo\Model\DemoFooModel::class;
@@ -357,7 +357,7 @@ $fn = function () use (
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
-"[ TEST 2 ]"
+"[ TEST 1 ]"
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 1 | 2
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
@@ -378,7 +378,7 @@ $fn = function () use (
     $eloquent,
     $schema
 ) {
-    _dump('[ TEST 3 ]');
+    _dump('[ TEST 2 ]');
 
 
     $modelClassDemoFoo = \Gzhegow\Database\Demo\Model\DemoFooModel::class;
@@ -443,7 +443,7 @@ $fn = function () use (
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
-"[ TEST 3 ]"
+"[ TEST 2 ]"
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 1 | 2
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
@@ -463,7 +463,7 @@ $fn = function () use (
     $eloquent,
     $schema
 ) {
-    _dump('[ TEST 4 ]');
+    _dump('[ TEST 3 ]');
 
 
     $modelClassDemoPost = \Gzhegow\Database\Demo\Model\DemoPostModel::class;
@@ -604,7 +604,7 @@ $fn = function () use (
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
-"[ TEST 4 ]"
+"[ TEST 3 ]"
 { object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 { object # Gzhegow\Database\Demo\Model\DemoImageModel } | { object # Gzhegow\Database\Demo\Model\DemoPostModel }
 ""
@@ -635,7 +635,7 @@ $fn = function () use (
     $eloquent,
     $schema
 ) {
-    _dump('[ TEST 5 ]');
+    _dump('[ TEST 4 ]');
 
 
     $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
@@ -661,7 +661,7 @@ $fn = function () use (
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
-"[ TEST 5 ]"
+"[ TEST 4 ]"
 1 | TRUE
 TRUE | TRUE
 ""
@@ -676,7 +676,7 @@ $fn = function () use (
     $eloquent,
     $schema
 ) {
-    _dump('[ TEST 6 ]');
+    _dump('[ TEST 5 ]');
 
 
     $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
@@ -715,7 +715,7 @@ $fn = function () use (
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
-"[ TEST 6 ]"
+"[ TEST 5 ]"
 "chunkModelNativeForeach"
 { object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 { object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
@@ -738,7 +738,7 @@ $fn = function () use (
     $eloquent,
     $schema
 ) {
-    _dump('[ TEST 7 ]');
+    _dump('[ TEST 6 ]');
 
 
     $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
@@ -793,7 +793,7 @@ $fn = function () use (
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
-"[ TEST 7 ]"
+"[ TEST 6 ]"
 "paginateModelNativeForeach"
 [
   "totalItems" => 100,
@@ -856,7 +856,7 @@ HEREDOC
 // >>> TEST
 // > рекомендуется в проекте указывать связи в виде callable, чтобы они менялись, когда применяешь `Refactor` в PHPStorm
 $fn = function () use ($eloquent) {
-    _dump('[ TEST 1 ]');
+    _dump('[ TEST 7 ]');
 
     $foo_hasMany_bars_hasMany_bazs = \Gzhegow\Database\Core\Orm::eloquentRelationDot()
     ([ \Gzhegow\Database\Demo\Model\DemoFooModel::class, '_demoBars' ])
@@ -931,7 +931,7 @@ $fn = function () use ($eloquent) {
     echo '';
 };
 _assert_output($fn, <<<HEREDOC
-"[ TEST 1 ]"
+"[ TEST 7 ]"
 "_demoBars._demoBazs"
 "_demoFoo"
 "_demoBazs"
