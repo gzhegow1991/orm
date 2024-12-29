@@ -18,7 +18,7 @@ class DemoTagModel extends EloquentModel
     use HasIdTrait;
 
 
-    protected function relationClasses() : array
+    protected static function relationClasses() : array
     {
         return [
             '_demoPosts' => MorphToMany::class,

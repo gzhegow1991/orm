@@ -19,10 +19,70 @@ PS2. Можно использовать PDO и встроенный в PHP сп
 Также добавлена возможность блокировки ленивой записи, что позволяет работать с таблицами с историческими данными, которые не должны меняться вручную.
 ```
 
-- добавлена возможность указывать префикс для связей (по умолчанию символ `_`);
+- добавлена возможность установить префикс для связей (по умолчанию символ `_`);
 
 ```
 Это сильно упрощает чтение кода, разделяя связи и свойства, а также ускоряет проверку при считывании свойства на предмет "нужно ли интерпретировать свойство как связь"
+
+Eloquent::setRelationPrefix('_');
+
+/**
+ * @property int            $id
+ * @property string         $name
+ *
+ * @property int            $demo_foo_id
+ * @property DemoFooModel   $_demoFoo
+ */
+abstract class AbstractModel extends \Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel
+{
+}
+
+/**
+ * @property int            $id
+ * @property string         $name
+ *
+ * @property int            $demo_foo_id
+ * @property DemoFooModel   $_demoFoo
+ */
+class MyModel extends \Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel
+{
+    protected static function relationClasses() : array
+    {
+        return [
+            '_demoFoo'  => BelongsTo::class,
+        ];
+    }
+
+    public function _demoFoo() : BelongsTo
+    {
+        return $this->relation()
+            ->belongsTo(
+                __FUNCTION__,
+                DemoFooModel::class
+            )
+        ;
+    }
+}
+```
+
+- добавлена возможность задавать колонки для выборки по-умолчанию, включая связи
+
+```
+Это сделано для того, чтобы при выборке модели из БД не тянуть все колонки, включая те, что могут хранить большие JSON данные, это можно задать в модели в свойстве $columns
+
+class MyModel extends AbstractModel
+{
+    protected $columns = [ '*' ]; // достает все колонки, как по-умолчанию в Eloquent, для development окружения
+    // protected $columns = [ '#' ]; // только PrimaryKey (не во всех таблицах он есть)
+    // protected $columns = [ '#', 'name' ]; // только PrimaryKey и колонка `name`
+}
+
+При выборке по связям колонки так же не будут выбираться из БД, это может привести к неверной работе связей, поэтому используйте этот инструмент с умом и загружайте нужные колонки.
+Инструмент отлично сочетается с $preventsLazyGet/$preventsLazySet - в этом случае отстутствующие колонки будут прерывать работу программы, позволяя исправить код
+
+$query = MyModel::query();
+$query->addColumn('name');
+$models = $query->get();
 ```
 
 - для пагинации и выборки большого числа записей пользуйтесь инструментом выборки по чанкам;

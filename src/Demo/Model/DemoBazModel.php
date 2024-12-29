@@ -19,7 +19,7 @@ class DemoBazModel extends EloquentModel
     use HasIdTrait;
 
 
-    protected function relationClasses() : array
+    protected static function relationClasses() : array
     {
         return [
             '_demoBar' => BelongsTo::class,

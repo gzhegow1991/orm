@@ -65,6 +65,7 @@ class OrmFacade implements OrmFacadeInterface
         );
     }
 
+
     public function newEloquentSchemaBlueprint(
         $table,
         \Closure $callback = null,
@@ -146,11 +147,6 @@ class OrmFacade implements OrmFacadeInterface
     ) : RelationFactoryInterface
     {
         return new RelationFactory($model);
-    }
-
-    public function eloquentRelationPrefix() : string
-    {
-        return '_';
     }
 
     /**

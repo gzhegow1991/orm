@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Illuminate\Database\Eloquent\Concerns\HidesAttributes;
 use Illuminate\Database\Eloquent\Concerns\GuardsAttributes;
 use Gzhegow\Database\Exception\Runtime\BadMethodCallException;
+use Gzhegow\Database\Package\Illuminate\Database\Capsule\Eloquent;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
@@ -147,12 +148,47 @@ trait AttributeTrait
 
     public function isRelationAttribute(string $key) : bool
     {
-        if (null !== $this->hasRelation($key)) {
+        return false
+            || $this->isRelationAttributeEloquent($key)
+            || $this->isRelationAttributeApplication($key);
+    }
+
+    protected function isRelationAttributeApplication(string $key) : bool
+    {
+        if ('' === $key) {
+            return false;
+        }
+
+        $relationPrefix = Eloquent::getRelationPrefix();
+
+        if ('' !== $relationPrefix) {
+            if (0 !== strpos($key, $relationPrefix)) {
+                return false;
+            }
+        }
+
+        if (isset(static::$cacheRelationClasses[ static::class ][ $key ])) {
             return true;
         }
 
         return false;
     }
+
+    protected function isRelationAttributeEloquent(string $key) : bool
+    {
+        if ('' === $key) {
+            return false;
+        }
+
+        if ('pivot' === $key) {
+            if (isset($this->relations[ 'pivot' ])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     public function isRelationAttributeExists(string $key) : bool
     {
@@ -160,20 +196,15 @@ trait AttributeTrait
             return false;
         }
 
-        // > gzhegow, в новой созданной модели все связи считаются существующими, т.к. есть вероятность
-        // if (! $this->exists) {
-        //     return true;
-        // }
-
         if ($this->relationLoaded($key)) {
             return true;
         }
 
-        if (true === $this->preventsLazyLoading) {
-            return false;
+        if (true !== $this->preventsLazyLoading) {
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     public function getRelationAttribute(string $key)
@@ -195,9 +226,7 @@ trait AttributeTrait
 
         $this->setRelation($key, $value);
 
-        if ($this->hasRelationOne($key)) {
-            $relationship = $this->{$key}();
-
+        if ($relationship = $this->hasRelationshipOne($key)) {
             if (null === $value) {
                 $relationship->dissociate();
 

@@ -33,6 +33,7 @@ class Orm
         );
     }
 
+
     public static function newEloquentSchemaBlueprint(
         $table,
         \Closure $callback = null,
@@ -114,11 +115,6 @@ class Orm
     )
     {
         return static::$facade->eloquentRelation($model);
-    }
-
-    public static function eloquentRelationPrefix() : string
-    {
-        return static::$facade->eloquentRelationPrefix();
     }
 
     /**

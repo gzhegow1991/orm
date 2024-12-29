@@ -6,6 +6,7 @@ use Gzhegow\Database\Exception\LogicException;
 use Gzhegow\Database\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
@@ -22,28 +23,20 @@ trait RelationTrait
 {
     protected function initializeRelationTrait()
     {
-        if (! isset(static::$cacheRelationClasses[ static::class ])) {
-            static::$cacheRelationClasses[ static::class ] = [];
+        if (isset(static::$cacheRelationClasses[ static::class ])) {
+            return;
+        }
 
-            foreach ( $this->relationClasses() as $key => $class ) {
-                try {
-                    $rm = new \ReflectionMethod(static::class, $key);
-                }
-                catch ( \ReflectionException $e ) {
-                    throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
-                }
+        static::$cacheRelationClasses[ static::class ] = [];
 
-                if (count($rm->getParameters())) {
-                    throw new RuntimeException(
-                        [
-                            'Relation method should not require any arguments',
-                            $key,
-                        ]
-                    );
-                }
-
-                static::$cacheRelationClasses[ static::class ][ $key ] = $class;
+        foreach ( static::relationClasses() as $key => $class ) {
+            if (! is_subclass_of($class, Relation::class)) {
+                throw new RuntimeException(
+                    [ 'The `class` should be class-string of: ' . Relation::class, $class, $key ]
+                );
             }
+
+            static::$cacheRelationClasses[ static::class ][ $key ] = $class;
         }
     }
 
@@ -56,10 +49,7 @@ trait RelationTrait
     /**
      * @return array<string, class-string<RelationInterface>>
      */
-    protected function relationClasses() : array
-    {
-        return [];
-    }
+    abstract protected static function relationClasses() : array;
 
     public function getRelationClass($key) : ?string
     {
@@ -134,10 +124,10 @@ trait RelationTrait
 
     private function doGetRelationValueDefault(string $key) : ?EloquentCollection
     {
-        if ($relation = $this->hasRelationshipMany($key)) {
+        if ($relationship = $this->hasRelationshipMany($key)) {
             // > gzhegow, создаем пустую коллекцию
 
-            $model = $relation->newModelInstance();
+            $model = $relationship->newModelInstance();
 
             $collection = $model->newCollection();
 
@@ -166,67 +156,32 @@ trait RelationTrait
     {
         /** @see HasAttributes::isRelation() */
 
-        if (null === $this->hasRelation($key)) {
-            return false;
-        }
-
-        return true;
+        return false
+            || $this->isRelationAttributeEloquent($key)
+            || $this->isRelationAttributeApplication($key);
     }
 
-
-    /**
-     * @template-covariant T of RelationInterface
-     *
-     * @param class-string<T>|null $relationClass
-     *
-     * @return class-string<T>|null
-     */
-    public function hasRelation(string $key, string $relationClass = null) : ?string
-    {
-        if ('' === $key) {
-            return false;
-        }
-
-        $resultRelationClass = null;
-
-        if (null === $resultRelationClass) {
-            $isEqualsPivot = ($key === 'pivot');
-
-            if ($isEqualsPivot) {
-                if (isset($this->relations[ 'pivot' ])) {
-                    $resultRelationClass = get_class($this->relations[ 'pivot' ]);
-                }
-            }
-        }
-
-        if (null === $resultRelationClass) {
-            $modelClass = static::class;
-
-            $existsInRelationClassCache = isset(static::$cacheRelationClasses[ $modelClass ][ $key ]);
-            if (! $existsInRelationClassCache) {
-                return null;
-            }
-
-            $resultRelationClass = static::$cacheRelationClasses[ $modelClass ][ $key ];
-        }
-
-        if (null !== $relationClass) {
-            if (! is_a($resultRelationClass, $relationClass, true)) {
-                return null;
-            }
-        }
-
-        return $resultRelationClass;
-    }
 
     /**
      * @return class-string<RelationInterface>|null
      */
+    public function hasRelation(string $key) : ?string
+    {
+        if (! $this->isRelationAttributeApplication($key)) {
+            return null;
+        }
+
+        $relationClass = static::$cacheRelationClasses[ static::class ][ $key ];
+
+        return $relationClass;
+    }
+
+    /**
+     * @return class-string<BelongsTo|HasOne|MorphOne>|null
+     */
     public function hasRelationOne(string $key) : ?string
     {
-        $relationClass = $this->hasRelation($key);
-
-        if (null === $relationClass) {
+        if (null === ($relationClass = $this->hasRelation($key))) {
             return null;
         }
 
@@ -246,9 +201,7 @@ trait RelationTrait
      */
     public function hasRelationMany(string $key) : ?string
     {
-        $relationClass = $this->hasRelation($key);
-
-        if (null === $relationClass) {
+        if (null === ($relationClass = $this->hasRelation($key))) {
             return null;
         }
 
@@ -263,10 +216,30 @@ trait RelationTrait
         return null;
     }
 
+    /**
+     * @template-covariant T of RelationInterface
+     *
+     * @param class-string<T> $ofClass
+     *
+     * @return class-string<T>|null
+     */
+    public function hasRelationOfClass(string $key, string $ofClass) : ?string
+    {
+        if (null === ($relationClass = $this->hasRelation($key))) {
+            return false;
+        }
+
+        if (! is_a($relationClass, $ofClass, true)) {
+            return null;
+        }
+
+        return $relationClass;
+    }
+
 
     public function hasRelationship(string $key, ...$args) : ?RelationInterface
     {
-        if (! $this->isRelation($key)) {
+        if (! $this->isRelationAttributeApplication($key)) {
             return null;
         }
 
@@ -275,19 +248,22 @@ trait RelationTrait
         return $relationship;
     }
 
+    /**
+     * @return BelongsTo|HasOne|MorphOne|null
+     */
     public function hasRelationshipOne(string $key, ...$args) : ?RelationInterface
     {
-        if (! $this->isRelation($key)) {
+        if (! $this->isRelationAttributeApplication($key)) {
             return null;
         }
 
         $relationship = $this->{$key}(...$args);
 
-        if ((
-            $relationship instanceof BelongsTo
+        if (false
+            || $relationship instanceof BelongsTo
             || $relationship instanceof HasOne
             || $relationship instanceof MorphOne
-        )) {
+        ) {
             return $relationship;
         }
 
@@ -296,17 +272,39 @@ trait RelationTrait
 
     public function hasRelationshipMany(string $key, ...$args) : ?RelationInterface
     {
-        if (! $this->isRelation($key)) {
+        if (! $this->isRelationAttributeApplication($key)) {
             return null;
         }
 
         $relationship = $this->{$key}(...$args);
 
-        if ((
-            $relationship instanceof BelongsTo
+        if (false
+            || $relationship instanceof BelongsTo
             || $relationship instanceof HasOne
             || $relationship instanceof MorphOne
-        )) {
+        ) {
+            return null;
+        }
+
+        return $relationship;
+    }
+
+    /**
+     * @template-covariant T of RelationInterface
+     *
+     * @param class-string<T> $ofClass
+     *
+     * @return T|null
+     */
+    public function hasRelationshipOfClass(string $key, string $ofClass, ...$args) : ?RelationInterface
+    {
+        if (! $this->isRelationAttributeApplication($key)) {
+            return null;
+        }
+
+        $relationship = $this->{$key}(...$args);
+
+        if (! ($relationship instanceof $ofClass)) {
             return null;
         }
 
@@ -355,10 +353,7 @@ trait RelationTrait
 
         if (! $status) {
             throw new RuntimeException(
-                [
-                    'The relation is required',
-                    $relation,
-                ]
+                [ 'The relation should be loaded: ' . $relation, $relation ]
             );
         }
 
@@ -367,23 +362,23 @@ trait RelationTrait
 
 
     /**
-     * @return array{0: string, 1: string}
+     * @return array{ 0: string, 1: string }
      */
-    public function getMorphKeys(
-        string $name,
-        string $type = null,
-        string $id = null
-    ) : array
+    public function getMorphKeys($name, $type = null, $id = null)
     {
-        return [
-            $type ?? $name . '_type',
-            $id ?? $name . '_id',
+        $morphs = [
+            $type ?: $name . '_type',
+            $id ?: $name . '_id',
         ];
+
+        return $morphs;
     }
 
     /**
-     * @deprecated
+     * @return array{ 0: string, 1: string }
+     *
      * @internal
+     * @deprecated
      */
     protected function getMorphs($name, $type, $id)
     {

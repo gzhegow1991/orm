@@ -22,6 +22,7 @@ interface OrmFacadeInterface
         ConnectionInterface $connection
     ) : EloquentSchemaBuilder;
 
+
     public function newEloquentSchemaBlueprint(
         $table,
         \Closure $callback = null,
@@ -69,8 +70,6 @@ interface OrmFacadeInterface
     public function eloquentRelation(
         EloquentModel $model
     ) : RelationFactoryInterface;
-
-    public function eloquentRelationPrefix() : string;
 
     /**
      * @template T of (\Closure(array|null $relationFn, string|null $fields) : T|string)

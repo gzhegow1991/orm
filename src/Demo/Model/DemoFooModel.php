@@ -17,7 +17,7 @@ class DemoFooModel extends EloquentModel
     use HasIdTrait;
 
 
-    protected function relationClasses() : array
+    protected static function relationClasses() : array
     {
         return [
             '_demoBars' => HasMany::class,

@@ -23,7 +23,6 @@ use Gzhegow\Database\Core\Model\Traits\Relation\RelationTrait;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Gzhegow\Database\Core\Model\Traits\Relation\RelationFactoryTrait;
 use Gzhegow\Database\Exception\Exception\Resource\ResourceNotFoundException;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\RelationInterface;
 
 
 abstract class EloquentModel extends EloquentModelBase
@@ -423,8 +422,8 @@ abstract class EloquentModel extends EloquentModelBase
         $relationForeignKeys = [];
         foreach ( $this->relations as $relationName => $relationValue ) {
             if (! (false
-                || $this->hasRelation($relationName, BelongsTo::class)
-                || $this->hasRelation($relationName, MorphTo::class)
+                || $this->hasRelationOfClass($relationName, BelongsTo::class)
+                || $this->hasRelationOfClass($relationName, MorphTo::class)
             )) {
                 continue;
             }
@@ -444,7 +443,7 @@ abstract class EloquentModel extends EloquentModelBase
             }
         }
 
-        foreach ( $this->getAttributes() as $key => $value ) {
+        foreach ( $this->attributes as $key => $value ) {
             if (isset($relationForeignKeys[ $key ]) && is_object($value)) {
                 throw new RuntimeException(
                     'Unable to associate foreign key: '
@@ -497,7 +496,7 @@ abstract class EloquentModel extends EloquentModelBase
         $graph[ $splHash ] = $this;
 
         // > gzhegow, this will remove cross-links for garbage collector
-        $relationsBelongsTo = [];
+        $relationsToUnset = [];
 
         foreach ( $this->relations as $relationName => $relationValue ) {
             if (null === $relationValue) {
@@ -505,13 +504,13 @@ abstract class EloquentModel extends EloquentModelBase
             }
 
             if (! (false
-                || $this->hasRelation($relationName, BelongsTo::class)
-                || $this->hasRelation($relationName, MorphTo::class)
+                || $this->hasRelationOfClass($relationName, BelongsTo::class)
+                || $this->hasRelationOfClass($relationName, MorphTo::class)
             )) {
                 continue;
             }
 
-            $relationsBelongsTo[ $relationName ] = true;
+            $relationsToUnset[ $relationName ] = true;
 
             /** @var EloquentModel $parent */
             $parent = $relationValue;
@@ -532,7 +531,7 @@ abstract class EloquentModel extends EloquentModelBase
                 continue;
             }
 
-            if (isset($relationsBelongsTo[ $relationName ])) {
+            if (isset($relationsToUnset[ $relationName ])) {
                 continue;
             }
 
@@ -551,7 +550,7 @@ abstract class EloquentModel extends EloquentModelBase
         }
 
         // > gzhegow, remove cross-links for garbage collector
-        foreach ( $relationsBelongsTo as $relationName => $bool ) {
+        foreach ( $relationsToUnset as $relationName => $bool ) {
             unset($this->relations[ $relationName ]);
         }
 
@@ -588,8 +587,8 @@ abstract class EloquentModel extends EloquentModelBase
             }
 
             if (false
-                || $this->hasRelation($relationName, BelongsTo::class)
-                || $this->hasRelation($relationName, MorphTo::class)
+                || $this->hasRelationOfClass($relationName, BelongsTo::class)
+                || $this->hasRelationOfClass($relationName, MorphTo::class)
             ) {
                 continue;
             }
@@ -736,12 +735,6 @@ abstract class EloquentModel extends EloquentModelBase
 
         return $this;
     }
-
-
-    /**
-     * @return array<string, class-string<RelationInterface>>
-     */
-    abstract protected function relationClasses() : array;
 
 
     /**

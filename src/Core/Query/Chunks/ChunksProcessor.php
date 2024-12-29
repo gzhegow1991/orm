@@ -39,7 +39,7 @@ class ChunksProcessor implements ChunksProcessorInterface
     /**
      * @return \Generator<EloquentModelCollection<T>>
      */
-    protected function doChunksModelNativeForeach(ChunksBuilder $builder) : \Generator
+    private function doChunksModelNativeForeach(ChunksBuilder $builder) : \Generator
     {
         $modelQuery = $builder->getModelQuery();
 
@@ -111,7 +111,7 @@ class ChunksProcessor implements ChunksProcessorInterface
     /**
      * @return \Generator<EloquentSupportCollection<\stdClass>
      */
-    protected function doChunksPdoNativeForeach(ChunksBuilder $builder) : \Generator
+    private function doChunksPdoNativeForeach(ChunksBuilder $builder) : \Generator
     {
         $pdoQuery = $builder->getPdoQuery();
 
@@ -183,7 +183,7 @@ class ChunksProcessor implements ChunksProcessorInterface
     /**
      * @return \Generator<EloquentModelCollection<T>>
      */
-    protected function doChunksModelAfterForeach(ChunksBuilder $builder) : \Generator
+    private function doChunksModelAfterForeach(ChunksBuilder $builder) : \Generator
     {
         $modelQuery = $builder->getModelQuery();
         $pdoQuery = $builder->getPdoQuery();
@@ -344,7 +344,7 @@ class ChunksProcessor implements ChunksProcessorInterface
     /**
      * @return \Generator<EloquentSupportCollection<\stdClass>
      */
-    protected function doChunksPdoAfterForeach(ChunksBuilder $builder) : \Generator
+    private function doChunksPdoAfterForeach(ChunksBuilder $builder) : \Generator
     {
         $pdoQuery = $builder->getPdoQuery();
 

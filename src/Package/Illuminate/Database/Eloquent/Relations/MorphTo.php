@@ -2,7 +2,6 @@
 
 namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations;
 
-use Illuminate\Database\Eloquent\Model;
 use Gzhegow\Database\Core\Relation\Traits\HasRelationNameTrait;
 use Illuminate\Database\Eloquent\Relations\MorphTo as MorphToBase;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;

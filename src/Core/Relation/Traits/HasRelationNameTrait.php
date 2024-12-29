@@ -2,8 +2,8 @@
 
 namespace Gzhegow\Database\Core\Relation\Traits;
 
-use Gzhegow\Database\Core\Orm;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Gzhegow\Database\Package\Illuminate\Database\Capsule\Eloquent;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\RelationInterface;
 
 
@@ -35,7 +35,8 @@ trait HasRelationNameTrait
             );
         }
 
-        $relationPrefix = Orm::eloquentRelationPrefix();
+        $relationPrefix = Eloquent::getRelationPrefix();;
+
         if ('' !== $relationPrefix) {
             if (0 !== strpos($relationName, $relationPrefix)) {
                 throw new \LogicException(

@@ -20,7 +20,7 @@ class DemoImageModel extends EloquentModel
     use HasIdTrait;
 
 
-    protected function relationClasses() : array
+    protected static function relationClasses() : array
     {
         return [
             '_imageable' => MorphTo::class,

@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToBase;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
-class BelongsTo extends BelongsToBase
+class BelongsTo extends BelongsToBase implements
+    RelationInterface
 {
     use HasRelationNameTrait;
 
