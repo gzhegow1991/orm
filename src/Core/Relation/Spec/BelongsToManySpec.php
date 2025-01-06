@@ -2,6 +2,7 @@
 
 namespace Gzhegow\Database\Core\Relation\Spec;
 
+use Gzhegow\Lib\Modules\BoolModule;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
@@ -26,44 +27,44 @@ class BelongsToManySpec extends AbstractSpec
     /**
      * @var string
      */
-    protected $relationName = _UNDEFINED;
+    protected $relationName = BoolModule::UNDEFINED;
 
     /**
      * @var EloquentModel
      */
-    protected $thisModel = _UNDEFINED;
+    protected $thisModel = BoolModule::UNDEFINED;
     /**
      * @var EloquentModel
      */
-    protected $remoteModel = _UNDEFINED;
+    protected $remoteModel = BoolModule::UNDEFINED;
     /**
      * @var EloquentModelQueryBuilder
      */
-    protected $remoteModelQuery = _UNDEFINED;
+    protected $remoteModelQuery = BoolModule::UNDEFINED;
 
     /**
      * @var string|class-string<EloquentModel>
      */
-    protected $remoteModelClassOrTableName = _UNDEFINED;
+    protected $remoteModelClassOrTableName = BoolModule::UNDEFINED;
     /**
      * @var class-string<EloquentModel>
      */
-    protected $pivotModelClass = _UNDEFINED;
+    protected $pivotModelClass = BoolModule::UNDEFINED;
 
     /**
      * @var string|null
      */
-    protected $thisTableRightKey = _UNDEFINED;
+    protected $thisTableRightKey = BoolModule::UNDEFINED;
     /**
      * @var string|null
      */
-    protected $pivotTableLeftKey = _UNDEFINED;
+    protected $pivotTableLeftKey = BoolModule::UNDEFINED;
     /**
      * @var string|null
      */
-    protected $pivotTableRightKey = _UNDEFINED;
+    protected $pivotTableRightKey = BoolModule::UNDEFINED;
     /**
      * @var string|null
      */
-    protected $remoteTableLeftKey = _UNDEFINED;
+    protected $remoteTableLeftKey = BoolModule::UNDEFINED;
 }

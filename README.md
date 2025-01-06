@@ -187,33 +187,45 @@ ini_set('memory_limit', '32M');
 
 
 // > добавляем несколько функция для тестирования
-function _debug(...$values) : void
+function _debug(...$values) : string
 {
     $lines = [];
     foreach ( $values as $value ) {
-        $lines[] = \Gzhegow\Lib\Lib::debug()->type_id($value);
+        $lines[] = \Gzhegow\Lib\Lib::debug()->type($value);
     }
 
-    echo implode(' | ', $lines) . PHP_EOL;
+    $ret = implode(' | ', $lines) . PHP_EOL;
+
+    echo $ret;
+
+    return $ret;
 }
 
-function _dump(...$values) : void
+function _dump(...$values) : string
 {
     $lines = [];
     foreach ( $values as $value ) {
         $lines[] = \Gzhegow\Lib\Lib::debug()->value($value);
     }
 
-    echo implode(' | ', $lines) . PHP_EOL;
+    $ret = implode(' | ', $lines) . PHP_EOL;
+
+    echo $ret;
+
+    return $ret;
 }
 
-function _dump_array($value, int $maxLevel = null, bool $multiline = false) : void
+function _dump_array($value, int $maxLevel = null, bool $multiline = false) : string
 {
     $content = $multiline
         ? \Gzhegow\Lib\Lib::debug()->array_multiline($value, $maxLevel)
         : \Gzhegow\Lib\Lib::debug()->array($value, $maxLevel);
 
-    echo $content . PHP_EOL;
+    $ret = $content . PHP_EOL;
+
+    echo $ret;
+
+    return $ret;
 }
 
 function _assert_output(
@@ -222,8 +234,16 @@ function _assert_output(
 {
     $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
 
-    \Gzhegow\Lib\Lib::assert()->resource_static(STDOUT);
     \Gzhegow\Lib\Lib::assert()->output($trace, $fn, $expect);
+}
+
+function _assert_microtime(
+    \Closure $fn, float $expectMax = null, float $expectMin = null
+) : void
+{
+    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
+
+    \Gzhegow\Lib\Lib::assert()->microtime($trace, $fn, $expectMax, $expectMin);
 }
 
 
@@ -467,6 +487,7 @@ $fn = function () use (
     $schema
 ) {
     _dump('[ TEST 1 ]');
+    echo PHP_EOL;
 
 
     $modelClassDemoFoo = \Gzhegow\Database\Demo\Model\DemoFooModel::class;
@@ -513,33 +534,32 @@ $fn = function () use (
     $barCollection = $modelClassDemoBar::query()->get([ '*' ]);
     $bazCollection = $modelClassDemoBaz::query()->get([ '*' ]);
 
-    _dump($fooCollection);
+    _debug($fooCollection);
     _dump($fooCollection[ 0 ]->id, $fooCollection[ 1 ]->id);
 
-    _dump($barCollection);
+    _debug($barCollection);
     _dump($barCollection[ 0 ]->id, $barCollection[ 0 ]->demo_foo_id);
     _dump($barCollection[ 1 ]->id, $barCollection[ 1 ]->demo_foo_id);
 
-    _dump($bazCollection);
+    _debug($bazCollection);
     _dump($bazCollection[ 0 ]->id, $bazCollection[ 0 ]->demo_bar_id);
     _dump($bazCollection[ 1 ]->id, $bazCollection[ 1 ]->demo_bar_id);
 
 
     echo '';
 };
-_assert_output($fn, <<<HEREDOC
+_assert_output($fn, '
 "[ TEST 1 ]"
-{ object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+
+{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 1 | 2
-{ object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-1 | 1
-2 | 2
-{ object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-1 | 1
-2 | 2
-""
-HEREDOC
-);
+{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+1 | "1"
+2 | "2"
+{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+1 | "1"
+2 | "2"
+');
 
 
 // >>> TEST
@@ -550,6 +570,7 @@ $fn = function () use (
     $schema
 ) {
     _dump('[ TEST 2 ]');
+    echo PHP_EOL;
 
 
     $modelClassDemoFoo = \Gzhegow\Database\Demo\Model\DemoFooModel::class;
@@ -599,33 +620,32 @@ $fn = function () use (
     $barCollection = $modelClassDemoBar::query()->get([ '*' ]);
     $bazCollection = $modelClassDemoBaz::query()->get([ '*' ]);
 
-    _dump($fooCollection);
+    _debug($fooCollection);
     _dump($fooCollection[ 0 ]->id, $fooCollection[ 1 ]->id);
 
-    _dump($barCollection);
+    _debug($barCollection);
     _dump($barCollection[ 0 ]->id, $barCollection[ 0 ]->demo_foo_id);
     _dump($barCollection[ 1 ]->id, $barCollection[ 1 ]->demo_foo_id);
 
-    _dump($bazCollection);
+    _debug($bazCollection);
     _dump($bazCollection[ 0 ]->id, $bazCollection[ 0 ]->demo_bar_id);
     _dump($bazCollection[ 1 ]->id, $bazCollection[ 1 ]->demo_bar_id);
 
 
     echo '';
 };
-_assert_output($fn, <<<HEREDOC
+_assert_output($fn, '
 "[ TEST 2 ]"
-{ object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+
+{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 1 | 2
-{ object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-1 | 1
-2 | 2
-{ object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-1 | 1
-2 | 2
-""
-HEREDOC
-);
+{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+1 | "1"
+2 | "2"
+{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+1 | "1"
+2 | "2"
+');
 
 
 // >>> TEST
@@ -635,6 +655,7 @@ $fn = function () use (
     $schema
 ) {
     _dump('[ TEST 3 ]');
+    echo PHP_EOL;
 
 
     $modelClassDemoPost = \Gzhegow\Database\Demo\Model\DemoPostModel::class;
@@ -697,17 +718,17 @@ $fn = function () use (
     $postCollection = $modelClassDemoPost::get($postQuery);
     $userCollection = $modelClassDemoUser::get($userQuery);
 
-    _dump($imageCollection);
-    _dump($imageCollection[ 0 ], $imageCollection[ 0 ]->_imageable);
-    _dump('');
+    _debug($imageCollection);
+    _debug($imageCollection[ 0 ], $imageCollection[ 0 ]->_imageable);
+    echo PHP_EOL;
 
-    _dump($postCollection);
-    _dump($postCollection[ 0 ], $postCollection[ 0 ]->_demoImages[ 0 ]);
-    _dump('');
+    _debug($postCollection);
+    _debug($postCollection[ 0 ], $postCollection[ 0 ]->_demoImages[ 0 ]);
+    echo PHP_EOL;
 
-    _dump($userCollection);
-    _dump($userCollection[ 0 ], $userCollection[ 0 ]->_demoImages[ 0 ]);
-    _dump('');
+    _debug($userCollection);
+    _debug($userCollection[ 0 ], $userCollection[ 0 ]->_demoImages[ 0 ]);
+    echo PHP_EOL;
 
 
     $post2 = $modelClassDemoPost::new();
@@ -759,44 +780,40 @@ $fn = function () use (
     $postCollection = $modelClassDemoPost::get($postQuery);
     $userCollection = $modelClassDemoUser::get($userQuery);
 
-    _dump($tagCollection);
-    _dump($tagCollection[ 0 ], $tagCollection[ 0 ]->_demoPosts[ 0 ], $tagCollection[ 0 ]->_demoUsers[ 0 ]);
-    _dump($tagCollection[ 1 ], $tagCollection[ 1 ]->_demoPosts[ 0 ], $tagCollection[ 1 ]->_demoUsers[ 0 ]);
-    _dump('');
+    _debug($tagCollection);
+    _debug($tagCollection[ 0 ], $tagCollection[ 0 ]->_demoPosts[ 0 ], $tagCollection[ 0 ]->_demoUsers[ 0 ]);
+    _debug($tagCollection[ 1 ], $tagCollection[ 1 ]->_demoPosts[ 0 ], $tagCollection[ 1 ]->_demoUsers[ 0 ]);
+    echo PHP_EOL;
 
-    _dump($postCollection);
-    _dump($postCollection[ 1 ], $postCollection[ 1 ]->_demoTags[ 0 ], $postCollection[ 1 ]->_demoTags[ 1 ]);
-    _dump('');
+    _debug($postCollection);
+    _debug($postCollection[ 1 ], $postCollection[ 1 ]->_demoTags[ 0 ], $postCollection[ 1 ]->_demoTags[ 1 ]);
+    echo PHP_EOL;
 
-    _dump($userCollection);
-    _dump($userCollection[ 1 ], $userCollection[ 1 ]->_demoTags[ 0 ], $userCollection[ 1 ]->_demoTags[ 1 ]);
-
-
-    echo '';
+    _debug($userCollection);
+    _debug($userCollection[ 1 ], $userCollection[ 1 ]->_demoTags[ 0 ], $userCollection[ 1 ]->_demoTags[ 1 ]);
 };
-_assert_output($fn, <<<HEREDOC
+_assert_output($fn, '
 "[ TEST 3 ]"
-{ object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object # Gzhegow\Database\Demo\Model\DemoImageModel } | { object # Gzhegow\Database\Demo\Model\DemoPostModel }
-""
-{ object(iterable countable(1)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object # Gzhegow\Database\Demo\Model\DemoPostModel } | { object # Gzhegow\Database\Demo\Model\DemoImageModel }
-""
-{ object(iterable countable(1)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object # Gzhegow\Database\Demo\Model\DemoUserModel } | { object # Gzhegow\Database\Demo\Model\DemoImageModel }
-""
-{ object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object # Gzhegow\Database\Demo\Model\DemoTagModel } | { object # Gzhegow\Database\Demo\Model\DemoPostModel } | { object # Gzhegow\Database\Demo\Model\DemoUserModel }
-{ object # Gzhegow\Database\Demo\Model\DemoTagModel } | { object # Gzhegow\Database\Demo\Model\DemoPostModel } | { object # Gzhegow\Database\Demo\Model\DemoUserModel }
-""
-{ object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object # Gzhegow\Database\Demo\Model\DemoPostModel } | { object # Gzhegow\Database\Demo\Model\DemoTagModel } | { object # Gzhegow\Database\Demo\Model\DemoTagModel }
-""
-{ object(iterable countable(2)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object # Gzhegow\Database\Demo\Model\DemoUserModel } | { object # Gzhegow\Database\Demo\Model\DemoTagModel } | { object # Gzhegow\Database\Demo\Model\DemoTagModel }
-""
-HEREDOC
-);
+
+{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(stringable) # Gzhegow\Database\Demo\Model\DemoImageModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoPostModel }
+
+{ object(countable(1) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(stringable) # Gzhegow\Database\Demo\Model\DemoPostModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoImageModel }
+
+{ object(countable(1) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(stringable) # Gzhegow\Database\Demo\Model\DemoUserModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoImageModel }
+
+{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(stringable) # Gzhegow\Database\Demo\Model\DemoTagModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoPostModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoUserModel }
+{ object(stringable) # Gzhegow\Database\Demo\Model\DemoTagModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoPostModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoUserModel }
+
+{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(stringable) # Gzhegow\Database\Demo\Model\DemoPostModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoTagModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoTagModel }
+
+{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(stringable) # Gzhegow\Database\Demo\Model\DemoUserModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoTagModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoTagModel }
+');
 
 
 // >>> TEST
@@ -807,6 +824,7 @@ $fn = function () use (
     $schema
 ) {
     _dump('[ TEST 4 ]');
+    echo PHP_EOL;
 
 
     $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
@@ -831,13 +849,12 @@ $fn = function () use (
 
     echo '';
 };
-_assert_output($fn, <<<HEREDOC
+_assert_output($fn, '
 "[ TEST 4 ]"
+
 1 | TRUE
 TRUE | TRUE
-""
-HEREDOC
-);
+');
 
 
 // >>> TEST
@@ -848,6 +865,7 @@ $fn = function () use (
     $schema
 ) {
     _dump('[ TEST 5 ]');
+    echo PHP_EOL;
 
 
     $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
@@ -869,8 +887,10 @@ $fn = function () use (
         $limitChunk = 25, $limit = null, $offset = null
     );
     foreach ( $builder->chunksForeach() as $chunk ) {
-        _dump($chunk);
+        _debug($chunk);
     }
+    echo PHP_EOL;
+
 
     _dump('chunkModelAfterForeach');
     $builder = $modelClassDemoTag::chunks();
@@ -879,27 +899,24 @@ $fn = function () use (
         $offsetColumn = 'id', $offsetOperator = '>', $offsetValue = 1, $includeOffsetValue = true
     );
     foreach ( $builder->chunksForeach() as $chunk ) {
-        _dump($chunk);
+        _debug($chunk);
     }
-
-
-    echo '';
 };
-_assert_output($fn, <<<HEREDOC
+_assert_output($fn, '
 "[ TEST 5 ]"
+
 "chunkModelNativeForeach"
-{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+
 "chunkModelAfterForeach"
-{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(iterable countable(25)) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-""
-HEREDOC
-);
+{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+');
 
 
 // >>> TEST
@@ -910,6 +927,7 @@ $fn = function () use (
     $schema
 ) {
     _dump('[ TEST 6 ]');
+    echo PHP_EOL;
 
 
     $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
@@ -942,6 +960,8 @@ $fn = function () use (
     _dump_array((array) $result, 1, true);
     _dump_array($result->pagesAbsolute, 1, true);
     _dump_array($result->pagesRelative, 1, true);
+    echo PHP_EOL;
+
 
     _dump('paginateModelAfterForeach');
     $builder = $modelClassDemoTag::chunks();
@@ -960,11 +980,10 @@ $fn = function () use (
     _dump_array((array) $result, 1, true);
     _dump_array($result->pagesAbsolute, 1, true);
     _dump_array($result->pagesRelative, 1, true);
-
-    echo '';
 };
-_assert_output($fn, <<<HEREDOC
+_assert_output($fn, '
 "[ TEST 6 ]"
+
 "paginateModelNativeForeach"
 [
   "totalItems" => 100,
@@ -976,7 +995,7 @@ _assert_output($fn, <<<HEREDOC
   "to" => 91,
   "pagesAbsolute" => "{ array(5) }",
   "pagesRelative" => "{ array(5) }",
-  "items" => "{ object(iterable countable(13)) # Illuminate\Support\Collection }"
+  "items" => "{ object(countable(13) iterable stringable) # Illuminate\Support\Collection }"
 ]
 [
   1 => 13,
@@ -992,6 +1011,7 @@ _assert_output($fn, <<<HEREDOC
   "next" => NULL,
   "last" => 9
 ]
+
 "paginateModelAfterForeach"
 [
   "totalItems" => 100,
@@ -1003,7 +1023,7 @@ _assert_output($fn, <<<HEREDOC
   "to" => 91,
   "pagesAbsolute" => "{ array(5) }",
   "pagesRelative" => "{ array(5) }",
-  "items" => "{ object(iterable countable(13)) # Illuminate\Support\Collection }"
+  "items" => "{ object(countable(13) iterable stringable) # Illuminate\Support\Collection }"
 ]
 [
   1 => 13,
@@ -1019,15 +1039,15 @@ _assert_output($fn, <<<HEREDOC
   "next" => NULL,
   "last" => 9
 ]
-""
-HEREDOC
-);
+');
 
 
 // >>> TEST
 // > рекомендуется в проекте указывать связи в виде callable, чтобы они менялись, когда применяешь `Refactor` в PHPStorm
 $fn = function () use ($eloquent) {
     _dump('[ TEST 7 ]');
+    echo PHP_EOL;
+
 
     $foo_hasMany_bars_hasMany_bazs = \Gzhegow\Database\Core\Orm::eloquentRelationDot()
     ([ \Gzhegow\Database\Demo\Model\DemoFooModel::class, '_demoBars' ])
@@ -1055,6 +1075,7 @@ $fn = function () use ($eloquent) {
     ();
     _dump($bar_hasMany_bazs_only_id);
 
+    // > ПРИМЕР
     // > Делаем запрос со связями
     // $query = \Gzhegow\Database\Demo\Model\DemoFooModel::query();
     // $query->with($foo_hasMany_bars_hasMany_bazs);
@@ -1098,19 +1119,16 @@ $fn = function () use ($eloquent) {
     //     $bar_belongsTo_foo => static function ($query) { },
     //     $bar_hasMany_bazs  => static function ($query) { },
     // ]);
-
-    echo '';
 };
-_assert_output($fn, <<<HEREDOC
+_assert_output($fn, '
 "[ TEST 7 ]"
+
 "_demoBars._demoBazs"
 "_demoFoo"
 "_demoBazs"
 "_demoFoo:id"
 "_demoBazs:id"
-""
-HEREDOC
-);
+');
 
 
 // > удаляем таблицы после тестов

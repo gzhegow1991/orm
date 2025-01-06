@@ -2,6 +2,7 @@
 
 namespace Gzhegow\Database\Core\Relation\Spec;
 
+use Gzhegow\Lib\Modules\BoolModule;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
@@ -27,49 +28,49 @@ class HasManyThroughSpec extends AbstractSpec
     /**
      * @var string
      */
-    protected $relationName = _UNDEFINED;
+    protected $relationName = BoolModule::UNDEFINED;
 
     /**
      * @var EloquentModel
      */
-    protected $thisModel = _UNDEFINED;
+    protected $thisModel = BoolModule::UNDEFINED;
     /**
      * @var EloquentModel
      */
-    protected $throughModel = _UNDEFINED;
+    protected $throughModel = BoolModule::UNDEFINED;
     /**
      * @var EloquentModel
      */
-    protected $remoteModel = _UNDEFINED;
+    protected $remoteModel = BoolModule::UNDEFINED;
     /**
      * @var EloquentModelQueryBuilder
      */
-    protected $remoteModelQuery = _UNDEFINED;
+    protected $remoteModelQuery = BoolModule::UNDEFINED;
 
     /**
      * @var string|class-string<EloquentModel>
      */
-    protected $remoteModelClassOrTableName = _UNDEFINED;
+    protected $remoteModelClassOrTableName = BoolModule::UNDEFINED;
 
     /**
      * @var class-string<EloquentModel>
      */
-    protected $throughModelClass = _UNDEFINED;
+    protected $throughModelClass = BoolModule::UNDEFINED;
 
     /**
      * @var string|null
      */
-    protected $thisTableRightKey = _UNDEFINED;
+    protected $thisTableRightKey = BoolModule::UNDEFINED;
     /**
      * @var string|null
      */
-    protected $throughTableLeftKey = _UNDEFINED;
+    protected $throughTableLeftKey = BoolModule::UNDEFINED;
     /**
      * @var string|null
      */
-    protected $throughTableRightKey = _UNDEFINED;
+    protected $throughTableRightKey = BoolModule::UNDEFINED;
     /**
      * @var string|null
      */
-    protected $remoteTableLeftKey = _UNDEFINED;
+    protected $remoteTableLeftKey = BoolModule::UNDEFINED;
 }
