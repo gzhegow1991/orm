@@ -544,9 +544,6 @@ $fn = function () use (
     _debug($bazCollection);
     _dump($bazCollection[ 0 ]->id, $bazCollection[ 0 ]->demo_bar_id);
     _dump($bazCollection[ 1 ]->id, $bazCollection[ 1 ]->demo_bar_id);
-
-
-    echo '';
 };
 _assert_output($fn, '
 "[ TEST 1 ]"
@@ -630,9 +627,6 @@ $fn = function () use (
     _debug($bazCollection);
     _dump($bazCollection[ 0 ]->id, $bazCollection[ 0 ]->demo_bar_id);
     _dump($bazCollection[ 1 ]->id, $bazCollection[ 1 ]->demo_bar_id);
-
-
-    echo '';
 };
 _assert_output($fn, '
 "[ TEST 2 ]"
@@ -845,9 +839,6 @@ $fn = function () use (
 
     $cnt = $query->countExplain();
     _dump($cnt > 1, $cnt <= 100);
-
-
-    echo '';
 };
 _assert_output($fn, '
 "[ TEST 4 ]"
