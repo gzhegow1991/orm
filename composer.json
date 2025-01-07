@@ -29,9 +29,7 @@
         "gzhegow/calendar": "~1.4.0",
         "gzhegow/lib": "~1.0",
 
-        "illuminate/database": "~8.0",
-
-        "symfony/uid": "~5.0"
+        "illuminate/database": "~8.0"
     },
 
     "config": {

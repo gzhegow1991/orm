@@ -3,7 +3,6 @@
 namespace Gzhegow\Database\Core\Model\Traits\Has;
 
 use Gzhegow\Lib\Lib;
-use Symfony\Component\Uid\UuidV4;
 use Gzhegow\Database\Exception\RuntimeException;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 
@@ -57,7 +56,7 @@ trait HasUuidTrait
         if (! $current) {
             $_uuid = null
                 ?? Lib::parse()->string_not_empty($uuid)
-                ?? new UuidV4();
+                ?? Lib::random()->uuid();
 
             $this->attributes[ 'uuid' ] = $_uuid;
         }
