@@ -334,6 +334,16 @@ abstract class EloquentModel extends EloquentModelBase
     }
 
 
+    /**
+     * @deprecated
+     * @internal
+     */
+    public static function clearBootedModels()
+    {
+        parent::clearBootedModels();
+    }
+
+
     public function getKey()
     {
         /** @see parent::getKey(); */
