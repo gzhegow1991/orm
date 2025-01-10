@@ -16,7 +16,7 @@ trait PersistenceTrait
      */
     public function persistEloquentInsert(array $values)
     {
-        $persistence = Orm::getEloquentPersistence();
+        $persistence = Orm::eloquentPersistence();
 
         $persistence->persistEloquentQueryForInsert($this, $values);
 
@@ -28,7 +28,7 @@ trait PersistenceTrait
      */
     public function persistEloquentUpdate(array $values)
     {
-        $persistence = Orm::getEloquentPersistence();
+        $persistence = Orm::eloquentPersistence();
 
         $persistence->persistEloquentQueryForUpdate($this, $values);
 
@@ -40,7 +40,7 @@ trait PersistenceTrait
      */
     public function persistEloquentDelete()
     {
-        $persistence = Orm::getEloquentPersistence();
+        $persistence = Orm::eloquentPersistence();
 
         $persistence->persistEloquentQueryForDelete($this);
 

@@ -6,10 +6,10 @@ use Illuminate\Database\ConnectionInterface;
 use Gzhegow\Database\Exception\LogicException;
 use Illuminate\Database\Query\Grammars\Grammar;
 use Illuminate\Database\Query\Processors\Processor;
-use Gzhegow\Database\Core\Relation\Factory\RelationFactory;
+use Gzhegow\Database\Core\Relation\Factory\EloquentRelationFactory;
 use Gzhegow\Database\Core\Query\Chunks\ChunksProcessorInterface;
 use Gzhegow\Database\Core\Persistence\EloquentPersistenceInterface;
-use Gzhegow\Database\Core\Relation\Factory\RelationFactoryInterface;
+use Gzhegow\Database\Core\Relation\Factory\EloquentRelationFactoryInterface;
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
 use Gzhegow\Database\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 use Gzhegow\Database\Package\Illuminate\Database\Capsule\EloquentInterface;
@@ -131,22 +131,11 @@ class OrmFacade implements OrmFacadeInterface
     }
 
 
-    public function getEloquent() : EloquentInterface
-    {
-        return $this->eloquent;
-    }
-
-    public function getEloquentPersistence() : EloquentPersistenceInterface
-    {
-        return $this->eloquentPersistence;
-    }
-
-
-    public function eloquentRelation(
+    public function newEloquentRelationFactory(
         EloquentModel $model
-    ) : RelationFactoryInterface
+    ) : EloquentRelationFactoryInterface
     {
-        return new RelationFactory($model);
+        return new EloquentRelationFactory($model);
     }
 
     /**
@@ -156,7 +145,7 @@ class OrmFacade implements OrmFacadeInterface
      *
      * @return T
      */
-    public function eloquentRelationDot(array $relationFn = null, string $fields = null)
+    public function fnEloquentRelationDotnameCurry(array $relationFn = null, string $fields = null)
     {
         $fn = static function ($relationFn = null, string $fields = null) use (&$fn) {
             static $current;
@@ -191,5 +180,16 @@ class OrmFacade implements OrmFacadeInterface
         return (null !== $relationFn)
             ? $fn($relationFn, $fields)
             : $fn;
+    }
+
+
+    public function getEloquent() : EloquentInterface
+    {
+        return $this->eloquent;
+    }
+
+    public function getEloquentPersistence() : EloquentPersistenceInterface
+    {
+        return $this->eloquentPersistence;
     }
 }

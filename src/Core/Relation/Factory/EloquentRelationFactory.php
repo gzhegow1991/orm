@@ -28,7 +28,7 @@ use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\HasOneThroug
 use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 
-class RelationFactory implements RelationFactoryInterface
+class EloquentRelationFactory implements EloquentRelationFactoryInterface
 {
     /**
      * @var EloquentModel

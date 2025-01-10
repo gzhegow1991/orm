@@ -5,16 +5,16 @@ namespace Gzhegow\Database\Core\Model\Traits\Relation;
 use Gzhegow\Database\Core\Orm;
 use Gzhegow\Database\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
-use Gzhegow\Database\Core\Relation\Factory\RelationFactory;
+use Gzhegow\Database\Core\Relation\Factory\EloquentRelationFactory;
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\Builder as EloquentQueryBuilder;
 
 
 trait RelationFactoryTrait
 {
-    protected function relation() : RelationFactory
+    protected function relation() : EloquentRelationFactory
     {
-        $factory = Orm::eloquentRelation($this);
+        $factory = Orm::newEloquentRelationFactory($this);
 
         return $factory;
     }
@@ -29,7 +29,7 @@ trait RelationFactoryTrait
         string $fields = null
     )
     {
-        $relationDot = Orm::eloquentRelationDot(
+        $relationDot = Orm::relationDot(
             $relationFn,
             $fields
         );

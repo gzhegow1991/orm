@@ -19,7 +19,7 @@ class MorphMany extends MorphManyBase implements
      */
     public function persistForSave(EloquentModel $model)
     {
-        $persistence = Orm::getEloquentPersistence();
+        $persistence = Orm::eloquentPersistence();
 
         $persistence->persistHasOneOrManyForSave($this, $model);
 
@@ -31,7 +31,7 @@ class MorphMany extends MorphManyBase implements
      */
     public function persistForSaveMany($models)
     {
-        $persistence = Orm::getEloquentPersistence();
+        $persistence = Orm::eloquentPersistence();
 
         $persistence->persistHasOneOrManyForSaveMany($this, $models);
 

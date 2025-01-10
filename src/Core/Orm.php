@@ -99,23 +99,24 @@ class Orm
     }
 
 
-    public static function getEloquent() : EloquentInterface
+    public static function newEloquentRelationFactory(
+        EloquentModel $model
+    )
+    {
+        return static::$facade->newEloquentRelationFactory($model);
+    }
+
+
+    public static function eloquent() : EloquentInterface
     {
         return static::$facade->getEloquent();
     }
 
-    public static function getEloquentPersistence() : EloquentPersistenceInterface
+    public static function eloquentPersistence() : EloquentPersistenceInterface
     {
         return static::$facade->getEloquentPersistence();
     }
 
-
-    public static function eloquentRelation(
-        EloquentModel $model
-    )
-    {
-        return static::$facade->eloquentRelation($model);
-    }
 
     /**
      * @template T of (\Closure(array|null $relationFn, string|null $fields) : T|string)
@@ -124,12 +125,12 @@ class Orm
      *
      * @return T
      */
-    public static function eloquentRelationDot(
+    public static function relationDot(
         array $relationFn = null,
         string $fields = null
     )
     {
-        return static::$facade->eloquentRelationDot($relationFn, $fields);
+        return static::$facade->fnEloquentRelationDotnameCurry($relationFn, $fields);
     }
 
 

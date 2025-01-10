@@ -110,7 +110,7 @@ class BelongsToMany extends BelongsToManyBase implements
      */
     public function persistForSave(EloquentModel $model, array $pivotAttributes = [], $touch = null)
     {
-        $persistence = Orm::getEloquentPersistence();
+        $persistence = Orm::eloquentPersistence();
 
         $persistence->persistBelongsToManyForSave($this, $model, $pivotAttributes, $touch);
 
@@ -122,7 +122,7 @@ class BelongsToMany extends BelongsToManyBase implements
      */
     public function persistForSaveMany($models, array $pivotAttributes = [])
     {
-        $persistence = Orm::getEloquentPersistence();
+        $persistence = Orm::eloquentPersistence();
 
         $persistence->persistBelongsToManyForSaveMany($this, $models, $pivotAttributes);
 
@@ -134,7 +134,7 @@ class BelongsToMany extends BelongsToManyBase implements
      */
     public function persistForSync($ids, $detaching = null)
     {
-        $persistence = Orm::getEloquentPersistence();
+        $persistence = Orm::eloquentPersistence();
 
         $persistence->persistBelongsToManyForSync($this, $ids, $detaching);
 

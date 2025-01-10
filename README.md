@@ -149,9 +149,9 @@ $query->with([
     Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
 ]);
 $model->load([
-    Orm::relation()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
-    Orm::relation()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
-    Orm::relation()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
 ]);
 $collection->load([
     Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
@@ -610,7 +610,7 @@ $fn = function () use (
     $foo4->persistForSaveRecursive();
 
 
-    \Gzhegow\Database\Core\Orm::getEloquentPersistence()->flush();
+    \Gzhegow\Database\Core\Orm::eloquentPersistence()->flush();
 
 
     $fooCollection = $modelClassDemoFoo::query()->get([ '*' ]);
@@ -688,7 +688,7 @@ $fn = function () use (
     $image1->persistForSaveRecursive();
     $image2->persistForSaveRecursive();
 
-    \Gzhegow\Database\Core\Orm::getEloquentPersistence()->flush();
+    \Gzhegow\Database\Core\Orm::eloquentPersistence()->flush();
 
 
     $imageQuery = $image1::query()
@@ -750,7 +750,7 @@ $fn = function () use (
         $tag2,
     ]);
 
-    \Gzhegow\Database\Core\Orm::getEloquentPersistence()->flush();
+    \Gzhegow\Database\Core\Orm::eloquentPersistence()->flush();
 
 
     $tagQuery = $modelClassDemoTag::query()
@@ -1040,7 +1040,7 @@ $fn = function () use ($eloquent) {
     echo PHP_EOL;
 
 
-    $foo_hasMany_bars_hasMany_bazs = \Gzhegow\Database\Core\Orm::eloquentRelationDot()
+    $foo_hasMany_bars_hasMany_bazs = \Gzhegow\Database\Core\Orm::relationDot()
     ([ \Gzhegow\Database\Demo\Model\DemoFooModel::class, '_demoBars' ])
     ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoBazs' ])
     ();

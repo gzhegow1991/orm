@@ -16,7 +16,7 @@ trait PersistenceTrait
      */
     public function persistForSave()
     {
-        $persistence = Orm::getEloquentPersistence();
+        $persistence = Orm::eloquentPersistence();
 
         $persistence->persistModelForSave($this);
 
@@ -28,7 +28,7 @@ trait PersistenceTrait
      */
     public function persistForDelete()
     {
-        $persistence = Orm::getEloquentPersistence();
+        $persistence = Orm::eloquentPersistence();
 
         $persistence->persistModelForDelete($this);
 
@@ -41,7 +41,7 @@ trait PersistenceTrait
      */
     public function persistForSaveRecursive()
     {
-        $persistence = Orm::getEloquentPersistence();
+        $persistence = Orm::eloquentPersistence();
 
         $persistence->persistModelForSaveRecursive($this);
 
@@ -53,7 +53,7 @@ trait PersistenceTrait
      */
     public function persistForDeleteRecursive()
     {
-        $persistence = Orm::getEloquentPersistence();
+        $persistence = Orm::eloquentPersistence();
 
         $persistence->persistModelForDeleteRecursive($this);
 
