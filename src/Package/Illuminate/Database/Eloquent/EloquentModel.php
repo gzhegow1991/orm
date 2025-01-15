@@ -389,42 +389,6 @@ abstract class EloquentModel extends EloquentModelBase
     }
 
 
-    /**
-     * @return static
-     */
-    public function fill(array $attributes)
-    {
-        /** @see parent::fill() */
-
-        foreach ( $attributes as $attr => $value ) {
-            if (! $this->isFillable($attr)) {
-                throw new RuntimeException(
-                    [
-                        'Attribute is not fillable: ' . $attr,
-                        $this,
-                    ]
-                );
-            }
-
-            $this->attributes[ $attr ] = $value;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return static
-     */
-    public function fillPassed(array $attributes)
-    {
-        $_attributes = Lib::bool()->passed($attributes);
-
-        $this->fill($_attributes);
-
-        return $this;
-    }
-
-
     public function save(array $options = null) : bool
     {
         $options = $options ?? [];

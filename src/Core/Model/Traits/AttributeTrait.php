@@ -2,7 +2,7 @@
 
 namespace Gzhegow\Database\Core\Model\Traits;
 
-use Gzhegow\Database\Core\Orm;
+use Gzhegow\Lib\Lib;
 use Illuminate\Contracts\Support\Arrayable;
 use Gzhegow\Database\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
@@ -294,6 +294,69 @@ trait AttributeTrait
 
         $this->classCastCache = [];
         $this->attributeCastCache = [];
+
+        return $this;
+    }
+
+
+    /**
+     * @return static
+     */
+    public function fill(array $attributes)
+    {
+        /** @see parent::fill() */
+
+        $this->fillAttributes($attributes, true);
+
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
+    public function fillPassed(array $attributes)
+    {
+        $this->fillAttributesPassed($attributes, true);
+
+        return $this;
+    }
+
+
+    /**
+     * @return static
+     */
+    public function fillAttributes(array $attributes, bool $throw = null)
+    {
+        $throw = $throw ?? true;
+
+        foreach ( $attributes as $attr => $value ) {
+            if (! $this->isFillable($attr)) {
+                if ($throw) {
+                    throw new RuntimeException(
+                        [
+                            'Attribute is not fillable: ' . $attr,
+                            $this,
+                        ]
+                    );
+                }
+
+                continue;
+            }
+
+            $this->setAttribute($attr, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
+    public function fillAttributesPassed(array $attributes, bool $throw = null)
+    {
+        $_attributes = Lib::bool()->passed($attributes);
+
+        $this->fillAttributes($_attributes, $throw);
 
         return $this;
     }
