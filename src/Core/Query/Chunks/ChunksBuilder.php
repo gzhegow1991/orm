@@ -258,7 +258,7 @@ class ChunksBuilder
 
         if (null === $instance) {
             foreach ( $errors as $error ) {
-                $last = new LogicException($error, null, $last);
+                $last = new LogicException($error, $last);
             }
         }
 
@@ -273,10 +273,7 @@ class ChunksBuilder
     {
         if (! is_a($from, static::class)) {
             return Lib::php()->error(
-                [
-                    'The `from` should be instance of: ' . static::class,
-                    $from,
-                ]
+                [ 'The `from` should be instance of: ' . static::class, $from ]
             );
         }
 
@@ -290,10 +287,7 @@ class ChunksBuilder
     {
         if (! is_a($from, EloquentModelQueryBuilder::class)) {
             return Lib::php()->error(
-                [
-                    'The `from` should be instance of: ' . EloquentModelQueryBuilder::class,
-                    $from,
-                ]
+                [ 'The `from` should be instance of: ' . EloquentModelQueryBuilder::class, $from ]
             );
         }
 
@@ -320,10 +314,7 @@ class ChunksBuilder
     {
         if (! is_a($from, EloquentPdoQueryBuilder::class)) {
             return Lib::php()->error(
-                [
-                    'The `from` should be instance of: ' . EloquentPdoQueryBuilder::class,
-                    $from,
-                ]
+                [ 'The `from` should be instance of: ' . EloquentPdoQueryBuilder::class, $from ]
             );
         }
 
@@ -342,10 +333,7 @@ class ChunksBuilder
     {
         if (! is_a($from, EloquentModel::class)) {
             return Lib::php()->error(
-                [
-                    'The `from` should be instance of: ' . EloquentModel::class,
-                    $from,
-                ]
+                [ 'The `from` should be instance of: ' . EloquentModel::class, $from ]
             );
         }
 
@@ -372,10 +360,7 @@ class ChunksBuilder
     {
         if (! is_subclass_of($from, EloquentModel::class)) {
             return Lib::php()->error(
-                [
-                    'The `from` should be class-string of: ' . EloquentModel::class,
-                    $from,
-                ]
+                [ 'The `from` should be class-string of: ' . EloquentModel::class, $from ]
             );
         }
 

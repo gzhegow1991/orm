@@ -4,7 +4,6 @@ namespace Gzhegow\Database\Package\Illuminate\Database\Schema;
 
 use Gzhegow\Lib\Lib;
 use Gzhegow\Database\Core\OrmFactoryInterface;
-use Illuminate\Database\Schema\ForeignKeyDefinition;
 use Illuminate\Database\Schema\Blueprint as EloquentSchemaBlueprintBase;
 
 
