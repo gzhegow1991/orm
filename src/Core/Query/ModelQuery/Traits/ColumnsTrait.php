@@ -1,8 +1,8 @@
 <?php
 
-namespace Gzhegow\Database\Core\Query\ModelQuery\Traits;
+namespace Gzhegow\Orm\Core\Query\ModelQuery\Traits;
 
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
 
 /**

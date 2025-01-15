@@ -1,11 +1,11 @@
 <?php
 
-namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations;
+namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations;
 
-use Gzhegow\Database\Core\Orm;
+use Gzhegow\Orm\Core\Orm;
 use Illuminate\Database\Eloquent\Relations\HasOne as HasOneBase;
-use Gzhegow\Database\Core\Relation\Traits\HasRelationNameTrait;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Core\Relation\Traits\HasRelationNameTrait;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
 class HasOne extends HasOneBase implements

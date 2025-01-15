@@ -1,12 +1,12 @@
 <?php
 
-namespace Gzhegow\Database\Core\Model\Traits;
+namespace Gzhegow\Orm\Core\Model\Traits;
 
 use Gzhegow\Lib\Lib;
-use Gzhegow\Database\Core\Orm;
-use Gzhegow\Database\Exception\LogicException;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
-use Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBuilder;
+use Gzhegow\Orm\Core\Orm;
+use Gzhegow\Orm\Exception\LogicException;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBuilder;
 
 
 /**

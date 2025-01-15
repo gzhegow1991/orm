@@ -1,28 +1,28 @@
 <?php
 
-namespace Gzhegow\Database\Core\Relation\Factory;
+namespace Gzhegow\Orm\Core\Relation\Factory;
 
 
-use Gzhegow\Database\Core\Relation\Spec\HasOneSpec;
-use Gzhegow\Database\Core\Relation\Spec\HasManySpec;
-use Gzhegow\Database\Core\Relation\Spec\MorphToSpec;
-use Gzhegow\Database\Core\Relation\Spec\MorphOneSpec;
-use Gzhegow\Database\Core\Relation\Spec\BelongsToSpec;
-use Gzhegow\Database\Core\Relation\Spec\MorphManySpec;
-use Gzhegow\Database\Core\Relation\Spec\MorphToManySpec;
-use Gzhegow\Database\Core\Relation\Spec\BelongsToManySpec;
-use Gzhegow\Database\Core\Relation\Spec\HasOneThroughSpec;
-use Gzhegow\Database\Core\Relation\Spec\HasManyThroughSpec;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\HasOne;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\HasMany;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\MorphTo;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\MorphOne;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\MorphMany;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\HasOneThrough;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Gzhegow\Orm\Core\Relation\Spec\HasOneSpec;
+use Gzhegow\Orm\Core\Relation\Spec\HasManySpec;
+use Gzhegow\Orm\Core\Relation\Spec\MorphToSpec;
+use Gzhegow\Orm\Core\Relation\Spec\MorphOneSpec;
+use Gzhegow\Orm\Core\Relation\Spec\BelongsToSpec;
+use Gzhegow\Orm\Core\Relation\Spec\MorphManySpec;
+use Gzhegow\Orm\Core\Relation\Spec\MorphToManySpec;
+use Gzhegow\Orm\Core\Relation\Spec\BelongsToManySpec;
+use Gzhegow\Orm\Core\Relation\Spec\HasOneThroughSpec;
+use Gzhegow\Orm\Core\Relation\Spec\HasManyThroughSpec;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\HasOne;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\HasMany;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\MorphTo;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\MorphOne;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\MorphMany;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 
 /**

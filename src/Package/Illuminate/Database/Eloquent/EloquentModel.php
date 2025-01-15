@@ -1,28 +1,28 @@
 <?php
 
-namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent;
+namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent;
 
 use Gzhegow\Lib\Lib;
-use Gzhegow\Database\Exception\LogicException;
-use Gzhegow\Database\Exception\RuntimeException;
-use Gzhegow\Database\Core\Model\Traits\LoadTrait;
+use Gzhegow\Orm\Exception\LogicException;
+use Gzhegow\Orm\Exception\RuntimeException;
+use Gzhegow\Orm\Core\Model\Traits\LoadTrait;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Gzhegow\Database\Core\Model\Traits\TableTrait;
-use Gzhegow\Database\Core\Model\Traits\QueryTrait;
-use Gzhegow\Database\Core\Model\Traits\ChunkTrait;
+use Gzhegow\Orm\Core\Model\Traits\TableTrait;
+use Gzhegow\Orm\Core\Model\Traits\QueryTrait;
+use Gzhegow\Orm\Core\Model\Traits\ChunkTrait;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Gzhegow\Database\Core\Model\Traits\FactoryTrait;
-use Gzhegow\Database\Core\Model\Traits\ColumnsTrait;
-use Gzhegow\Database\Core\Model\Traits\CalendarTrait;
+use Gzhegow\Orm\Core\Model\Traits\FactoryTrait;
+use Gzhegow\Orm\Core\Model\Traits\ColumnsTrait;
+use Gzhegow\Orm\Core\Model\Traits\CalendarTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Gzhegow\Database\Core\Model\Traits\AttributeTrait;
-use Gzhegow\Database\Core\Model\Traits\PersistenceTrait;
+use Gzhegow\Orm\Core\Model\Traits\AttributeTrait;
+use Gzhegow\Orm\Core\Model\Traits\PersistenceTrait;
 use Illuminate\Database\Eloquent\Model as EloquentModelBase;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
-use Gzhegow\Database\Core\Model\Traits\Relation\RelationTrait;
+use Gzhegow\Orm\Core\Model\Traits\Relation\RelationTrait;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Gzhegow\Database\Core\Model\Traits\Relation\RelationFactoryTrait;
-use Gzhegow\Database\Exception\Exception\Resource\ResourceNotFoundException;
+use Gzhegow\Orm\Core\Model\Traits\Relation\RelationFactoryTrait;
+use Gzhegow\Orm\Exception\Exception\Resource\ResourceNotFoundException;
 
 
 abstract class EloquentModel extends EloquentModelBase

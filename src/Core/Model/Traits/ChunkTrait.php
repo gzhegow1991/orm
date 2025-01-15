@@ -1,10 +1,10 @@
 <?php
 
-namespace Gzhegow\Database\Core\Model\Traits;
+namespace Gzhegow\Orm\Core\Model\Traits;
 
-use Gzhegow\Database\Core\Query\Chunks\ChunksBuilder;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
+use Gzhegow\Orm\Core\Query\Chunks\ChunksBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 
 
 /**

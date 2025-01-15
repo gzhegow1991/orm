@@ -1,14 +1,14 @@
 <?php
 
-namespace Gzhegow\Database\Core\Query\Chunks;
+namespace Gzhegow\Orm\Core\Query\Chunks;
 
-use Gzhegow\Database\Exception\LogicException;
-use Gzhegow\Database\Exception\RuntimeException;
+use Gzhegow\Orm\Exception\LogicException;
+use Gzhegow\Orm\Exception\RuntimeException;
 use Illuminate\Support\Collection as EloquentSupportCollection;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
-use Gzhegow\Database\Package\Illuminate\Database\EloquentPdoQueryBuilder;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
 
 /**

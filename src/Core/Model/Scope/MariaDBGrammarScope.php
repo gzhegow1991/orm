@@ -1,11 +1,11 @@
 <?php
 
-namespace Gzhegow\Database\Core\Model\Scope;
+namespace Gzhegow\Orm\Core\Model\Scope;
 
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\Model as EloquentModelBase;
 use Illuminate\Database\Eloquent\Builder as EloquentModelQueryBuilderBase;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
 
 /**

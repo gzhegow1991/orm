@@ -16,7 +16,7 @@
 
     "autoload": {
         "psr-4": {
-            "Gzhegow\\Database\\": "src/"
+            "Gzhegow\\Orm\\": "src/"
         }
     },
 

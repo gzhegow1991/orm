@@ -1,9 +1,9 @@
 <?php
 
-namespace Gzhegow\Database\Core\Model\Traits\Grammar;
+namespace Gzhegow\Orm\Core\Model\Traits\Grammar;
 
-use Gzhegow\Database\Core\Model\Scope\MariaDBGrammarScope;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Core\Model\Scope\MariaDBGrammarScope;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
 /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Gzhegow\Database\Core\Model\Interfaces;
+namespace Gzhegow\Orm\Core\Model\Interfaces;
 
 interface SoftDeletesInterface
 {

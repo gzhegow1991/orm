@@ -1,6 +1,6 @@
 <?php
 
-namespace Gzhegow\Database\Package\Illuminate\Database\Capsule;
+namespace Gzhegow\Orm\Package\Illuminate\Database\Capsule;
 
 /**
  * @mixin Eloquent

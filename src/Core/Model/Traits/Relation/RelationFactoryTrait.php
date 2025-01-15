@@ -1,11 +1,11 @@
 <?php
 
-namespace Gzhegow\Database\Core\Model\Traits\Relation;
+namespace Gzhegow\Orm\Core\Model\Traits\Relation;
 
-use Gzhegow\Database\Core\Orm;
-use Gzhegow\Database\Exception\RuntimeException;
+use Gzhegow\Orm\Core\Orm;
+use Gzhegow\Orm\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
-use Gzhegow\Database\Core\Relation\Factory\EloquentRelationFactory;
+use Gzhegow\Orm\Core\Relation\Factory\EloquentRelationFactory;
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\Builder as EloquentQueryBuilder;
 

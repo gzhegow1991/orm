@@ -1,16 +1,16 @@
 <?php
 
-namespace Gzhegow\Database\Core;
+namespace Gzhegow\Orm\Core;
 
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Grammars\Grammar;
 use Illuminate\Database\Query\Processors\Processor;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
-use Gzhegow\Database\Package\Illuminate\Database\EloquentPdoQueryBuilder;
-use Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBuilder;
-use Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
 
 interface OrmFactoryInterface

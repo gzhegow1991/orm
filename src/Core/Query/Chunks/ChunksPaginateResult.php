@@ -1,6 +1,6 @@
 <?php
 
-namespace Gzhegow\Database\Core\Query\Chunks;
+namespace Gzhegow\Orm\Core\Query\Chunks;
 
 use Gzhegow\Lib\Modules\BoolModule;
 

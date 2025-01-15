@@ -1,10 +1,10 @@
 <?php
 
-namespace Gzhegow\Database\Core\Query\PdoQuery\Traits;
+namespace Gzhegow\Orm\Core\Query\PdoQuery\Traits;
 
-use Gzhegow\Database\Core\Query\Chunks\ChunksBuilder;
+use Gzhegow\Orm\Core\Query\Chunks\ChunksBuilder;
 use Illuminate\Support\Collection as EloquentSupportCollection;
-use Gzhegow\Database\Package\Illuminate\Database\EloquentPdoQueryBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 
 
 /**

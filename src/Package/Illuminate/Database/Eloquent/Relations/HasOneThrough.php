@@ -1,8 +1,8 @@
 <?php
 
-namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations;
+namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations;
 
-use Gzhegow\Database\Core\Relation\Traits\HasRelationNameTrait;
+use Gzhegow\Orm\Core\Relation\Traits\HasRelationNameTrait;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough as HasOneThroughBase;
 
 

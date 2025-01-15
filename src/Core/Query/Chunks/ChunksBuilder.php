@@ -1,15 +1,15 @@
 <?php
 
-namespace Gzhegow\Database\Core\Query\Chunks;
+namespace Gzhegow\Orm\Core\Query\Chunks;
 
 use Gzhegow\Lib\Lib;
-use Gzhegow\Database\Core\Orm;
+use Gzhegow\Orm\Core\Orm;
 use Gzhegow\Lib\Modules\BoolModule;
-use Gzhegow\Database\Exception\LogicException;
-use Gzhegow\Database\Exception\RuntimeException;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
-use Gzhegow\Database\Package\Illuminate\Database\EloquentPdoQueryBuilder;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
+use Gzhegow\Orm\Exception\LogicException;
+use Gzhegow\Orm\Exception\RuntimeException;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
 
 /**

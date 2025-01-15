@@ -1,9 +1,9 @@
 <?php
 
-namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations;
+namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
 
 /**

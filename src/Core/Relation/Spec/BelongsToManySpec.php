@@ -1,10 +1,10 @@
 <?php
 
-namespace Gzhegow\Database\Core\Relation\Spec;
+namespace Gzhegow\Orm\Core\Relation\Spec;
 
 use Gzhegow\Lib\Modules\BoolModule;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
 
 /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Gzhegow\Database\Package\Illuminate\Database\Schema;
+namespace Gzhegow\Orm\Package\Illuminate\Database\Schema;
 
 use Gzhegow\Lib\Delegate\Delegate;
 use Illuminate\Database\Schema\Builder as EloquentSchemaBuilderBase;

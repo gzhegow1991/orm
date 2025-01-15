@@ -1,16 +1,15 @@
 <?php
 
-namespace Gzhegow\Database\Core\Model\Traits;
+namespace Gzhegow\Orm\Core\Model\Traits;
 
-use Gzhegow\Lib\Lib;
 use Illuminate\Contracts\Support\Arrayable;
-use Gzhegow\Database\Exception\RuntimeException;
+use Gzhegow\Orm\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Illuminate\Database\Eloquent\Concerns\HidesAttributes;
 use Illuminate\Database\Eloquent\Concerns\GuardsAttributes;
-use Gzhegow\Database\Exception\Runtime\BadMethodCallException;
-use Gzhegow\Database\Package\Illuminate\Database\Capsule\Eloquent;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Exception\Runtime\BadMethodCallException;
+use Gzhegow\Orm\Package\Illuminate\Database\Capsule\Eloquent;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
 /**

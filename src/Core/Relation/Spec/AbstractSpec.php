@@ -1,9 +1,9 @@
 <?php
 
-namespace Gzhegow\Database\Core\Relation\Spec;
+namespace Gzhegow\Orm\Core\Relation\Spec;
 
 use Gzhegow\Lib\Lib;
-use Gzhegow\Database\Exception\RuntimeException;
+use Gzhegow\Orm\Exception\RuntimeException;
 
 
 abstract class AbstractSpec

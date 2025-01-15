@@ -1,8 +1,8 @@
 <?php
 
-namespace Gzhegow\Database\Exception\Runtime;
+namespace Gzhegow\Orm\Exception\Runtime;
 
-use Gzhegow\Database\Exception\RuntimeException;
+use Gzhegow\Orm\Exception\RuntimeException;
 
 
 class DatabaseException extends RuntimeException

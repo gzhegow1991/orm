@@ -1,9 +1,9 @@
 <?php
 
-namespace Gzhegow\Database\Core\Query\PdoQuery\Traits;
+namespace Gzhegow\Orm\Core\Query\PdoQuery\Traits;
 
-use Gzhegow\Database\Core\Orm;
-use Gzhegow\Database\Package\Illuminate\Database\EloquentPdoQueryBuilder;
+use Gzhegow\Orm\Core\Orm;
+use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 
 
 /**

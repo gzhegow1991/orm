@@ -1,11 +1,11 @@
 <?php
 
-namespace Gzhegow\Database\Core\Model\Traits;
+namespace Gzhegow\Orm\Core\Model\Traits;
 
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilder;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
 
 /**

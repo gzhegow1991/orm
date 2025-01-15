@@ -1,13 +1,13 @@
 <?php
 
-namespace Gzhegow\Database\Package\Illuminate\Database\Capsule;
+namespace Gzhegow\Orm\Package\Illuminate\Database\Capsule;
 
-use Gzhegow\Database\Core\Orm;
+use Gzhegow\Orm\Core\Orm;
 use Illuminate\Database\ConnectionInterface;
-use Gzhegow\Database\Exception\LogicException;
-use Gzhegow\Database\Exception\RuntimeException;
+use Gzhegow\Orm\Exception\LogicException;
+use Gzhegow\Orm\Exception\RuntimeException;
 use Illuminate\Database\Capsule\Manager as EloquentBase;
-use Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBuilder;
 
 
 class Eloquent extends EloquentBase implements

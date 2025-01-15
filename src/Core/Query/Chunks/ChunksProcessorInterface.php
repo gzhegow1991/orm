@@ -1,10 +1,10 @@
 <?php
 
-namespace Gzhegow\Database\Core\Query\Chunks;
+namespace Gzhegow\Orm\Core\Query\Chunks;
 
 use Illuminate\Support\Collection as EloquentSupportCollection;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 
 
 /**

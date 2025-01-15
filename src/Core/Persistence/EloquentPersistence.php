@@ -1,17 +1,17 @@
 <?php
 
-namespace Gzhegow\Database\Core\Persistence;
+namespace Gzhegow\Orm\Core\Persistence;
 
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
-use Gzhegow\Database\Exception\Runtime\DatabaseException;
+use Gzhegow\Orm\Exception\Runtime\DatabaseException;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilder;
-use Gzhegow\Database\Package\Illuminate\Database\Capsule\Eloquent;
+use Gzhegow\Orm\Package\Illuminate\Database\Capsule\Eloquent;
 use Illuminate\Database\Eloquent\Builder as EloquentModelQueryBuilder;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
 class EloquentPersistence implements EloquentPersistenceInterface

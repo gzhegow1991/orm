@@ -1,9 +1,9 @@
 <?php
 
-namespace Gzhegow\Database\Core\Model\Traits\Grammar;
+namespace Gzhegow\Orm\Core\Model\Traits\Grammar;
 
-use Gzhegow\Database\Exception\RuntimeException;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Exception\RuntimeException;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
 /**

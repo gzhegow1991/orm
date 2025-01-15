@@ -1,6 +1,6 @@
 <?php
 
-namespace Gzhegow\Database\Exception;
+namespace Gzhegow\Orm\Exception;
 
 interface ExceptionInterface
 {

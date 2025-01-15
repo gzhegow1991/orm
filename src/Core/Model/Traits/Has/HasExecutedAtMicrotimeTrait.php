@@ -1,9 +1,9 @@
 <?php
 
-namespace Gzhegow\Database\Core\Model\Traits\Has;
+namespace Gzhegow\Orm\Core\Model\Traits\Has;
 
 use Gzhegow\Calendar\Calendar;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
 /**

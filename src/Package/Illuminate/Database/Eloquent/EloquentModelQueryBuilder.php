@@ -1,19 +1,19 @@
 <?php
 
-namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent;
+namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent;
 
 use Gzhegow\Lib\Lib;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
-use Gzhegow\Database\Exception\LogicException;
+use Gzhegow\Orm\Exception\LogicException;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Gzhegow\Database\Core\Query\ModelQuery\Traits\ChunkTrait;
+use Gzhegow\Orm\Core\Query\ModelQuery\Traits\ChunkTrait;
 use Illuminate\Support\Collection as EloquentSupportCollection;
-use Gzhegow\Database\Core\Query\ModelQuery\Traits\ColumnsTrait;
+use Gzhegow\Orm\Core\Query\ModelQuery\Traits\ColumnsTrait;
 use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilder;
-use Gzhegow\Database\Core\Query\ModelQuery\Traits\PersistenceTrait;
+use Gzhegow\Orm\Core\Query\ModelQuery\Traits\PersistenceTrait;
 use Illuminate\Database\Eloquent\Builder as EloquentQueryBuilderBase;
-use Gzhegow\Database\Exception\Exception\Resource\ResourceNotFoundException;
+use Gzhegow\Orm\Exception\Exception\Resource\ResourceNotFoundException;
 
 
 /**

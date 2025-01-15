@@ -1,6 +1,6 @@
 <?php
 
-namespace Gzhegow\Database\Core\Persistence;
+namespace Gzhegow\Orm\Core\Persistence;
 
 
 use Illuminate\Database\Connection;
@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentModelQueryBuilder;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
 interface EloquentPersistenceInterface

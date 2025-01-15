@@ -1,9 +1,9 @@
 <?php
 
-namespace Gzhegow\Database\Core\Model\Traits\Relation;
+namespace Gzhegow\Orm\Core\Model\Traits\Relation;
 
-use Gzhegow\Database\Exception\LogicException;
-use Gzhegow\Database\Exception\RuntimeException;
+use Gzhegow\Orm\Exception\LogicException;
+use Gzhegow\Orm\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -11,9 +11,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\RelationInterface;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\RelationInterface;
 
 
 /**

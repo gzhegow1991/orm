@@ -1,9 +1,9 @@
 <?php
 
-namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent;
+namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent;
 
-use Gzhegow\Database\Exception\LogicException;
-use Gzhegow\Database\Exception\RuntimeException;
+use Gzhegow\Orm\Exception\LogicException;
+use Gzhegow\Orm\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Collection as EloquentModelCollectionBase;
 
 

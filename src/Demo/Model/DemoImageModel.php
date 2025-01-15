@@ -1,10 +1,10 @@
 <?php
 
-namespace Gzhegow\Database\Demo\Model;
+namespace Gzhegow\Orm\Demo\Model;
 
-use Gzhegow\Database\Core\Model\Traits\Has\HasIdTrait;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\MorphTo;
+use Gzhegow\Orm\Core\Model\Traits\Has\HasIdTrait;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\MorphTo;
 
 
 /**

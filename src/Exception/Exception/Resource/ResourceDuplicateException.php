@@ -1,8 +1,8 @@
 <?php
 
-namespace Gzhegow\Database\Exception\Exception\Resource;
+namespace Gzhegow\Orm\Exception\Exception\Resource;
 
-use Gzhegow\Database\Exception\Exception;
+use Gzhegow\Orm\Exception\Exception;
 
 
 class ResourceDuplicateException extends Exception

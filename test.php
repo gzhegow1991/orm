@@ -79,14 +79,14 @@ function _assert_microtime(
 // >>> ЗАПУСКАЕМ!
 
 // > сначала всегда фабрика
-$factory = new \Gzhegow\Database\Core\OrmFactory();
+$factory = new \Gzhegow\Orm\Core\OrmFactory();
 
 // > создаем контейнер для Eloquent (не обязательно)
 // $illuminateContainer = new \Illuminate\Container\Container();
 $illuminateContainer = null;
 
 // > создаем экземпляр Eloquent
-$eloquent = new \Gzhegow\Database\Package\Illuminate\Database\Capsule\Eloquent(
+$eloquent = new \Gzhegow\Orm\Package\Illuminate\Database\Capsule\Eloquent(
     $illuminateContainer
 );
 
@@ -157,12 +157,12 @@ $eloquent->bootEloquent();
 // });
 
 // > создаем Persistence для Eloquent (с помощью него будем откладывать выполнение запросов в очередь, уменьшая время транзакции)
-$eloquentPersistence = new \Gzhegow\Database\Core\Persistence\EloquentPersistence(
+$eloquentPersistence = new \Gzhegow\Orm\Core\Persistence\EloquentPersistence(
     $eloquent
 );
 
 // > создаем фасад
-$facade = new \Gzhegow\Database\Core\OrmFacade(
+$facade = new \Gzhegow\Orm\Core\OrmFacade(
     $factory,
     //
     $eloquent,
@@ -170,19 +170,19 @@ $facade = new \Gzhegow\Database\Core\OrmFacade(
 );
 
 // > устанавливаем фасад
-\Gzhegow\Database\Core\Orm::setFacade($facade);
+\Gzhegow\Orm\Core\Orm::setFacade($facade);
 
 
 $conn = $eloquent->getConnection();
 $schema = $eloquent->getSchemaBuilder($conn);
 
-$modelClassDemoBar = \Gzhegow\Database\Demo\Model\DemoBarModel::class;
-$modelClassDemoBaz = \Gzhegow\Database\Demo\Model\DemoBazModel::class;
-$modelClassDemoFoo = \Gzhegow\Database\Demo\Model\DemoFooModel::class;
-$modelClassDemoImage = \Gzhegow\Database\Demo\Model\DemoImageModel::class;
-$modelClassDemoPost = \Gzhegow\Database\Demo\Model\DemoPostModel::class;
-$modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
-$modelClassDemoUser = \Gzhegow\Database\Demo\Model\DemoUserModel::class;
+$modelClassDemoBar = \Gzhegow\Orm\Demo\Model\DemoBarModel::class;
+$modelClassDemoBaz = \Gzhegow\Orm\Demo\Model\DemoBazModel::class;
+$modelClassDemoFoo = \Gzhegow\Orm\Demo\Model\DemoFooModel::class;
+$modelClassDemoImage = \Gzhegow\Orm\Demo\Model\DemoImageModel::class;
+$modelClassDemoPost = \Gzhegow\Orm\Demo\Model\DemoPostModel::class;
+$modelClassDemoTag = \Gzhegow\Orm\Demo\Model\DemoTagModel::class;
+$modelClassDemoUser = \Gzhegow\Orm\Demo\Model\DemoUserModel::class;
 
 $tableDemoBar = $modelClassDemoBar::table();
 $tableDemoBaz = $modelClassDemoBaz::table();
@@ -203,7 +203,7 @@ $schema->enableForeignKeyConstraints();
 // > создаем таблицы поновой
 $schema->create(
     $tableDemoFoo,
-    static function (\Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) {
+    static function (\Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) {
         $blueprint->bigIncrements('id');
         //
         $blueprint->string('name')->nullable();
@@ -212,7 +212,7 @@ $schema->create(
 
 $schema->create(
     $tableDemoBar,
-    static function (\Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) use (
+    static function (\Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) use (
         $tableDemoFoo
     ) {
         $blueprint->bigIncrements('id');
@@ -232,7 +232,7 @@ $schema->create(
 
 $schema->create(
     $tableDemoBaz,
-    static function (\Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) use (
+    static function (\Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) use (
         $tableDemoBar
     ) {
         $blueprint->bigIncrements('id');
@@ -253,7 +253,7 @@ $schema->create(
 
 $schema->create(
     $tableDemoImage,
-    static function (\Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) use (
+    static function (\Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) use (
         $tableDemoImage
     ) {
         $blueprint->bigIncrements('id');
@@ -266,7 +266,7 @@ $schema->create(
 
 $schema->create(
     $tableDemoPost,
-    static function (\Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) use (
+    static function (\Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) use (
         $tableDemoPost
     ) {
         $blueprint->bigIncrements('id');
@@ -277,7 +277,7 @@ $schema->create(
 
 $schema->create(
     $tableDemoUser,
-    static function (\Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) use (
+    static function (\Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) use (
         $tableDemoUser
     ) {
         $blueprint->bigIncrements('id');
@@ -288,7 +288,7 @@ $schema->create(
 
 $schema->create(
     $tableDemoTag,
-    static function (\Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) use (
+    static function (\Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) use (
         $tableDemoTag
     ) {
         $blueprint->bigIncrements('id');
@@ -299,7 +299,7 @@ $schema->create(
 
 $schema->create(
     $tableTaggable,
-    static function (\Gzhegow\Database\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) use (
+    static function (\Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint $blueprint) use (
         $tableTaggable
     ) {
         $blueprint->bigInteger('tag_id')->nullable()->unsigned();
@@ -319,9 +319,9 @@ $fn = function () use (
     echo PHP_EOL;
 
 
-    $modelClassDemoFoo = \Gzhegow\Database\Demo\Model\DemoFooModel::class;
-    $modelClassDemoBar = \Gzhegow\Database\Demo\Model\DemoBarModel::class;
-    $modelClassDemoBaz = \Gzhegow\Database\Demo\Model\DemoBazModel::class;
+    $modelClassDemoFoo = \Gzhegow\Orm\Demo\Model\DemoFooModel::class;
+    $modelClassDemoBar = \Gzhegow\Orm\Demo\Model\DemoBarModel::class;
+    $modelClassDemoBaz = \Gzhegow\Orm\Demo\Model\DemoBazModel::class;
 
     $schema->disableForeignKeyConstraints();
     $modelClassDemoFoo::query()->truncate();
@@ -377,12 +377,12 @@ $fn = function () use (
 _assert_output($fn, '
 "[ TEST 1 ]"
 
-{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 1 | 2
-{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 1 | "1"
 2 | "2"
-{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 1 | "1"
 2 | "2"
 ');
@@ -399,9 +399,9 @@ $fn = function () use (
     echo PHP_EOL;
 
 
-    $modelClassDemoFoo = \Gzhegow\Database\Demo\Model\DemoFooModel::class;
-    $modelClassDemoBar = \Gzhegow\Database\Demo\Model\DemoBarModel::class;
-    $modelClassDemoBaz = \Gzhegow\Database\Demo\Model\DemoBazModel::class;
+    $modelClassDemoFoo = \Gzhegow\Orm\Demo\Model\DemoFooModel::class;
+    $modelClassDemoBar = \Gzhegow\Orm\Demo\Model\DemoBarModel::class;
+    $modelClassDemoBaz = \Gzhegow\Orm\Demo\Model\DemoBazModel::class;
 
     $schema->disableForeignKeyConstraints();
     $modelClassDemoFoo::query()->truncate();
@@ -439,7 +439,7 @@ $fn = function () use (
     $foo4->persistForSaveRecursive();
 
 
-    \Gzhegow\Database\Core\Orm::eloquentPersistence()->flush();
+    \Gzhegow\Orm\Core\Orm::eloquentPersistence()->flush();
 
 
     $fooCollection = $modelClassDemoFoo::query()->get([ '*' ]);
@@ -460,12 +460,12 @@ $fn = function () use (
 _assert_output($fn, '
 "[ TEST 2 ]"
 
-{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 1 | 2
-{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 1 | "1"
 2 | "2"
-{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 1 | "1"
 2 | "2"
 ');
@@ -481,10 +481,10 @@ $fn = function () use (
     echo PHP_EOL;
 
 
-    $modelClassDemoPost = \Gzhegow\Database\Demo\Model\DemoPostModel::class;
-    $modelClassDemoUser = \Gzhegow\Database\Demo\Model\DemoUserModel::class;
-    $modelClassDemoImage = \Gzhegow\Database\Demo\Model\DemoImageModel::class;
-    $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
+    $modelClassDemoPost = \Gzhegow\Orm\Demo\Model\DemoPostModel::class;
+    $modelClassDemoUser = \Gzhegow\Orm\Demo\Model\DemoUserModel::class;
+    $modelClassDemoImage = \Gzhegow\Orm\Demo\Model\DemoImageModel::class;
+    $modelClassDemoTag = \Gzhegow\Orm\Demo\Model\DemoTagModel::class;
 
     $schema->disableForeignKeyConstraints();
     $modelClassDemoPost::query()->truncate();
@@ -517,7 +517,7 @@ $fn = function () use (
     $image1->persistForSaveRecursive();
     $image2->persistForSaveRecursive();
 
-    \Gzhegow\Database\Core\Orm::eloquentPersistence()->flush();
+    \Gzhegow\Orm\Core\Orm::eloquentPersistence()->flush();
 
 
     $imageQuery = $image1::query()
@@ -579,7 +579,7 @@ $fn = function () use (
         $tag2,
     ]);
 
-    \Gzhegow\Database\Core\Orm::eloquentPersistence()->flush();
+    \Gzhegow\Orm\Core\Orm::eloquentPersistence()->flush();
 
 
     $tagQuery = $modelClassDemoTag::query()
@@ -618,24 +618,24 @@ $fn = function () use (
 _assert_output($fn, '
 "[ TEST 3 ]"
 
-{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(stringable) # Gzhegow\Database\Demo\Model\DemoImageModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoPostModel }
+{ object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(stringable) # Gzhegow\Orm\Demo\Model\DemoImageModel } | { object(stringable) # Gzhegow\Orm\Demo\Model\DemoPostModel }
 
-{ object(countable(1) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(stringable) # Gzhegow\Database\Demo\Model\DemoPostModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoImageModel }
+{ object(countable(1) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(stringable) # Gzhegow\Orm\Demo\Model\DemoPostModel } | { object(stringable) # Gzhegow\Orm\Demo\Model\DemoImageModel }
 
-{ object(countable(1) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(stringable) # Gzhegow\Database\Demo\Model\DemoUserModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoImageModel }
+{ object(countable(1) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(stringable) # Gzhegow\Orm\Demo\Model\DemoUserModel } | { object(stringable) # Gzhegow\Orm\Demo\Model\DemoImageModel }
 
-{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(stringable) # Gzhegow\Database\Demo\Model\DemoTagModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoPostModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoUserModel }
-{ object(stringable) # Gzhegow\Database\Demo\Model\DemoTagModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoPostModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoUserModel }
+{ object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(stringable) # Gzhegow\Orm\Demo\Model\DemoTagModel } | { object(stringable) # Gzhegow\Orm\Demo\Model\DemoPostModel } | { object(stringable) # Gzhegow\Orm\Demo\Model\DemoUserModel }
+{ object(stringable) # Gzhegow\Orm\Demo\Model\DemoTagModel } | { object(stringable) # Gzhegow\Orm\Demo\Model\DemoPostModel } | { object(stringable) # Gzhegow\Orm\Demo\Model\DemoUserModel }
 
-{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(stringable) # Gzhegow\Database\Demo\Model\DemoPostModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoTagModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoTagModel }
+{ object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(stringable) # Gzhegow\Orm\Demo\Model\DemoPostModel } | { object(stringable) # Gzhegow\Orm\Demo\Model\DemoTagModel } | { object(stringable) # Gzhegow\Orm\Demo\Model\DemoTagModel }
 
-{ object(countable(2) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(stringable) # Gzhegow\Database\Demo\Model\DemoUserModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoTagModel } | { object(stringable) # Gzhegow\Database\Demo\Model\DemoTagModel }
+{ object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(stringable) # Gzhegow\Orm\Demo\Model\DemoUserModel } | { object(stringable) # Gzhegow\Orm\Demo\Model\DemoTagModel } | { object(stringable) # Gzhegow\Orm\Demo\Model\DemoTagModel }
 ');
 
 
@@ -650,7 +650,7 @@ $fn = function () use (
     echo PHP_EOL;
 
 
-    $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
+    $modelClassDemoTag = \Gzhegow\Orm\Demo\Model\DemoTagModel::class;
 
     $schema->disableForeignKeyConstraints();
     $modelClassDemoTag::query()->truncate();
@@ -688,7 +688,7 @@ $fn = function () use (
     echo PHP_EOL;
 
 
-    $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
+    $modelClassDemoTag = \Gzhegow\Orm\Demo\Model\DemoTagModel::class;
 
     $schema->disableForeignKeyConstraints();
     $modelClassDemoTag::query()->truncate();
@@ -726,16 +726,16 @@ _assert_output($fn, '
 "[ TEST 5 ]"
 
 "chunkModelNativeForeach"
-{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(25) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(25) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(25) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(25) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 
 "chunkModelAfterForeach"
-{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
-{ object(countable(25) iterable stringable) # Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(25) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(25) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(25) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
+{ object(countable(25) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 ');
 
 
@@ -750,7 +750,7 @@ $fn = function () use (
     echo PHP_EOL;
 
 
-    $modelClassDemoTag = \Gzhegow\Database\Demo\Model\DemoTagModel::class;
+    $modelClassDemoTag = \Gzhegow\Orm\Demo\Model\DemoTagModel::class;
 
     $schema->disableForeignKeyConstraints();
     $modelClassDemoTag::query()->truncate();
@@ -869,35 +869,35 @@ $fn = function () use ($eloquent) {
     echo PHP_EOL;
 
 
-    $foo_hasMany_bars_hasMany_bazs = \Gzhegow\Database\Core\Orm::relationDot()
-    ([ \Gzhegow\Database\Demo\Model\DemoFooModel::class, '_demoBars' ])
-    ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoBazs' ])
+    $foo_hasMany_bars_hasMany_bazs = \Gzhegow\Orm\Core\Orm::relationDot()
+    ([ \Gzhegow\Orm\Demo\Model\DemoFooModel::class, '_demoBars' ])
+    ([ \Gzhegow\Orm\Demo\Model\DemoBarModel::class, '_demoBazs' ])
     ();
     _dump($foo_hasMany_bars_hasMany_bazs);
 
-    $bar_belongsTo_foo = \Gzhegow\Database\Demo\Model\DemoBarModel::relationDot()
-    ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoFoo' ])
+    $bar_belongsTo_foo = \Gzhegow\Orm\Demo\Model\DemoBarModel::relationDot()
+    ([ \Gzhegow\Orm\Demo\Model\DemoBarModel::class, '_demoFoo' ])
     ();
     _dump($bar_belongsTo_foo);
 
-    $bar_hasMany_bazs = \Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
-    ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoBazs' ])
+    $bar_hasMany_bazs = \Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
+    ([ \Gzhegow\Orm\Demo\Model\DemoBarModel::class, '_demoBazs' ])
     ();
     _dump($bar_hasMany_bazs);
 
-    $bar_belongsTo_foo_only_id = \Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
-    ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoFoo' ], 'id')
+    $bar_belongsTo_foo_only_id = \Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
+    ([ \Gzhegow\Orm\Demo\Model\DemoBarModel::class, '_demoFoo' ], 'id')
     ();
     _dump($bar_belongsTo_foo_only_id);
 
-    $bar_hasMany_bazs_only_id = \Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
-    ([ \Gzhegow\Database\Demo\Model\DemoBarModel::class, '_demoBazs' ], 'id')
+    $bar_hasMany_bazs_only_id = \Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
+    ([ \Gzhegow\Orm\Demo\Model\DemoBarModel::class, '_demoBazs' ], 'id')
     ();
     _dump($bar_hasMany_bazs_only_id);
 
     // > ПРИМЕР
     // > Делаем запрос со связями
-    // $query = \Gzhegow\Database\Demo\Model\DemoFooModel::query();
+    // $query = \Gzhegow\Orm\Demo\Model\DemoFooModel::query();
     // $query->with($foo_hasMany_bars_hasMany_bazs);
     // $query->with([
     //     $foo_hasMany_bars_hasMany_bazs,
@@ -906,7 +906,7 @@ $fn = function () use ($eloquent) {
     //     $foo_hasMany_bars_hasMany_bazs => static function ($query) { },
     // ]);
     //
-    // $query = \Gzhegow\Database\Demo\Model\DemoBarModel::query();
+    // $query = \Gzhegow\Orm\Demo\Model\DemoBarModel::query();
     // $query->with($bar_belongsTo_foo);
     // $query->with([
     //     $bar_belongsTo_foo,
@@ -918,7 +918,7 @@ $fn = function () use ($eloquent) {
     // ]);
 
     // > Подгружаем связи к уже полученным из базы моделям
-    // $query = \Gzhegow\Database\Demo\Model\DemoFooModel::query();
+    // $query = \Gzhegow\Orm\Demo\Model\DemoFooModel::query();
     // $model = $query->firstOrFail();
     // $model->load($foo_hasMany_bars_hasMany_bazs);
     // $model->load([
@@ -928,7 +928,7 @@ $fn = function () use ($eloquent) {
     //     $foo_hasMany_bars_hasMany_bazs => static function ($query) { },
     // ]);
     //
-    // $query = \Gzhegow\Database\Demo\Model\DemoBarModel::query();
+    // $query = \Gzhegow\Orm\Demo\Model\DemoBarModel::query();
     // $model = $query->firstOrFail();
     // $model->load($bar_belongsTo_foo);
     // $model->load([

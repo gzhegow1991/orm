@@ -1,11 +1,11 @@
 <?php
 
-namespace Gzhegow\Database\Core\Model\Traits;
+namespace Gzhegow\Orm\Core\Model\Traits;
 
 use Gzhegow\Calendar\Calendar;
-use Gzhegow\Database\Exception\RuntimeException;
+use Gzhegow\Orm\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
 /**

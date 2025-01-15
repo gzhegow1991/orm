@@ -1,13 +1,13 @@
 <?php
 
-namespace Gzhegow\Database\Package\Illuminate\Database;
+namespace Gzhegow\Orm\Package\Illuminate\Database;
 
-use Gzhegow\Database\Exception\LogicException;
-use Gzhegow\Database\Core\Query\PdoQuery\Traits\ChunkTrait;
+use Gzhegow\Orm\Exception\LogicException;
+use Gzhegow\Orm\Core\Query\PdoQuery\Traits\ChunkTrait;
 use Illuminate\Support\Collection as EloquentSupportCollection;
-use Gzhegow\Database\Core\Query\PdoQuery\Traits\PersistenceTrait;
+use Gzhegow\Orm\Core\Query\PdoQuery\Traits\PersistenceTrait;
 use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilderBase;
-use Gzhegow\Database\Exception\Exception\Resource\ResourceNotFoundException;
+use Gzhegow\Orm\Exception\Exception\Resource\ResourceNotFoundException;
 
 
 class EloquentPdoQueryBuilder extends EloquentPdoQueryBuilderBase

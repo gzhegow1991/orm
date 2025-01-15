@@ -1,10 +1,10 @@
 <?php
 
-namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations;
+namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations;
 
-use Gzhegow\Database\Core\Relation\Traits\HasRelationNameTrait;
+use Gzhegow\Orm\Core\Relation\Traits\HasRelationNameTrait;
 use Illuminate\Database\Eloquent\Relations\MorphTo as MorphToBase;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
 class MorphTo extends MorphToBase implements

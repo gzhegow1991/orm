@@ -1,10 +1,10 @@
 <?php
 
-namespace Gzhegow\Database\Core\Relation\Traits;
+namespace Gzhegow\Orm\Core\Relation\Traits;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Gzhegow\Database\Package\Illuminate\Database\Capsule\Eloquent;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\Relations\RelationInterface;
+use Gzhegow\Orm\Package\Illuminate\Database\Capsule\Eloquent;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\RelationInterface;
 
 
 /**

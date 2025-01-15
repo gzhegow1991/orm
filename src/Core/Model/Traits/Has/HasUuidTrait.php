@@ -1,10 +1,10 @@
 <?php
 
-namespace Gzhegow\Database\Core\Model\Traits\Has;
+namespace Gzhegow\Orm\Core\Model\Traits\Has;
 
 use Gzhegow\Lib\Lib;
-use Gzhegow\Database\Exception\RuntimeException;
-use Gzhegow\Database\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Exception\RuntimeException;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
 /**

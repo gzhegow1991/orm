@@ -1,6 +1,6 @@
 <?php
 
-namespace Gzhegow\Database\Package\Illuminate\Database\Eloquent\Casts;
+namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
