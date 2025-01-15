@@ -268,6 +268,7 @@ trait AttributeTrait
         return $result;
     }
 
+
     public function setRawAttribute($key, $value, $sync = false)
     {
         $this->attributes[ $key ] = $value;
@@ -302,11 +303,23 @@ trait AttributeTrait
     /**
      * @return static
      */
-    public function fill(array $attributes)
+    public function fillRawAttribute($key, $value, array $options = [])
     {
-        /** @see parent::fill() */
+        $sync = $options[ 'sync' ] ?? false;
+        $throw = $options[ 'throw' ] ?? true;
 
-        $this->fillAttributes($attributes, true);
+        if ($this->isFillable($key)) {
+            $this->setRawAttribute($key, $value, $sync);
+        }
+
+        if ($throw) {
+            throw new RuntimeException(
+                [
+                    'Attribute is not fillable: ' . $key,
+                    $this,
+                ]
+            );
+        }
 
         return $this;
     }
@@ -314,20 +327,10 @@ trait AttributeTrait
     /**
      * @return static
      */
-    public function fillPassed(array $attributes)
+    public function fillRawAttributes(array $attributes, array $options = [])
     {
-        $this->fillAttributesPassed($attributes, true);
-
-        return $this;
-    }
-
-
-    /**
-     * @return static
-     */
-    public function fillAttributes(array $attributes, bool $throw = null)
-    {
-        $throw = $throw ?? true;
+        $sync = $options[ 'sync' ] ?? false;
+        $throw = $options[ 'throw' ] ?? true;
 
         foreach ( $attributes as $attr => $value ) {
             if (! $this->isFillable($attr)) {
@@ -340,11 +343,11 @@ trait AttributeTrait
                     );
                 }
 
-                continue;
+                unset($attributes[ $attr ]);
             }
-
-            $this->setAttribute($attr, $value);
         }
+
+        $this->setRawAttributes($attributes, $sync);
 
         return $this;
     }
@@ -352,11 +355,11 @@ trait AttributeTrait
     /**
      * @return static
      */
-    public function fillAttributesPassed(array $attributes, bool $throw = null)
+    public function fill(array $attributes)
     {
-        $_attributes = Lib::bool()->passed($attributes);
+        /** @see parent::fill() */
 
-        $this->fillAttributes($_attributes, $throw);
+        $this->fillRawAttributes($attributes, [ 'throw' => true ]);
 
         return $this;
     }
