@@ -15,14 +15,20 @@ trait HasCreatedAtTrait
 {
     public function setCreatedAt($createdAt) : void
     {
-        $_createdAt = Calendar::dateTimeImmutable($createdAt);
+        $_createdAt = $createdAt;
 
-        $this->created_at = $_createdAt;
+        if (null !== $_createdAt) {
+            $_createdAt = Calendar::dateTimeImmutable($_createdAt);
+        }
+
+        $this->attributes[ 'created_at' ] = $_createdAt;
     }
 
     public function setupCreatedAt($createdAt = null) : string
     {
-        if (null === $this->created_at) {
+        $current = $this->attributes[ 'created_at' ] ?? null;
+
+        if (null === $current) {
             if (null === $createdAt) {
                 $_createdAt = Calendar::nowImmutable();
 
@@ -30,7 +36,7 @@ trait HasCreatedAtTrait
                 $_createdAt = Calendar::dateTimeImmutable($createdAt);
             }
 
-            $this->created_at = $_createdAt;
+            $this->attributes[ 'created_at' ] = $_createdAt;
         }
 
         return $this->created_at;

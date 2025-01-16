@@ -15,21 +15,21 @@ trait HasExecutedAtMicrotimeTrait
 {
     public function setExecutedAtMicrotime($executedAtMicrotime) : void
     {
-        if (null === $executedAtMicrotime) {
-            $_executedAtMicrotime = $executedAtMicrotime;
+        $_executedAtMicrotime = $executedAtMicrotime;
 
-        } else {
-            $_executedAt = Calendar::dateTimeImmutable($executedAtMicrotime);
-
+        if (null !== $_executedAtMicrotime) {
+            $_executedAt = Calendar::dateTimeImmutable($_executedAtMicrotime);
             $_executedAtMicrotime = Calendar::formatMicroseconds($_executedAt);
         }
 
-        $this->executed_at_microtime = $_executedAtMicrotime;
+        $this->attributes[ 'executed_at_microtime' ] = $_executedAtMicrotime;
     }
 
     public function setupExecutedAtMicrotime($executedAtMicrotime = null) : string
     {
-        if (null === $this->executed_at_microtime) {
+        $current = $this->attributes[ 'executed_at_microtime' ] ?? null;
+
+        if (null === $current) {
             if (null === $executedAtMicrotime) {
                 $_executedAt = Calendar::nowImmutable();
 
@@ -37,7 +37,7 @@ trait HasExecutedAtMicrotimeTrait
                 $_executedAt = Calendar::dateTimeImmutable($executedAtMicrotime);
             }
 
-            $this->executed_at_microtime = Calendar::formatMicroseconds($_executedAt);
+            $this->attributes[ 'executed_at_microtime' ] = Calendar::formatMicroseconds($_executedAt);
         }
 
         return $this->executed_at_microtime;

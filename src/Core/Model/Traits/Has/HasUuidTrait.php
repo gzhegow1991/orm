@@ -17,14 +17,8 @@ trait HasUuidTrait
     public function getUuid() : string
     {
         $uuid = null
-            ?? Lib::parse()->int_positive($this->attributes[ 'uuid' ] ?? null)
-            ?? Lib::parse()->string_not_empty($this->attributes[ 'uuid' ] ?? null);
-
-        if (null === $uuid) {
-            throw new RuntimeException(
-                'The `uuid` is empty'
-            );
-        }
+            ?? Lib::parse()->string_not_empty($this->attributes[ 'uuid' ] ?? null)
+            ?? Lib::php()->throw([ 'The `uuid` is empty' ]);
 
         return $uuid;
     }
@@ -38,13 +32,8 @@ trait HasUuidTrait
     public function setUuid($uuid) : void
     {
         $_uuid = null
-            ?? Lib::parse()->string_not_empty($uuid);
-
-        if (null === $_uuid) {
-            throw new RuntimeException(
-                'The `uuid` is empty'
-            );
-        }
+            ?? Lib::parse()->string_not_empty($uuid)
+            ?? Lib::php()->throw([ 'The `uuid` should be non-empty string' ]);
 
         $this->attributes[ 'uuid' ] = $_uuid;
     }
@@ -53,7 +42,7 @@ trait HasUuidTrait
     {
         $current = $this->attributes[ 'uuid' ] ?? null;
 
-        if (! $current) {
+        if (null === $current) {
             $_uuid = null
                 ?? Lib::parse()->string_not_empty($uuid)
                 ?? Lib::random()->uuid();
