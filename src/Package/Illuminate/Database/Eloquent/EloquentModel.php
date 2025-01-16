@@ -55,18 +55,18 @@ abstract class EloquentModel extends EloquentModelBase
     // >>> strict mode
     /**
      * > позволяет отключить `casts` и динамические аттрибуты, то есть использовать только те, которые были получены из БД
-     * > `false|null` -> вернет null; `true` -> бросит исключение
+     * > `false` -> вернет null; `true` -> бросит исключение
      */
     public $preventsLazyGet = true;
     /**
      * > позволяет гарантировать, что полученная из БД модель не будет изменяться напрямую с помощью __set()/__offsetSet()
-     * > модель нужно будет создавать со свойством `recentlyCreated = true` или использовать ->fill() для проставления значений
-     * > `false|null` -> действие будет пропущено; `true` -> бросит исключение
+     * > модель нужно будет обновлять с помощью ->fill($array) для проставления значений
+     * > `false` -> свойство будет обновлено; `true` -> бросит исключение
      */
-    public $preventsLazySet = true;
+    public $preventsLazySet = false;
     /**
      * > позволяет отключить ленивый запрос по связи, если связь не была запрошена явно через $query->with() или $model->load()
-     * > `null` -> вернет null|default; `false` -> выполнит SQL SELECT; `true` -> бросит исключение
+     * > `null` -> вернет null|`default`; `false` -> выполнит SQL SELECT; `true` -> бросит исключение
      */
     public $preventsLazyLoading = null;
 
