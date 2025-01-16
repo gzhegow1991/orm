@@ -271,7 +271,7 @@ abstract class EloquentModel extends EloquentModelBase
                     if (! $existsAttribute) {
                         $existsGetter = $this->isModelAttributeGetterExists($offset);
 
-                        if (! $existsGetter) {
+                        if ($existsGetter) {
                             throw new RuntimeException(
                                 'Attribute is missing: `' . $offset . '`.'
                                 . ' This message is shown because `preventsLazyGet` is set to TRUE'
@@ -297,7 +297,9 @@ abstract class EloquentModel extends EloquentModelBase
 
         if ($this->isModelAttribute($offset)) {
             if ($this->preventsLazySet) {
-                if (! $this->recentlyCreated) {
+                $existsAttribute = $this->isModelAttributeValueExists($offset);
+
+                if ($existsAttribute) {
                     throw new RuntimeException(
                         'Unable to set attribute due to model `preventsLazySet` is enabled: ' . $offset
                     );
