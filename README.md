@@ -1,4 +1,4 @@
-# Database
+# ORM
 
 Пакет на основе `illuminate/database` (Laravel Eloquent, в простонародье "ёлка"), доработанный с помощью функционала Persistence и некоторыми другими полезными функциями
 
