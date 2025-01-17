@@ -4,6 +4,7 @@ namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations;
 
 use Gzhegow\Orm\Core\Orm;
 use Gzhegow\Orm\Core\Relation\Traits\HasRelationNameTrait;
+use Gzhegow\Orm\Core\Persistence\EloquentPersistenceInterface;
 use Illuminate\Database\Eloquent\Relations\HasMany as HasManyBase;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
@@ -14,12 +15,19 @@ class HasMany extends HasManyBase implements
     use HasRelationNameTrait;
 
 
+    public function persistence() : EloquentPersistenceInterface
+    {
+        $persistence = Orm::eloquentPersistence();
+
+        return $persistence;
+    }
+
     /**
      * @return static
      */
     public function persistForSave(EloquentModel $model)
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = $this->persistence();
 
         $persistence->persistHasOneOrManyForSave($this, $model);
 
@@ -31,7 +39,7 @@ class HasMany extends HasManyBase implements
      */
     public function persistForSaveMany($models)
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = $this->persistence();
 
         $persistence->persistHasOneOrManyForSaveMany($this, $models);
 

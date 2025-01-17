@@ -3,6 +3,7 @@
 namespace Gzhegow\Orm\Core\Query\PdoQuery\Traits;
 
 use Gzhegow\Orm\Core\Orm;
+use Gzhegow\Orm\Core\Persistence\EloquentPersistenceInterface;
 use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 
 
@@ -11,12 +12,19 @@ use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
  */
 trait PersistenceTrait
 {
+    public function persistence() : EloquentPersistenceInterface
+    {
+        $persistence = Orm::eloquentPersistence();
+
+        return $persistence;
+    }
+
     /**
      * @return static
      */
     public function persistQueryInsert(array $values)
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = $this->persistence();
 
         $persistence->persistQueryForInsert($this, $values);
 
@@ -28,7 +36,7 @@ trait PersistenceTrait
      */
     public function persistQueryUpdate(array $values)
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = $this->persistence();
 
         $persistence->persistQueryForUpdate($this, $values);
 
@@ -40,7 +48,7 @@ trait PersistenceTrait
      */
     public function persistQueryDelete()
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = $this->persistence();
 
         $persistence->persistQueryForDelete($this);
 

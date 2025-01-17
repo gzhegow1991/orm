@@ -4,6 +4,7 @@ namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations;
 
 use Gzhegow\Orm\Core\Orm;
 use Gzhegow\Orm\Core\Relation\Traits\HasRelationNameTrait;
+use Gzhegow\Orm\Core\Persistence\EloquentPersistenceInterface;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as BelongsToManyBase;
 
@@ -105,12 +106,19 @@ class BelongsToMany extends BelongsToManyBase implements
     }
 
 
+    public function persistence() : EloquentPersistenceInterface
+    {
+        $persistence = Orm::eloquentPersistence();
+
+        return $persistence;
+    }
+
     /**
      * @return static
      */
     public function persistForSave(EloquentModel $model, array $pivotAttributes = [], $touch = null)
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = $this->persistence();
 
         $persistence->persistBelongsToManyForSave($this, $model, $pivotAttributes, $touch);
 
@@ -122,7 +130,7 @@ class BelongsToMany extends BelongsToManyBase implements
      */
     public function persistForSaveMany($models, array $pivotAttributes = [])
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = $this->persistence();
 
         $persistence->persistBelongsToManyForSaveMany($this, $models, $pivotAttributes);
 
@@ -134,7 +142,7 @@ class BelongsToMany extends BelongsToManyBase implements
      */
     public function persistForSync($ids, $detaching = null)
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = $this->persistence();
 
         $persistence->persistBelongsToManyForSync($this, $ids, $detaching);
 

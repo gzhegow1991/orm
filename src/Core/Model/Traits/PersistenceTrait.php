@@ -3,6 +3,7 @@
 namespace Gzhegow\Orm\Core\Model\Traits;
 
 use Gzhegow\Orm\Core\Orm;
+use Gzhegow\Orm\Core\Persistence\EloquentPersistenceInterface;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
 
@@ -11,12 +12,19 @@ use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
  */
 trait PersistenceTrait
 {
+    public function persistence() : EloquentPersistenceInterface
+    {
+        $persistence = Orm::eloquentPersistence();
+
+        return $persistence;
+    }
+
     /**
      * @return static
      */
     public function persistForSave()
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = $this->persistence();
 
         $persistence->persistModelForSave($this);
 
@@ -28,7 +36,7 @@ trait PersistenceTrait
      */
     public function persistForDelete()
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = $this->persistence();
 
         $persistence->persistModelForDelete($this);
 
@@ -41,7 +49,7 @@ trait PersistenceTrait
      */
     public function persistForSaveRecursive()
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = $this->persistence();
 
         $persistence->persistModelForSaveRecursive($this);
 
@@ -53,7 +61,7 @@ trait PersistenceTrait
      */
     public function persistForDeleteRecursive()
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = $this->persistence();
 
         $persistence->persistModelForDeleteRecursive($this);
 

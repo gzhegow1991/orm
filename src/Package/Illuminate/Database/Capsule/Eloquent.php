@@ -3,11 +3,11 @@
 namespace Gzhegow\Orm\Package\Illuminate\Database\Capsule;
 
 use Gzhegow\Orm\Core\Orm;
-use Illuminate\Database\ConnectionInterface;
 use Gzhegow\Orm\Exception\LogicException;
 use Gzhegow\Orm\Exception\RuntimeException;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Capsule\Manager as EloquentBase;
-use Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBuilder;
+use Illuminate\Database\Schema\Builder as EloquentSchemaBuilder;
 
 
 class Eloquent extends EloquentBase implements
@@ -26,9 +26,11 @@ class Eloquent extends EloquentBase implements
      */
     public function getSchemaBuilder($connection = null) : EloquentSchemaBuilder
     {
-        $_connection = is_object($connection)
-            ? $connection
-            : $this->getConnection($connection);
+        $_connection = $connection;
+
+        if (! is_object($connection)) {
+            $_connection = $this->getConnection($connection);
+        }
 
         $schema = Orm::newEloquentSchemaBuilder($_connection);
 

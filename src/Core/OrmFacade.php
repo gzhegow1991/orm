@@ -2,18 +2,18 @@
 
 namespace Gzhegow\Orm\Core;
 
-use Illuminate\Database\ConnectionInterface;
 use Gzhegow\Orm\Exception\LogicException;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Grammars\Grammar;
 use Illuminate\Database\Query\Processors\Processor;
-use Gzhegow\Orm\Core\Relation\Factory\EloquentRelationFactory;
 use Gzhegow\Orm\Core\Query\Chunks\ChunksProcessorInterface;
+use Gzhegow\Orm\Core\Relation\Factory\EloquentRelationFactory;
 use Gzhegow\Orm\Core\Persistence\EloquentPersistenceInterface;
-use Gzhegow\Orm\Core\Relation\Factory\EloquentRelationFactoryInterface;
+use Illuminate\Database\Schema\Builder as EloquentSchemaBuilder;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 use Gzhegow\Orm\Package\Illuminate\Database\Capsule\EloquentInterface;
-use Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBuilder;
+use Gzhegow\Orm\Core\Relation\Factory\EloquentRelationFactoryInterface;
 use Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;

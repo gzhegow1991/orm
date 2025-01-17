@@ -5,9 +5,9 @@ namespace Gzhegow\Orm\Core\Model\Traits;
 use Illuminate\Contracts\Support\Arrayable;
 use Gzhegow\Orm\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
+use Gzhegow\Orm\Exception\Runtime\BadMethodCallException;
 use Illuminate\Database\Eloquent\Concerns\HidesAttributes;
 use Illuminate\Database\Eloquent\Concerns\GuardsAttributes;
-use Gzhegow\Orm\Exception\Runtime\BadMethodCallException;
 use Gzhegow\Orm\Package\Illuminate\Database\Capsule\Eloquent;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
@@ -40,7 +40,9 @@ trait AttributeTrait
     {
         /** @see HasAttributes::getAttributeValue() */
 
-        return $this->doGetAttributeValue($key);
+        $value = $this->doGetAttributeValue($key);
+
+        return $value;
     }
 
     private function doGetAttributeValue(string $key)
@@ -152,6 +154,21 @@ trait AttributeTrait
             || $this->isRelationAttributeApplication($key);
     }
 
+    protected function isRelationAttributeEloquent(string $key) : bool
+    {
+        if ('' === $key) {
+            return false;
+        }
+
+        if ('pivot' === $key) {
+            if (isset($this->relations[ 'pivot' ])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     protected function isRelationAttributeApplication(string $key) : bool
     {
         if ('' === $key) {
@@ -168,21 +185,6 @@ trait AttributeTrait
 
         if (isset(static::$cacheRelationClasses[ static::class ][ $key ])) {
             return true;
-        }
-
-        return false;
-    }
-
-    protected function isRelationAttributeEloquent(string $key) : bool
-    {
-        if ('' === $key) {
-            return false;
-        }
-
-        if ('pivot' === $key) {
-            if (isset($this->relations[ 'pivot' ])) {
-                return true;
-            }
         }
 
         return false;
