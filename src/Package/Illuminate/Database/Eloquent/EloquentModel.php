@@ -6,22 +6,22 @@ use Gzhegow\Lib\Lib;
 use Gzhegow\Orm\Exception\LogicException;
 use Gzhegow\Orm\Exception\RuntimeException;
 use Gzhegow\Orm\Core\Model\Traits\LoadTrait;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Gzhegow\Orm\Core\Model\Traits\TableTrait;
 use Gzhegow\Orm\Core\Model\Traits\QueryTrait;
 use Gzhegow\Orm\Core\Model\Traits\ChunkTrait;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Gzhegow\Orm\Core\Model\Traits\FactoryTrait;
 use Gzhegow\Orm\Core\Model\Traits\ColumnsTrait;
 use Gzhegow\Orm\Core\Model\Traits\CalendarTrait;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Gzhegow\Orm\Core\Model\Traits\AttributeTrait;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Gzhegow\Orm\Core\Model\Traits\PersistenceTrait;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Gzhegow\Orm\Core\Model\Traits\Relation\RelationTrait;
 use Illuminate\Database\Eloquent\Model as EloquentModelBase;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
-use Gzhegow\Orm\Core\Model\Traits\Relation\RelationTrait;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Gzhegow\Orm\Core\Model\Traits\Relation\RelationFactoryTrait;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Gzhegow\Orm\Exception\Exception\Resource\ResourceNotFoundException;
 
 
@@ -363,6 +363,13 @@ abstract class EloquentModel extends EloquentModelBase
         return $this->primaryKey;
     }
 
+    public static function keyName()
+    {
+        $model = static::getModel();
+
+        return $model->getKeyName();
+    }
+
 
     /**
      * @return string
@@ -388,6 +395,13 @@ abstract class EloquentModel extends EloquentModelBase
         $key = $this->getForeignKey();
 
         return $key;
+    }
+
+    public static function foreignKeyName()
+    {
+        $model = static::getModel();
+
+        return $model->getForeignKeyName();
     }
 
 
