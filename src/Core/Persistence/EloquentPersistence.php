@@ -596,7 +596,7 @@ class EloquentPersistence implements EloquentPersistenceInterface
             ) {
                 /** @var EloquentPdoQueryBuilder $query */
 
-                $query = $this->queue[ $idx ];
+                [ $query ] = $this->queue[ $idx ];
 
                 $connection = $query->getConnection();
             }
