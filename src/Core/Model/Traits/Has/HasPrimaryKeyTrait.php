@@ -24,9 +24,7 @@ trait HasPrimaryKeyTrait
             ?? Lib::parse()->string_not_empty($this->attributes[ $field ] ?? null);
 
         if (null === $pk) {
-            throw new RuntimeException(
-                "The `{$field}` is empty"
-            );
+            throw new RuntimeException("The `{$field}` is empty");
         }
 
         return $pk;

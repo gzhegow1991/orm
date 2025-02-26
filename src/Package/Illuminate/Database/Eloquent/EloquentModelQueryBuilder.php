@@ -505,11 +505,13 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
      */
     public function hydrateArray(array $items)
     {
+        $thePhp = Lib::php();
+
         $model = static::getModel();
 
         $result = [];
         foreach ( $items as $i => $item ) {
-            $attributes = Lib::php()->toArray($item);
+            $attributes = $thePhp->to_array($item);
 
             $result[ $i ] = $model->newFromBuilder($attributes);
         }

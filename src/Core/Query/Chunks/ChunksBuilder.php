@@ -4,7 +4,6 @@ namespace Gzhegow\Orm\Core\Query\Chunks;
 
 use Gzhegow\Lib\Lib;
 use Gzhegow\Orm\Core\Orm;
-use Gzhegow\Lib\Modules\BoolModule;
 use Gzhegow\Orm\Exception\LogicException;
 use Gzhegow\Orm\Exception\RuntimeException;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
@@ -73,49 +72,49 @@ class ChunksBuilder
     /**
      * @var EloquentModelQueryBuilder<T>|null
      */
-    protected $modelQuery = BoolModule::UNDEFINED;
+    protected $modelQuery = [];
     /**
      * @var EloquentPdoQueryBuilder|null
      */
-    protected $pdoQuery = BoolModule::UNDEFINED;
+    protected $pdoQuery = [];
     /**
      * @var EloquentModel|null
      */
-    protected $model = BoolModule::UNDEFINED;
+    protected $model = [];
     /**
      * @var class-string<T>|null
      */
-    protected $modelClass = BoolModule::UNDEFINED;
+    protected $modelClass = [];
 
     /**
      * @see static::LIST_MODE_OFFSET
      *
      * @var string
      */
-    protected $modeOffset = BoolModule::UNDEFINED;
+    protected $modeOffset = [];
     /**
      * @see static::LIST_MODE_FETCH
      *
      * @var string
      */
-    protected $modeFetch = BoolModule::UNDEFINED;
+    protected $modeFetch = [];
     /**
      * @see static::LIST_MODE_SELECT_COUNT
      *
      * @var string
      */
-    protected $modeSelectCount = BoolModule::UNDEFINED;
+    protected $modeSelectCount = [];
     /**
      * @see static::LIST_MODE_RESULT
      *
      * @var string
      */
-    protected $modeResult = BoolModule::UNDEFINED;
+    protected $modeResult = [];
 
     /**
      * @var int
      */
-    protected $limitChunk = BoolModule::UNDEFINED;
+    protected $limitChunk = [];
     /**
      * @var int
      */
@@ -124,12 +123,12 @@ class ChunksBuilder
     /**
      * @var int|null
      */
-    protected $limit = BoolModule::UNDEFINED;
+    protected $limit = [];
 
     /**
      * @var int
      */
-    protected $offset = BoolModule::UNDEFINED;
+    protected $offset = [];
     /**
      * @var int
      */
@@ -138,7 +137,7 @@ class ChunksBuilder
     /**
      * @var string|null
      */
-    protected $offsetColumn = BoolModule::UNDEFINED;
+    protected $offsetColumn = [];
     /**
      * @var string
      */
@@ -147,7 +146,7 @@ class ChunksBuilder
     /**
      * @var string
      */
-    protected $offsetOperator = BoolModule::UNDEFINED;
+    protected $offsetOperator = [];
     /**
      * @var string
      */
@@ -156,12 +155,12 @@ class ChunksBuilder
     /**
      * @var array{ 0?: mixed }
      */
-    protected $offsetValue = BoolModule::UNDEFINED;
+    protected $offsetValue = [];
 
     /**
      * @var bool
      */
-    protected $includeOffsetValue = BoolModule::UNDEFINED;
+    protected $includeOffsetValue = [];
     /**
      * @var bool
      */
@@ -170,7 +169,7 @@ class ChunksBuilder
     /**
      * @var int
      */
-    protected $perPage = BoolModule::UNDEFINED;
+    protected $perPage = [];
     /**
      * @var int
      */
@@ -179,16 +178,16 @@ class ChunksBuilder
     /**
      * @var int
      */
-    protected $page = BoolModule::UNDEFINED;
+    protected $page = [];
     /**
      * @var int
      */
-    protected $pagesDelta = BoolModule::UNDEFINED;
+    protected $pagesDelta = [];
 
     /**
      * @var int|null
      */
-    protected $totalItems = BoolModule::UNDEFINED;
+    protected $totalItems = [];
     /**
      * @var int|null
      */
@@ -196,7 +195,7 @@ class ChunksBuilder
     /**
      * @var int|null
      */
-    protected $totalPages = BoolModule::UNDEFINED;
+    protected $totalPages = [];
     /**
      * @var int|null
      */

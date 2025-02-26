@@ -2,7 +2,6 @@
 
 namespace Gzhegow\Orm\Core\Relation\Spec;
 
-use Gzhegow\Lib\Modules\BoolModule;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
@@ -24,32 +23,32 @@ class HasOneSpec extends AbstractSpec
     /**
      * @var string
      */
-    protected $relationName = BoolModule::UNDEFINED;
+    protected $relationName = [];
 
     /**
      * @var EloquentModel
      */
-    protected $thisModel = BoolModule::UNDEFINED;
+    protected $thisModel = [];
     /**
      * @var EloquentModel
      */
-    protected $remoteModel = BoolModule::UNDEFINED;
+    protected $remoteModel = [];
     /**
      * @var EloquentModelQueryBuilder
      */
-    protected $remoteModelQuery = BoolModule::UNDEFINED;
+    protected $remoteModelQuery = [];
 
     /**
      * @var string|class-string<EloquentModel>
      */
-    protected $remoteModelClassOrTableName = BoolModule::UNDEFINED;
+    protected $remoteModelClassOrTableName = [];
 
     /**
      * @var string|null
      */
-    protected $thisTableRightKey = BoolModule::UNDEFINED;
+    protected $thisTableRightKey = [];
     /**
      * @var string|null
      */
-    protected $remoteTableLeftKey = BoolModule::UNDEFINED;
+    protected $remoteTableLeftKey = [];
 }

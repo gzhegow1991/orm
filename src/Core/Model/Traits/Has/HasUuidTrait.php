@@ -3,6 +3,7 @@
 namespace Gzhegow\Orm\Core\Model\Traits\Has;
 
 use Gzhegow\Lib\Lib;
+use Gzhegow\Orm\Exception\LogicException;
 use Gzhegow\Orm\Exception\RuntimeException;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
@@ -16,11 +17,11 @@ trait HasUuidTrait
 {
     public function getUuid() : string
     {
-        $uuid = null
-            ?? Lib::parse()->string_not_empty($this->attributes[ 'uuid' ] ?? null)
-            ?? Lib::php()->throw([ 'The `uuid` is empty' ]);
+        if (! Lib::type()->string_not_empty($_uuid, $this->attributes[ 'uuid' ])) {
+            throw new RuntimeException('The `uuid` is empty');
+        }
 
-        return $uuid;
+        return $_uuid;
     }
 
     public function hasUuid() : ?string
@@ -31,9 +32,9 @@ trait HasUuidTrait
 
     public function setUuid($uuid) : void
     {
-        $_uuid = null
-            ?? Lib::parse()->string_not_empty($uuid)
-            ?? Lib::php()->throw([ 'The `uuid` should be non-empty string' ]);
+        if (! Lib::type()->string_not_empty($_uuid, $uuid)) {
+            throw new LogicException('The `uuid` should be non-empty string');
+        }
 
         $this->attributes[ 'uuid' ] = $_uuid;
     }

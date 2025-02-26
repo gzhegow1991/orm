@@ -21,6 +21,12 @@ class HasManyThrough extends HasManyThroughBase implements
         $this->performJoin();
 
         if (static::$constraints) {
+            if (! $this->farParent->exists) {
+                $this->query->whereRaw('0');
+
+                return;
+            }
+
             $this->query->where(
                 $this->getQualifiedFirstKeyName(),
                 '=',

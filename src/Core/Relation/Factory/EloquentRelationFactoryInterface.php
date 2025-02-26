@@ -2,7 +2,6 @@
 
 namespace Gzhegow\Orm\Core\Relation\Factory;
 
-
 use Gzhegow\Orm\Core\Relation\Spec\HasOneSpec;
 use Gzhegow\Orm\Core\Relation\Spec\HasManySpec;
 use Gzhegow\Orm\Core\Relation\Spec\MorphToSpec;
@@ -25,9 +24,6 @@ use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 
-/**
- * @mixin EloquentRelationFactory
- */
 interface EloquentRelationFactoryInterface
 {
     public function newBelongsTo(BelongsToSpec $spec) : BelongsTo;

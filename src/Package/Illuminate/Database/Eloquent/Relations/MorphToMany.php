@@ -22,6 +22,12 @@ class MorphToMany extends MorphToManyBase implements
         $this->performJoin();
 
         if (static::$constraints) {
+            if (! $this->parent->exists) {
+                $this->query->whereRaw('0');
+
+                return;
+            }
+
             $this->addWhereConstraints();
         }
     }

@@ -2,41 +2,39 @@
 
 namespace Gzhegow\Orm\Core\Query\Chunks;
 
-use Gzhegow\Lib\Modules\BoolModule;
-
 
 class ChunksPaginateResult
 {
     /**
      * @var int|null
      */
-    public $totalItems = BoolModule::UNDEFINED;
+    public $totalItems = [];
     /**
      * @var int|null
      */
-    public $totalPages = BoolModule::UNDEFINED;
+    public $totalPages = [];
 
     /**
      * @var int
      */
-    public $page = BoolModule::UNDEFINED;
+    public $page = [];
     /**
      * @var int
      */
-    public $perPage = BoolModule::UNDEFINED;
+    public $perPage = [];
     /**
      * @var int
      */
-    public $pagesDelta = BoolModule::UNDEFINED;
+    public $pagesDelta = [];
 
     /**
      * @var int|string
      */
-    public $from = BoolModule::UNDEFINED;
+    public $from = [];
     /**
      * @var int|string
      */
-    public $to = BoolModule::UNDEFINED;
+    public $to = [];
 
     /**
      * @var array<int|null>

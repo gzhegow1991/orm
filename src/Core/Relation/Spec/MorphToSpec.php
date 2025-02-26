@@ -2,7 +2,6 @@
 
 namespace Gzhegow\Orm\Core\Relation\Spec;
 
-use Gzhegow\Lib\Modules\BoolModule;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
@@ -29,41 +28,41 @@ class MorphToSpec extends AbstractSpec
     /**
      * @var string
      */
-    protected $relationName = BoolModule::UNDEFINED;
+    protected $relationName = [];
 
     /**
      * @var EloquentModel
      */
-    protected $thisModel = BoolModule::UNDEFINED;
+    protected $thisModel = [];
     /**
      * @var EloquentModel
      */
-    protected $morphModel = BoolModule::UNDEFINED;
+    protected $morphModel = [];
     /**
      * @var EloquentModelQueryBuilder
      */
-    protected $morphModelQuery = BoolModule::UNDEFINED;
+    protected $morphModelQuery = [];
 
     /**
      * @var string|null
      */
-    protected $morphType = BoolModule::UNDEFINED;
+    protected $morphType = [];
     /**
      * @var string|null
      */
-    protected $morphTypeKey = BoolModule::UNDEFINED;
+    protected $morphTypeKey = [];
     /**
      * @var string|null
      */
-    protected $morphIdKey = BoolModule::UNDEFINED;
+    protected $morphIdKey = [];
 
     /**
      * @var class-string<EloquentModel>
      */
-    protected $morphClass = BoolModule::UNDEFINED;
+    protected $morphClass = [];
 
     /**
      * @var string|null
      */
-    protected $remoteTableLeftKey = BoolModule::UNDEFINED;
+    protected $remoteTableLeftKey = [];
 }

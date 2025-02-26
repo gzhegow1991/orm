@@ -367,6 +367,48 @@ trait AttributeTrait
 
 
     /**
+     * @see HasAttributes::hasCast()
+     */
+    public function hasCast($key, $types = null)
+    {
+        $casts = $this->getCasts();
+
+        if (! isset($casts[ $key ])) {
+            return false;
+        }
+
+        if (! $types) {
+            return true;
+        }
+
+        $type = $this->getCastType($key);
+
+        if (in_array($type, $types, true)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array
+     * @see HasAttributes::getCasts()
+     *
+     */
+    public function getCasts()
+    {
+        $casts = $this->casts;
+
+        $isIncrementing = $this->getIncrementing();
+
+        if ($isIncrementing) {
+            array_unshift($casts, [ $this->getKeyName() => $this->getKeyType() ]);
+        }
+
+        return $casts;
+    }
+
+    /**
      * @see HasAttributes::castAttribute()
      */
     protected function castAttribute($key, $value)
@@ -376,12 +418,13 @@ trait AttributeTrait
         if ($castType == 'custom_datetime') {
             [ $format ] = explode(':', $key, 2);
 
-            return $this->asDateTimeFormat($value, $format);
+            $_value = $this->asDateTimeFormat($value, $format);
+
+        } else {
+            $_value = parent::castAttribute($key, $value);
         }
 
-        $value = parent::castAttribute($key, $value);
-
-        return $value;
+        return $_value;
     }
 
     /**
@@ -397,11 +440,10 @@ trait AttributeTrait
                 continue;
             }
 
-
             $attributes[ $key ] = $this->castAttribute(
-                $key, $attributes[ $key ]
+                $key,
+                $attributes[ $key ]
             );
-
 
             if ($attributes[ $key ]
                 && (false

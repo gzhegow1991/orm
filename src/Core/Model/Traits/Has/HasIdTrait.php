@@ -24,9 +24,7 @@ trait HasIdTrait
             ?? Lib::parse()->string_not_empty($this->attributes[ 'id' ] ?? null);
 
         if (null === $id) {
-            throw new RuntimeException(
-                'The `id` is empty'
-            );
+            throw new RuntimeException('The `id` is empty');
         }
 
         return $id;

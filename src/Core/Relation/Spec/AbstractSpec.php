@@ -10,11 +10,13 @@ abstract class AbstractSpec
 {
     public function __isset($name)
     {
-        if (! property_exists($this, $name)) {
+        if (! isset($this->{$name})) {
             return false;
         }
 
-        if (Lib::bool()->is_undefined($this->{$name})) {
+        $value = $this->{$name};
+
+        if (! count($value)) {
             return false;
         }
 
@@ -23,30 +25,38 @@ abstract class AbstractSpec
 
     public function __get($name)
     {
-        if (! property_exists($this, $name)) {
-            throw new RuntimeException([ 'Missing property', $name ]);
+        if (! isset($this->{$name})) {
+            throw new RuntimeException(
+                [ 'Missing property', $name ]
+            );
         }
 
         $value = $this->{$name};
 
-        if (Lib::bool()->is_undefined($value)) {
-            throw new RuntimeException([ 'Value is undefined', $name ]);
+        if (! count($value)) {
+            throw new RuntimeException(
+                [ 'Value is undefined', $name ]
+            );
         }
 
-        return $value;
+        return $value[ 0 ];
     }
 
     public function __set($name, $value)
     {
-        if (! property_exists($this, $name)) {
-            throw new RuntimeException([ 'Missing property', $name ]);
+        if (! isset($this->{$name})) {
+            throw new RuntimeException(
+                [ 'Missing property', $name ]
+            );
         }
 
-        $this->{$name} = $value;
+        $this->{$name} = [ $value ];
     }
 
     public function __unset($name)
     {
-        throw new RuntimeException([ 'Unable to unset property', $name ]);
+        throw new RuntimeException(
+            [ 'Unable to unset property', $name ]
+        );
     }
 }

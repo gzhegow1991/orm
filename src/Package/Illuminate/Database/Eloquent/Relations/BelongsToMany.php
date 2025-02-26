@@ -22,12 +22,11 @@ class BelongsToMany extends BelongsToManyBase implements
         $this->performJoin();
 
         if (static::$constraints) {
-            // todo
-            // if (! $this->parent->exists) {
-            //     $this->query->whereRaw('0');
-            //
-            //     return;
-            // }
+            if (! $this->parent->exists) {
+                $this->query->whereRaw('0');
+
+                return;
+            }
 
             $this->addWhereConstraints();
         }

@@ -122,7 +122,7 @@ trait FactoryTrait
     {
         /** @see Model::newInstance() */
 
-        $_attributes = Lib::php()->toArray($attributes);
+        $_attributes = Lib::php()->to_array($attributes);
         $_exists = (bool) ($exists ?? false);
 
         $instance = $this->newInstanceWithState(
@@ -166,7 +166,7 @@ trait FactoryTrait
     {
         /** @see Model::newFromBuilder() */
 
-        $_attributes = Lib::php()->toArray($attributes);
+        $_attributes = Lib::php()->to_array($attributes);
 
         $instance = $this->newInstanceWithState(
             [],

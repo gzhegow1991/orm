@@ -47,6 +47,7 @@ abstract class EloquentModel extends EloquentModelBase
     protected $tablePrefix;
     protected $tableNoPrefix;
     protected $primaryKey = 'id';
+    protected $keyType    = 'string';
 
     // >>> settings
     public $incrementing = true;
