@@ -2,7 +2,7 @@
 
 namespace Gzhegow\Orm\Exception;
 
-interface ExceptionInterface
+interface ExceptionInterface extends \Throwable
 {
 
 }
