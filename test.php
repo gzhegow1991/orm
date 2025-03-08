@@ -87,6 +87,8 @@ $eloquent = new \Gzhegow\Orm\Package\Illuminate\Database\Capsule\Eloquent(
 );
 
 // > добавляем соединение к БД
+$pdoCharset = 'utf8mb4';
+$pdoCollate = 'utf8mb4_unicode_ci';
 $eloquent->addConnection(
     [
         'driver' => 'mysql',
@@ -97,22 +99,19 @@ $eloquent->addConnection(
         'password' => '',
         'database' => 'test',
 
-        'charset'   => 'utf8mb4',
-        'collation' => 'utf8mb4_unicode_ci',
+        'charset'   => $pdoCharset,
+        'collation' => $pdoCollate,
 
         'options' => [
-            // > until (PHP_VERSION_ID < 50306) this command was not sent on connect
-            \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4;',
-            //
             // > always throw an exception if any error occured
-            \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
+            \PDO::ATTR_ERRMODE           => \PDO::ERRMODE_EXCEPTION,
             //
             // > calculate $pdo->prepare() on PHP level instead of sending it to MySQL as is
-            \PDO::ATTR_EMULATE_PREPARES   => true,
+            \PDO::ATTR_EMULATE_PREPARES  => true,
             //
             // > since (PHP_VERSION_ID > 80100) mysql integers return integer
             // > setting ATTR_STRINGIFY_FETCHES flag to TRUE forces returning numeric string
-            \PDO::ATTR_STRINGIFY_FETCHES  => true,
+            \PDO::ATTR_STRINGIFY_FETCHES => true,
         ],
     ],
     $connName = 'default'

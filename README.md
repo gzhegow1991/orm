@@ -272,9 +272,6 @@ $eloquent->addConnection(
         'collation' => 'utf8mb4_unicode_ci',
 
         'options' => [
-            // > until (PHP_VERSION_ID < 50306) this command was not sent on connect
-            \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4;',
-            //
             // > always throw an exception if any error occured
             \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
             //
