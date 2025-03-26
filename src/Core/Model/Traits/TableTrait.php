@@ -152,7 +152,9 @@ trait TableTrait
         // > gzhegow, Eloquent при подстановке в запрос оборачивает alias согласно Grammar
         // > а вот если пишете RAW запрос, передавайте $alias вместе с кавычками
 
-        $tableDefault = Lib::str()->ends(static::class, 'Model') ?? static::class;
+        Lib::str()->ends(static::class, 'Model', false, [ &$substr ]);
+
+        $tableDefault = $substr ?? static::class;
         $tableDefault = class_basename($tableDefault);
         $tableDefault = Lib::str()->snake_lower($tableDefault);
 
