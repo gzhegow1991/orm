@@ -156,7 +156,7 @@ class ChunksProcessor implements ChunksProcessorInterface
 
             $left = max(0, $left - $rowsCount);
             $offset = $offset + $rowsCount;
-        } while ( $left && ($rowsCount === $limitChunkCurrent) );
+        } while ( (0 !== $left) && ($rowsCount === $limitChunkCurrent) );
     }
 
 
@@ -317,7 +317,7 @@ class ChunksProcessor implements ChunksProcessorInterface
             if ($isFirst) {
                 $isFirst = false;
             }
-        } while ( $left && ($modelsCount === $limitChunkCurrent) );
+        } while ( (0 !== $left) && ($modelsCount === $limitChunkCurrent) );
     }
 
 
@@ -477,7 +477,7 @@ class ChunksProcessor implements ChunksProcessorInterface
             if ($isFirst) {
                 $isFirst = false;
             }
-        } while ( $left && ($rowsCount === $limitChunkCurrent) );
+        } while ( (0 !== $left) && ($rowsCount === $limitChunkCurrent) );
     }
 
 

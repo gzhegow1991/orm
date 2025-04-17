@@ -4,6 +4,7 @@ namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent;
 
 use Gzhegow\Orm\Exception\LogicException;
 use Gzhegow\Orm\Exception\RuntimeException;
+use Gzhegow\Orm\Exception\Runtime\DeprecatedException;
 use Illuminate\Database\Eloquent\Collection as EloquentModelCollectionBase;
 
 
@@ -16,6 +17,15 @@ class EloquentModelCollection extends EloquentModelCollectionBase
      * @var class-string<T>
      */
     protected $modelClass;
+
+
+    public function __toString() : string
+    {
+        // > originally, casting model/collection to string returns JSON, guess to posibility to store whole model to one DB cell
+        // > it is deprecated magic that forces any string casting or dumping to do useless job
+        throw new DeprecatedException('Casting collection to string is deprecated');
+    }
+
 
     /**
      * @param T|class-string<T> $modelOrClass

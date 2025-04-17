@@ -17,6 +17,7 @@ use Gzhegow\Orm\Core\Model\Traits\AttributeTrait;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Gzhegow\Orm\Core\Model\Traits\PersistenceTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Gzhegow\Orm\Exception\Runtime\DeprecatedException;
 use Gzhegow\Orm\Core\Model\Traits\Relation\RelationTrait;
 use Illuminate\Database\Eloquent\Model as EloquentModelBase;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
@@ -103,6 +104,14 @@ abstract class EloquentModel extends EloquentModelBase
     public $recentlyCreated = false;
     /** > INSERT/UPDATE был сделан в рамках этого скрипта, т.е. модель создана "недавно", `exists` тоже будет true */
     public $wasRecentlyCreated = false;
+
+
+    public function __toString() : string
+    {
+        // > originally, casting model/collection to string returns JSON, guess to posibility to store whole model to one DB cell
+        // > it is deprecated magic that forces any string casting or dumping to do useless job
+        throw new DeprecatedException('Casting model to string is deprecated');
+    }
 
 
     /**

@@ -154,7 +154,7 @@ trait TableTrait
 
         $theStr = Lib::str();
 
-        $theStr->ends(static::class, 'Model', false, [ &$substr ]);
+        $theStr->str_ends(static::class, 'Model', false, [ &$substr ]);
 
         $tableDefault = $substr ?? static::class;
         $tableDefault = class_basename($tableDefault);
