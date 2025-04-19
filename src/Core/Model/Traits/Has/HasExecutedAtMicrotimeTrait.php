@@ -2,6 +2,7 @@
 
 namespace Gzhegow\Orm\Core\Model\Traits\Has;
 
+use Gzhegow\Lib\Lib;
 use Gzhegow\Calendar\Calendar;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
@@ -18,8 +19,9 @@ trait HasExecutedAtMicrotimeTrait
         $_executedAtMicrotime = $executedAtMicrotime;
 
         if (null !== $_executedAtMicrotime) {
-            $_executedAt = Calendar::dateTimeImmutable($_executedAtMicrotime);
-            $_executedAtMicrotime = Calendar::formatMicroseconds($_executedAt);
+            Lib::date()->type_idate_microtime($_executedAt, $_executedAtMicrotime);
+
+            $_executedAtMicrotime = Lib::date()->format_usec($_executedAt);
         }
 
         $this->attributes[ 'executed_at_microtime' ] = $_executedAtMicrotime;
@@ -31,13 +33,13 @@ trait HasExecutedAtMicrotimeTrait
 
         if (null === $current) {
             if (null === $executedAtMicrotime) {
-                $_executedAt = Calendar::nowImmutable();
+                $_executedAt = Lib::date()->idate_now();
 
             } else {
-                $_executedAt = Calendar::dateTimeImmutable($executedAtMicrotime);
+                Lib::date()->type_idate_microtime($_executedAt, $executedAtMicrotime);
             }
 
-            $this->attributes[ 'executed_at_microtime' ] = Calendar::formatMicroseconds($_executedAt);
+            $this->attributes[ 'executed_at_microtime' ] = Lib::date()->format_usec($_executedAt);
         }
 
         return $this->executed_at_microtime;

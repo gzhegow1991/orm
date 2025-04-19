@@ -2,7 +2,7 @@
 
 namespace Gzhegow\Orm\Core\Model\Traits;
 
-use Gzhegow\Calendar\Calendar;
+use Gzhegow\Lib\Lib;
 use Gzhegow\Orm\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
@@ -29,25 +29,25 @@ trait CalendarTrait
     {
         /** @see HasAttributes::asDateTime() */
 
-        $formats = [
-            Calendar::FORMAT_SQL_MICROSECONDS,
-            Calendar::FORMAT_SQL_MILLISECONDS,
-            Calendar::FORMAT_SQL,
-            $this->getDateFormat(),
-        ];
-
         if (null === $value) {
             return null;
         }
 
-        $dateTimeImmutable = Calendar::parseDateTimeImmutable($value, $formats);
+        $formats = [
+            'Y-m-d H:i:s.u',
+            'Y-m-d H:i:s.v',
+            'Y-m-d H:i:s',
+            $this->getDateFormat(),
+        ];
 
-        if (null === $dateTimeImmutable) {
+        $status = Lib::type()->idate_formatted(
+            $dateTimeImmutable,
+            $formats, $value
+        );
+
+        if (! $status) {
             throw new RuntimeException(
-                [
-                    'Unable to parse DateTime',
-                    $value,
-                ]
+                [ 'Unable to parse date', $value ]
             );
         }
 
@@ -58,7 +58,16 @@ trait CalendarTrait
     {
         $formats = [ $format ];
 
-        $dateTimeImmutable = Calendar::parseDateTimeImmutable($value, $formats);
+        $status = Lib::type()->idate_formatted(
+            $dateTimeImmutable,
+            $formats, $value
+        );
+
+        if (! $status) {
+            throw new RuntimeException(
+                [ 'Unable to parse date', $value ]
+            );
+        }
 
         return $dateTimeImmutable;
     }
@@ -68,6 +77,6 @@ trait CalendarTrait
     {
         /** @see HasAttributes::serializeDate() */
 
-        return Calendar::formatJavascriptMilliseconds($date);
+        return Lib::date()->format_javascript_msec($date);
     }
 }

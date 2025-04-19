@@ -2,6 +2,7 @@
 
 namespace Gzhegow\Orm\Core\Model\Traits\Has;
 
+use Gzhegow\Lib\Lib;
 use Gzhegow\Calendar\Calendar;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
@@ -18,7 +19,7 @@ trait HasCreatedAtTrait
         $_createdAt = $createdAt;
 
         if (null !== $_createdAt) {
-            $_createdAt = Calendar::dateTimeImmutable($_createdAt);
+            Lib::date()->type_idate($_createdAt, $_createdAt);
         }
 
         $this->attributes[ 'created_at' ] = $_createdAt;
@@ -30,10 +31,10 @@ trait HasCreatedAtTrait
 
         if (null === $current) {
             if (null === $createdAt) {
-                $_createdAt = Calendar::nowImmutable();
+                $_createdAt = Lib::date()->idate_now();
 
             } else {
-                $_createdAt = Calendar::dateTimeImmutable($createdAt);
+                Lib::date()->type_idate($_createdAt, $createdAt);
             }
 
             $this->attributes[ 'created_at' ] = $_createdAt;

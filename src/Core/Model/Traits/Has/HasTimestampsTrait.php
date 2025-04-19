@@ -2,7 +2,7 @@
 
 namespace Gzhegow\Orm\Core\Model\Traits\Has;
 
-use Gzhegow\Calendar\Calendar;
+use Gzhegow\Lib\Lib;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 
@@ -19,6 +19,6 @@ trait HasTimestampsTrait
     {
         /** @see HasTimestamps::freshTimestamp() */
 
-        return Calendar::nowImmutable();
+        return Lib::date()->idate_now();
     }
 }
