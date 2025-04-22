@@ -9,12 +9,12 @@ PS2. Можно использовать PDO и встроенный в PHP сп
 
 Рекомендации при работе с ORM:
 
-- не создавать модели в коде используя `new ModelClass()`, использовать для этого `ModelClass::new()`;
+- не создавать модели в коде используя `new ModelClass()`, использовать для этого `ModelClass::new()`. Это позволит работать проверкам в __get()/__set() на возможность проставления и получения данных.
 
 ```
-Это позволит работать проверкам в __get()/__set() на возможность проставления и получения данных.
 Так, в ёлке метод __get() может выполнить запрос, если свойство является связью. Разумно включить блокировку ленивых запросов в классе модели.
 Также добавлена возможность блокировки ленивого чтения, чтобы была возможность оперировать ровно теми данными, что получены из БД, без применения магических атрибутов, которые могут возвращать значение по-умоланию, если оно там было.
+
 Так, в ёлке метод __set() может проставить свойства, которые являются ID, при клонировании существующей модели.
 Также добавлена возможность блокировки ленивой записи, что позволяет работать с таблицами с историческими данными, которые не должны меняться вручную.
 ```
@@ -27,41 +27,41 @@ PS2. Можно использовать PDO и встроенный в PHP сп
 Eloquent::setRelationPrefix('_');
 
 /**
-* @property int            $id
-* @property string         $name
-*
-* @property int            $demo_foo_id
-* @property DemoFooModel   $_demoFoo
-*/
+ * @property int            $id
+ * @property string         $name
+ *
+ * @property int            $demo_foo_id
+ * @property DemoFooModel   $_demoFoo
+ */
 abstract class AbstractModel extends \Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel
 {
 }
 
 /**
-* @property int            $id
-* @property string         $name
-*
-* @property int            $demo_foo_id
-* @property DemoFooModel   $_demoFoo
-*/
+ * @property int            $id
+ * @property string         $name
+ *
+ * @property int            $demo_foo_id
+ * @property DemoFooModel   $_demoFoo
+ */
 class MyModel extends AbstractModel
 {
-protected static function relationClasses() : array
-{
-return [
-'_demoFoo'  => BelongsTo::class,
-];
-}
+    protected static function relationClasses() : array
+    {
+        return [
+            '_demoFoo'  => BelongsTo::class,
+        ];
+    }
 
-public function _demoFoo() : BelongsTo
-{
-return $this->relation()
-->belongsTo(
-__FUNCTION__,
-DemoFooModel::class
-)
-;
-}
+    public function _demoFoo() : BelongsTo
+    {
+        return $this->relation()
+            ->belongsTo(
+                __FUNCTION__,
+                DemoFooModel::class
+            )
+        ;
+    }
 }
 ```
 
@@ -72,9 +72,9 @@ DemoFooModel::class
 
 class MyModel extends AbstractModel
 {
-protected $columns = [ '*' ]; // достает все колонки, как по-умолчанию в Eloquent, для development окружения
-// protected $columns = [ '#' ]; // только PrimaryKey (не во всех таблицах он есть)
-// protected $columns = [ '#', 'name' ]; // только PrimaryKey и колонка `name`
+    protected $columns = [ '*' ]; // достает все колонки, как по-умолчанию в Eloquent, для development окружения
+    // protected $columns = [ '#' ]; // только PrimaryKey (не во всех таблицах он есть)
+    // protected $columns = [ '#', 'name' ]; // только PrimaryKey и колонка `name`
 }
 
 Инструмент отлично сочетается с $preventsLazyGet/$preventsLazySet - в этом случае отстутствующие колонки будут прерывать работу программы, позволяя исправить код.
@@ -92,22 +92,22 @@ $models = $query->get();
 
 $builder = MyModel::chunks();
 $builder->chunksModelNativeForeach(
-$limitChunk = 25, $limit = null, $offset = null
+    $limitChunk = 25, $limit = null, $offset = null
 );
 foreach ( $builder->chunksForeach() as $chunk ) {
-_dump($chunk);
+    _dump($chunk);
 }
 
 $builder = MyModel::chunks();
 $builder
-// ->setTotalItems(100)
-// ->setTotalPages(8)
-// ->withSelectCountNative()
-// ->withSelectCountExplain()
-->paginatePdoNativeForeach(
-$perPage = 13, $page = 7, $pagesDelta = 2,
-$offset = null
-)
+    // ->setTotalItems(100)
+    // ->setTotalPages(8)
+    // ->withSelectCountNative()
+    // ->withSelectCountExplain()
+    ->paginatePdoNativeForeach(
+        $perPage = 13, $page = 7, $pagesDelta = 2,
+        $offset = null
+    )
 ;
 $result = $builder->paginateResult();
 ```
@@ -127,36 +127,36 @@ $my->persistForSaveRecursive();
 ```
 // НЕ ВЕРНО:
 $query->with([
-'_relationName._relationNameChild',
-'_relationName._relationNameChild',
-'_relationName._relationNameChild',
+    '_relationName._relationNameChild',
+    '_relationName._relationNameChild',
+    '_relationName._relationNameChild',
 ]);
 $model->load([
-'_relationName._relationNameChild',
-'_relationName._relationNameChild',
-'_relationName._relationNameChild',
+    '_relationName._relationNameChild',
+    '_relationName._relationNameChild',
+    '_relationName._relationNameChild',
 ]);
 $collection->load([
-'_relationName._relationNameChild',
-'_relationName._relationNameChild',
-'_relationName._relationNameChild',
+    '_relationName._relationNameChild',
+    '_relationName._relationNameChild',
+    '_relationName._relationNameChild',
 ]);
 
 // ВЕРНО:
 $query->with([
-Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
-Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
-Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
 ]);
 $model->load([
-Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
-Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
-Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
 ]);
 $collection->load([
-Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
-Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
-Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
+    Orm::relationDot()([ ModelClass::class, '_relationName' ])([ Model2Class::class, '_relationNameChild' ])(),
 ]);
 ```
 
