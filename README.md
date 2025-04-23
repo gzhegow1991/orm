@@ -195,59 +195,65 @@ ini_set('memory_limit', '32M');
 
 
 // > добавляем несколько функция для тестирования
-function _types($separator = null, ...$values) : string
-{
-    return \Gzhegow\Lib\Lib::debug()->types($separator, [], ...$values);
-}
+$ffn = new class {
+    function value_array($value, int $maxLevel = null, array $options = []) : string
+    {
+        return \Gzhegow\Lib\Lib::debug()->value_array($value, $maxLevel, $options);
+    }
 
-function _values($separator = null, ...$values) : string
-{
-    return \Gzhegow\Lib\Lib::debug()->values($separator, [], ...$values);
-}
+    function value_array_multiline($value, int $maxLevel = null, array $options = []) : string
+    {
+        return \Gzhegow\Lib\Lib::debug()->value_array_multiline($value, $maxLevel, $options);
+    }
 
-function _array($value, int $maxLevel = null, array $options = []) : string
-{
-    return \Gzhegow\Lib\Lib::debug()->value_array($value, $maxLevel, $options);
-}
 
-function _array_multiline($value, int $maxLevel = null, array $options = []) : string
-{
-    return \Gzhegow\Lib\Lib::debug()->value_array_multiline($value, $maxLevel, $options);
-}
+    function types($separator = null, ...$values) : string
+    {
+        return \Gzhegow\Lib\Lib::debug()->types([], $separator, ...$values);
+    }
 
-function _print(...$values) : void
-{
-    echo _values(' | ', ...$values) . PHP_EOL;
-}
+    function values($separator = null, ...$values) : string
+    {
+        return \Gzhegow\Lib\Lib::debug()->values([], $separator, ...$values);
+    }
 
-function _print_types(...$values) : void
-{
-    echo _types(' | ', ...$values) . PHP_EOL;
-}
 
-function _print_array($value, int $maxLevel = null, array $options = []) : void
-{
-    echo _array($value, $maxLevel, $options) . PHP_EOL;
-}
+    function print(...$values) : void
+    {
+        echo $this->values(' | ', ...$values) . PHP_EOL;
+    }
 
-function _print_array_multiline($value, int $maxLevel = null, array $options = []) : void
-{
-    echo _array_multiline($value, $maxLevel, $options) . PHP_EOL;
-}
+    function print_types(...$values) : void
+    {
+        echo $this->types(' | ', ...$values) . PHP_EOL;
+    }
 
-function _assert_stdout(
-    \Closure $fn, array $fnArgs = [],
-    string $expectedStdout = null
-) : void
-{
-    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
 
-    \Gzhegow\Lib\Lib::test()->assertStdout(
-        $trace,
-        $fn, $fnArgs,
-        $expectedStdout
-    );
-}
+    function print_array($value, int $maxLevel = null, array $options = []) : void
+    {
+        echo $this->value_array($value, $maxLevel, $options) . PHP_EOL;
+    }
+
+    function print_array_multiline($value, int $maxLevel = null, array $options = []) : void
+    {
+        echo $this->value_array_multiline($value, $maxLevel, $options) . PHP_EOL;
+    }
+
+
+    function assert_stdout(
+        \Closure $fn, array $fnArgs = [],
+        string $expectedStdout = null
+    ) : void
+    {
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
+
+        \Gzhegow\Lib\Lib::test()->assertStdout(
+            $trace,
+            $fn, $fnArgs,
+            $expectedStdout
+        );
+    }
+};
 
 
 // >>> ЗАПУСКАЕМ!
@@ -497,9 +503,10 @@ $schema->create(
 // > используем рекурсивное сохранение для того, чтобы сохранить модели вместе со связями
 $fn = function () use (
     $eloquent,
-    $schema
+    $schema,
+    $ffn
 ) {
-    _print('[ TEST 1 ]');
+    $ffn->print('[ TEST 1 ]');
     echo PHP_EOL;
 
 
@@ -547,18 +554,18 @@ $fn = function () use (
     $barCollection = $modelClassDemoBar::query()->get([ '*' ]);
     $bazCollection = $modelClassDemoBaz::query()->get([ '*' ]);
 
-    _print($fooCollection);
-    _print($fooCollection[ 0 ]->id, $fooCollection[ 1 ]->id);
+    $ffn->print($fooCollection);
+    $ffn->print($fooCollection[ 0 ]->id, $fooCollection[ 1 ]->id);
 
-    _print($barCollection);
-    _print($barCollection[ 0 ]->id, $barCollection[ 0 ]->demo_foo_id);
-    _print($barCollection[ 1 ]->id, $barCollection[ 1 ]->demo_foo_id);
+    $ffn->print($barCollection);
+    $ffn->print($barCollection[ 0 ]->id, $barCollection[ 0 ]->demo_foo_id);
+    $ffn->print($barCollection[ 1 ]->id, $barCollection[ 1 ]->demo_foo_id);
 
-    _print($bazCollection);
-    _print($bazCollection[ 0 ]->id, $bazCollection[ 0 ]->demo_bar_id);
-    _print($bazCollection[ 1 ]->id, $bazCollection[ 1 ]->demo_bar_id);
+    $ffn->print($bazCollection);
+    $ffn->print($bazCollection[ 0 ]->id, $bazCollection[ 0 ]->demo_bar_id);
+    $ffn->print($bazCollection[ 1 ]->id, $bazCollection[ 1 ]->demo_bar_id);
 };
-_assert_stdout($fn, [], '
+$ffn->assert_stdout($fn, [], '
 "[ TEST 1 ]"
 
 { object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
@@ -577,9 +584,10 @@ _assert_stdout($fn, [], '
 // > это нужно, чтобы уменьшить время транзакции - сохранение делаем в конце бизнес-действия
 $fn = function () use (
     $eloquent,
-    $schema
+    $schema,
+    $ffn
 ) {
-    _print('[ TEST 2 ]');
+    $ffn->print('[ TEST 2 ]');
     echo PHP_EOL;
 
 
@@ -630,18 +638,18 @@ $fn = function () use (
     $barCollection = $modelClassDemoBar::query()->get([ '*' ]);
     $bazCollection = $modelClassDemoBaz::query()->get([ '*' ]);
 
-    _print($fooCollection);
-    _print($fooCollection[ 0 ]->id, $fooCollection[ 1 ]->id);
+    $ffn->print($fooCollection);
+    $ffn->print($fooCollection[ 0 ]->id, $fooCollection[ 1 ]->id);
 
-    _print($barCollection);
-    _print($barCollection[ 0 ]->id, $barCollection[ 0 ]->demo_foo_id);
-    _print($barCollection[ 1 ]->id, $barCollection[ 1 ]->demo_foo_id);
+    $ffn->print($barCollection);
+    $ffn->print($barCollection[ 0 ]->id, $barCollection[ 0 ]->demo_foo_id);
+    $ffn->print($barCollection[ 1 ]->id, $barCollection[ 1 ]->demo_foo_id);
 
-    _print($bazCollection);
-    _print($bazCollection[ 0 ]->id, $bazCollection[ 0 ]->demo_bar_id);
-    _print($bazCollection[ 1 ]->id, $bazCollection[ 1 ]->demo_bar_id);
+    $ffn->print($bazCollection);
+    $ffn->print($bazCollection[ 0 ]->id, $bazCollection[ 0 ]->demo_bar_id);
+    $ffn->print($bazCollection[ 1 ]->id, $bazCollection[ 1 ]->demo_bar_id);
 };
-_assert_stdout($fn, [], '
+$ffn->assert_stdout($fn, [], '
 "[ TEST 2 ]"
 
 { object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
@@ -659,9 +667,10 @@ _assert_stdout($fn, [], '
 // > тестирование связей (для примера взят Morph), у которых в этом пакете изменился интерфейс создания
 $fn = function () use (
     $eloquent,
-    $schema
+    $schema,
+    $ffn
 ) {
-    _print('[ TEST 3 ]');
+    $ffn->print('[ TEST 3 ]');
     echo PHP_EOL;
 
 
@@ -725,16 +734,16 @@ $fn = function () use (
     $postCollection = $modelClassDemoPost::get($postQuery);
     $userCollection = $modelClassDemoUser::get($userQuery);
 
-    _print($imageCollection);
-    _print($imageCollection[ 0 ], $imageCollection[ 0 ]->_imageable);
+    $ffn->print($imageCollection);
+    $ffn->print($imageCollection[ 0 ], $imageCollection[ 0 ]->_imageable);
     echo PHP_EOL;
 
-    _print($postCollection);
-    _print($postCollection[ 0 ], $postCollection[ 0 ]->_demoImages[ 0 ]);
+    $ffn->print($postCollection);
+    $ffn->print($postCollection[ 0 ], $postCollection[ 0 ]->_demoImages[ 0 ]);
     echo PHP_EOL;
 
-    _print($userCollection);
-    _print($userCollection[ 0 ], $userCollection[ 0 ]->_demoImages[ 0 ]);
+    $ffn->print($userCollection);
+    $ffn->print($userCollection[ 0 ], $userCollection[ 0 ]->_demoImages[ 0 ]);
     echo PHP_EOL;
 
 
@@ -787,19 +796,19 @@ $fn = function () use (
     $postCollection = $modelClassDemoPost::get($postQuery);
     $userCollection = $modelClassDemoUser::get($userQuery);
 
-    _print($tagCollection);
-    _print($tagCollection[ 0 ], $tagCollection[ 0 ]->_demoPosts[ 0 ], $tagCollection[ 0 ]->_demoUsers[ 0 ]);
-    _print($tagCollection[ 1 ], $tagCollection[ 1 ]->_demoPosts[ 0 ], $tagCollection[ 1 ]->_demoUsers[ 0 ]);
+    $ffn->print($tagCollection);
+    $ffn->print($tagCollection[ 0 ], $tagCollection[ 0 ]->_demoPosts[ 0 ], $tagCollection[ 0 ]->_demoUsers[ 0 ]);
+    $ffn->print($tagCollection[ 1 ], $tagCollection[ 1 ]->_demoPosts[ 0 ], $tagCollection[ 1 ]->_demoUsers[ 0 ]);
     echo PHP_EOL;
 
-    _print($postCollection);
-    _print($postCollection[ 1 ], $postCollection[ 1 ]->_demoTags[ 0 ], $postCollection[ 1 ]->_demoTags[ 1 ]);
+    $ffn->print($postCollection);
+    $ffn->print($postCollection[ 1 ], $postCollection[ 1 ]->_demoTags[ 0 ], $postCollection[ 1 ]->_demoTags[ 1 ]);
     echo PHP_EOL;
 
-    _print($userCollection);
-    _print($userCollection[ 1 ], $userCollection[ 1 ]->_demoTags[ 0 ], $userCollection[ 1 ]->_demoTags[ 1 ]);
+    $ffn->print($userCollection);
+    $ffn->print($userCollection[ 1 ], $userCollection[ 1 ]->_demoTags[ 0 ], $userCollection[ 1 ]->_demoTags[ 1 ]);
 };
-_assert_stdout($fn, [], '
+$ffn->assert_stdout($fn, [], '
 "[ TEST 3 ]"
 
 { object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
@@ -828,9 +837,10 @@ _assert_stdout($fn, [], '
 // > но иногда этого достаточно, особенно если запрос покрыт должным числом индексов, чтобы отобразить "Всего: ~100 страниц"
 $fn = function () use (
     $eloquent,
-    $schema
+    $schema,
+    $ffn
 ) {
-    _print('[ TEST 4 ]');
+    $ffn->print('[ TEST 4 ]');
     echo PHP_EOL;
 
 
@@ -848,12 +858,12 @@ $fn = function () use (
 
 
     $query = $modelClassDemoTag::query()->where('name', 'tag77');
-    _print($cnt = $query->count(), $cnt === 1);
+    $ffn->print($cnt = $query->count(), $cnt === 1);
 
     $cnt = $query->countExplain();
-    _print($cnt > 1, $cnt <= 100);
+    $ffn->print($cnt > 1, $cnt <= 100);
 };
-_assert_stdout($fn, [], '
+$ffn->assert_stdout($fn, [], '
 "[ TEST 4 ]"
 
 1 | TRUE
@@ -866,9 +876,10 @@ TRUE | TRUE
 // > на базе механизма работает и пагинация, предлагается два варианта - нативный SQL LIMIT/OFFSET и COLUMN(>|>=|<|<=)VALUE
 $fn = function () use (
     $eloquent,
-    $schema
+    $schema,
+    $ffn
 ) {
-    _print('[ TEST 5 ]');
+    $ffn->print('[ TEST 5 ]');
     echo PHP_EOL;
 
 
@@ -885,28 +896,28 @@ $fn = function () use (
     }
 
 
-    _print('chunkModelNativeForeach');
+    $ffn->print('chunkModelNativeForeach');
     $builder = $modelClassDemoTag::chunks();
     $builder->chunksModelNativeForeach(
         $limitChunk = 25, $limit = null, $offset = null
     );
     foreach ( $builder->chunksForeach() as $chunk ) {
-        _print($chunk);
+        $ffn->print($chunk);
     }
     echo PHP_EOL;
 
 
-    _print('chunkModelAfterForeach');
+    $ffn->print('chunkModelAfterForeach');
     $builder = $modelClassDemoTag::chunks();
     $builder = $builder->chunksModelAfterForeach(
         $limitChunk = 25, $limit = null,
         $offsetColumn = 'id', $offsetOperator = '>', $offsetValue = 1, $includeOffsetValue = true
     );
     foreach ( $builder->chunksForeach() as $chunk ) {
-        _print($chunk);
+        $ffn->print($chunk);
     }
 };
-_assert_stdout($fn, [], '
+$ffn->assert_stdout($fn, [], '
 "[ TEST 5 ]"
 
 "chunkModelNativeForeach"
@@ -928,9 +939,10 @@ _assert_stdout($fn, [], '
 // > на базе механизма работает и пагинация, предлагается два варианта - нативный SQL LIMIT/OFFSET и COLUMN(>|>=|<|<=)VALUE
 $fn = function () use (
     $eloquent,
-    $schema
+    $schema,
+    $ffn
 ) {
-    _print('[ TEST 6 ]');
+    $ffn->print('[ TEST 6 ]');
     echo PHP_EOL;
 
 
@@ -947,7 +959,7 @@ $fn = function () use (
     }
 
 
-    _print('paginateModelNativeForeach');
+    $ffn->print('paginateModelNativeForeach');
     $builder = $modelClassDemoTag::chunks();
     $builder
         // ->setTotalItems(100)
@@ -961,13 +973,13 @@ $fn = function () use (
     ;
 
     $result = $builder->paginateResult();
-    _print_array_multiline((array) $result);
-    _print_array_multiline($result->pagesAbsolute);
-    _print_array_multiline($result->pagesRelative);
+    $ffn->print_array_multiline((array) $result);
+    $ffn->print_array_multiline($result->pagesAbsolute);
+    $ffn->print_array_multiline($result->pagesRelative);
     echo PHP_EOL;
 
 
-    _print('paginateModelAfterForeach');
+    $ffn->print('paginateModelAfterForeach');
     $builder = $modelClassDemoTag::chunks();
     $builder
         // ->setTotalItems(100)
@@ -981,11 +993,11 @@ $fn = function () use (
     ;
 
     $result = $builder->paginateResult();
-    _print_array_multiline((array) $result);
-    _print_array_multiline($result->pagesAbsolute);
-    _print_array_multiline($result->pagesRelative);
+    $ffn->print_array_multiline((array) $result);
+    $ffn->print_array_multiline($result->pagesAbsolute);
+    $ffn->print_array_multiline($result->pagesRelative);
 };
-_assert_stdout($fn, [], '
+$ffn->assert_stdout($fn, [], '
 "[ TEST 6 ]"
 
 "paginateModelNativeForeach"
@@ -1060,8 +1072,11 @@ _assert_stdout($fn, [], '
 
 // >>> TEST
 // > рекомендуется в проекте указывать связи в виде callable, чтобы они менялись, когда применяешь `Refactor` в PHPStorm
-$fn = function () use ($eloquent) {
-    _print('[ TEST 7 ]');
+$fn = function () use (
+    $eloquent,
+    $ffn
+) {
+    $ffn->print('[ TEST 7 ]');
     echo PHP_EOL;
 
 
@@ -1069,27 +1084,27 @@ $fn = function () use ($eloquent) {
     ([ \Gzhegow\Orm\Demo\Model\DemoFooModel::class, '_demoBars' ])
     ([ \Gzhegow\Orm\Demo\Model\DemoBarModel::class, '_demoBazs' ])
     ();
-    _print($foo_hasMany_bars_hasMany_bazs);
+    $ffn->print($foo_hasMany_bars_hasMany_bazs);
 
     $bar_belongsTo_foo = \Gzhegow\Orm\Demo\Model\DemoBarModel::relationDot()
     ([ \Gzhegow\Orm\Demo\Model\DemoBarModel::class, '_demoFoo' ])
     ();
-    _print($bar_belongsTo_foo);
+    $ffn->print($bar_belongsTo_foo);
 
     $bar_hasMany_bazs = \Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
     ([ \Gzhegow\Orm\Demo\Model\DemoBarModel::class, '_demoBazs' ])
     ();
-    _print($bar_hasMany_bazs);
+    $ffn->print($bar_hasMany_bazs);
 
     $bar_belongsTo_foo_only_id = \Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
     ([ \Gzhegow\Orm\Demo\Model\DemoBarModel::class, '_demoFoo' ], 'id')
     ();
-    _print($bar_belongsTo_foo_only_id);
+    $ffn->print($bar_belongsTo_foo_only_id);
 
     $bar_hasMany_bazs_only_id = \Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
     ([ \Gzhegow\Orm\Demo\Model\DemoBarModel::class, '_demoBazs' ], 'id')
     ();
-    _print($bar_hasMany_bazs_only_id);
+    $ffn->print($bar_hasMany_bazs_only_id);
 
     // > ПРИМЕР
     // > Делаем запрос со связями
@@ -1136,7 +1151,7 @@ $fn = function () use ($eloquent) {
     //     $bar_hasMany_bazs  => static function ($query) { },
     // ]);
 };
-_assert_stdout($fn, [], '
+$ffn->assert_stdout($fn, [], '
 "[ TEST 7 ]"
 
 "_demoBars._demoBazs"
