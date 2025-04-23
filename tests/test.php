@@ -1,8 +1,6 @@
 <?php
 
-define('__ROOT__', __DIR__ . '/..');
-
-require_once __ROOT__ . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 
 // > настраиваем PHP
@@ -19,6 +17,12 @@ ini_set('memory_limit', '32M');
 
 // > добавляем несколько функция для тестирования
 $ffn = new class {
+    function root()
+    {
+        return realpath(__DIR__ . '/..');
+    }
+
+
     function value_array($value, int $maxLevel = null, array $options = []) : string
     {
         return \Gzhegow\Lib\Lib::debug()->value_array($value, $maxLevel, $options);
