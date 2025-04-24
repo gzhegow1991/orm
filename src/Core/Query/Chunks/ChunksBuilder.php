@@ -228,10 +228,10 @@ class ChunksBuilder
      */
     public static function from($from) // : static
     {
-        $instance = static::tryFrom($from, $error);
+        $instance = static::tryFrom($from, $e);
 
         if (null === $instance) {
-            throw $error;
+            throw $e;
         }
 
         return $instance;
@@ -240,53 +240,49 @@ class ChunksBuilder
     /**
      * @return static|null
      */
-    public static function tryFrom($from, \Throwable &$last = null) // : ?static
+    public static function tryFrom($from, \Throwable &$e = null) // : ?static
     {
-        $last = null;
-
-        Lib::php()->errors_start($b);
+        $e = null;
 
         $instance = null
-            ?? static::tryFromInstance($from)
-            ?? static::tryFromModelQuery($from)
-            ?? static::tryFromModel($from)
-            ?? static::tryFromModelClass($from)
-            ?? static::tryFromPdoQuery($from);
-
-        $errors = Lib::php()->errors_end($b);
-
-        if (null === $instance) {
-            foreach ( $errors as $error ) {
-                $last = new LogicException($error, $last);
-            }
-        }
+            ?? static::fromInstance($from, [ &$e ])
+            ?? static::fromModelQuery($from, [ &$e ])
+            ?? static::fromModel($from, [ &$e ])
+            ?? static::fromModelClass($from, [ &$e ])
+            ?? static::fromPdoQuery($from, [ &$e ]);
 
         return $instance;
     }
 
 
     /**
-     * @return static|null
+     * @return static|bool|null
      */
-    public static function tryFromInstance($from) // : ?static
+    public static function fromInstance($from, array $refs = [])
     {
-        if (! is_a($from, static::class)) {
-            return Lib::php()->error(
-                [ 'The `from` should be instance of: ' . static::class, $from ]
-            );
+        if ($from instanceof static) {
+            return Lib::refsResult($refs, $from);
         }
 
-        return $from;
+        return Lib::refsError(
+            $refs,
+            new LogicException(
+                [ 'The `from` should be instance of: ' . static::class, $from ]
+            )
+        );
     }
 
     /**
-     * @return static|null
+     * @return static|bool|null
      */
-    public static function tryFromModelQuery($from) // : ?static
+    public static function fromModelQuery($from, array $refs = [])
     {
-        if (! is_a($from, EloquentModelQueryBuilder::class)) {
-            return Lib::php()->error(
-                [ 'The `from` should be instance of: ' . EloquentModelQueryBuilder::class, $from ]
+        if (! ($from instanceof EloquentModelQueryBuilder)) {
+            return Lib::refsError(
+                $refs,
+                new LogicException(
+                    [ 'The `from` should be instance of: ' . EloquentModelQueryBuilder::class, $from ]
+                )
             );
         }
 
@@ -303,17 +299,20 @@ class ChunksBuilder
 
         $instance->offsetColumnDefault = $model->getKeyName();
 
-        return $instance;
+        return Lib::refsResult($refs, $instance);
     }
 
     /**
-     * @return static|null
+     * @return static|bool|null
      */
-    public static function tryFromPdoQuery($from) // : ?static
+    public static function fromPdoQuery($from, array $refs = [])
     {
-        if (! is_a($from, EloquentPdoQueryBuilder::class)) {
-            return Lib::php()->error(
-                [ 'The `from` should be instance of: ' . EloquentPdoQueryBuilder::class, $from ]
+        if (! ($from instanceof EloquentPdoQueryBuilder)) {
+            return Lib::refsError(
+                $refs,
+                new LogicException(
+                    [ 'The `from` should be instance of: ' . EloquentPdoQueryBuilder::class, $from ]
+                )
             );
         }
 
@@ -322,17 +321,20 @@ class ChunksBuilder
         $instance = new static();
         $instance->pdoQuery = $pdoQuery;
 
-        return $instance;
+        return Lib::refsResult($refs, $instance);
     }
 
     /**
-     * @return static|null
+     * @return static|bool|null
      */
-    public static function tryFromModel($from) // : ?static
+    public static function fromModel($from, array $refs = [])
     {
-        if (! is_a($from, EloquentModel::class)) {
-            return Lib::php()->error(
-                [ 'The `from` should be instance of: ' . EloquentModel::class, $from ]
+        if (! ($from instanceof EloquentModel)) {
+            return Lib::refsError(
+                $refs,
+                new LogicException(
+                    [ 'The `from` should be instance of: ' . EloquentModel::class, $from ]
+                )
             );
         }
 
@@ -349,17 +351,29 @@ class ChunksBuilder
 
         $instance->offsetColumnDefault = $model->getKeyName();
 
-        return $instance;
+        return Lib::refsResult($refs, $instance);
     }
 
     /**
-     * @return static|null
+     * @return static|bool|null
      */
-    public static function tryFromModelClass($from) // : ?static
+    public static function fromModelClass($from, array $refs = [])
     {
+        if (! (is_string($from) && ('' !== $from))) {
+            return Lib::refsError(
+                $refs,
+                new LogicException(
+                    [ 'The `from` should be non-empty string', $from ]
+                )
+            );
+        }
+
         if (! is_subclass_of($from, EloquentModel::class)) {
-            return Lib::php()->error(
-                [ 'The `from` should be class-string of: ' . EloquentModel::class, $from ]
+            return Lib::refsError(
+                $refs,
+                new LogicException(
+                    [ 'The `from` should be class-string of: ' . EloquentModel::class, $from ]
+                )
             );
         }
 
@@ -376,7 +390,7 @@ class ChunksBuilder
 
         $instance->offsetColumnDefault = $model->getKeyName();
 
-        return $instance;
+        return Lib::refsResult($refs, $instance);
     }
 
 
