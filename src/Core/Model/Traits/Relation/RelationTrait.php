@@ -347,7 +347,7 @@ trait RelationTrait
      *
      * @return T|TT
      */
-    public function requireRelationLoaded(string $relation) // : object
+    public function requireRelationLoaded(string $relation)
     {
         $status = $this->hasRelationLoaded($relation, $result);
 

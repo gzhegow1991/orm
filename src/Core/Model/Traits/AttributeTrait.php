@@ -258,7 +258,7 @@ trait AttributeTrait
         return false;
     }
 
-    public function getRawAttribute($key) // : mixed
+    public function getRawAttribute($key)
     {
         if (! $this->hasRawAttribute($key, $result)) {
             throw new RuntimeException(
