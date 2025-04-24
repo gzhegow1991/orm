@@ -114,119 +114,6 @@ abstract class EloquentModel extends EloquentModelBase
     }
 
 
-    /**
-     * @return static
-     */
-    public static function new(array $attributes = null, \Closure $fnInitialize = null)
-    {
-        $attributes = $attributes ?? [];
-
-        $instance = new static($attributes);
-        $instance->recentlyCreated = true;
-
-        if (null !== $fnInitialize) {
-            $fnInitialize->call($instance, $instance);
-        }
-
-        return $instance;
-    }
-
-
-    /**
-     * @return static
-     */
-    public static function from($from, \Closure $fnInitialize = null) // : static
-    {
-        $instance = static::tryFrom($from, $fnInitialize, $error);
-
-        if (null === $instance) {
-            throw $error;
-        }
-
-        return $instance;
-    }
-
-    /**
-     * @return static|null
-     */
-    public static function tryFrom($from, \Closure $fnInitialize = null, \Throwable &$last = null) // : ?static
-    {
-        $last = null;
-
-        Lib::php()->errors_start($b);
-
-        $instance = null
-            ?? static::tryFromInstance($from, $fnInitialize)
-            ?? static::tryFromArray($from, $fnInitialize)
-            ?? static::tryFromStd($from, $fnInitialize);
-
-        $errors = Lib::php()->errors_end($b);
-
-        if (null === $instance) {
-            foreach ( $errors as $error ) {
-                $last = new LogicException($error, $last);
-            }
-        }
-
-        return $instance;
-    }
-
-
-    /**
-     * @return static|null
-     */
-    public static function tryFromInstance($from, \Closure $fnInitialize = null) // : ?static
-    {
-        if (! is_a($from, static::class)) {
-            return Lib::php()->error(
-                [ 'The `from` should be instance of: ' . static::class, $from ]
-            );
-        }
-
-        $model = static::getModel();
-
-        $rawAttributes = $from->getRawAttributes();
-
-        foreach ( $rawAttributes as $key => $value ) {
-            if (! $model->isFillable($key)) {
-                unset($rawAttributes[ $key ]);
-            }
-        }
-
-        $instance = $from::new($rawAttributes, $fnInitialize);
-
-        return $instance;
-    }
-
-    /**
-     * @return static|null
-     */
-    public static function tryFromArray($from, \Closure $fnInitialize = null) // : ?static
-    {
-        if (! is_array($from)) {
-            return Lib::php()->error([ 'The `from` should be array', $from ]);
-        }
-
-        $instance = static::new($from, $fnInitialize);
-
-        return $instance;
-    }
-
-    /**
-     * @return static|null
-     */
-    public static function tryFromStd($from, \Closure $fnInitialize = null) : ?self
-    {
-        if (! is_a($from, \stdClass::class)) {
-            return Lib::php()->error([ 'The `from` should be \stdClass', $from ]);
-        }
-
-        $instance = static::new((array) $from, $fnInitialize);
-
-        return $instance;
-    }
-
-
     public function __isset($key)
     {
         return $this->offsetExists($key);
@@ -245,6 +132,92 @@ abstract class EloquentModel extends EloquentModelBase
     public function __unset($key)
     {
         return $this->offsetUnset($key);
+    }
+
+
+    /**
+     * @return static
+     */
+    public static function new(?array $attributes = null, ?\Closure $fnSetState = null)
+    {
+        $attributes = $attributes ?? [];
+
+        $instance = new static($attributes);
+        $instance->recentlyCreated = true;
+
+        if (null !== $fnSetState) {
+            $fnSetState->call($instance, $instance);
+        }
+
+        return $instance;
+    }
+
+
+    /**
+     * @return static|bool|null
+     */
+    public static function tryFromStatic($from, ?\Closure $fnSetState = null, array $refs = []) // : ?static
+    {
+        if (! ($from instanceof static)) {
+            return Lib::refsError(
+                $refs,
+                new LogicException(
+                    [ 'The `from` should be instance of: ' . static::class, $from ]
+                )
+            );
+        }
+
+        $model = static::getModel();
+
+        $rawAttributes = $from->getRawAttributes();
+
+        foreach ( array_keys($rawAttributes) as $key ) {
+            if (! $model->isFillable($key)) {
+                unset($rawAttributes[ $key ]);
+            }
+        }
+
+        $instance = static::new($rawAttributes, $fnSetState);
+
+        return Lib::refsResult($refs, $instance);
+    }
+
+    /**
+     * @return static|bool|null
+     */
+    public static function tryFromArray($from, ?\Closure $fnSetState = null, array $refs = []) // : ?static
+    {
+        if (! is_array($from)) {
+            return Lib::refsError(
+                $refs,
+                new LogicException(
+                    [ 'The `from` should be array', $from ]
+                )
+            );
+        }
+
+        $instance = static::new($from, $fnSetState);
+
+        return Lib::refsResult($refs, $instance);
+    }
+
+    /**
+     * @return static|bool|null
+     */
+    public static function tryFromStdClass($from, ?\Closure $fnSetState = null, array $refs = []) : ?self
+    {
+        if (! ($from instanceof \stdClass)) {
+            return Lib::refsError(
+                $refs,
+                new LogicException(
+                    [ 'The `from` should be \stdClass', $from ]
+                )
+            );
+        }
+
+        $instance = static::new((array) $from, $fnSetState);
+
+        return Lib::refsResult($refs, $instance);
     }
 
 

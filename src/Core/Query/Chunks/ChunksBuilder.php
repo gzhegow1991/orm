@@ -224,38 +224,6 @@ class ChunksBuilder
 
 
     /**
-     * @return static
-     */
-    public static function from($from) // : static
-    {
-        $instance = static::tryFrom($from, $e);
-
-        if (null === $instance) {
-            throw $e;
-        }
-
-        return $instance;
-    }
-
-    /**
-     * @return static|null
-     */
-    public static function tryFrom($from, \Throwable &$e = null) // : ?static
-    {
-        $e = null;
-
-        $instance = null
-            ?? static::fromInstance($from, [ &$e ])
-            ?? static::fromModelQuery($from, [ &$e ])
-            ?? static::fromModel($from, [ &$e ])
-            ?? static::fromModelClass($from, [ &$e ])
-            ?? static::fromPdoQuery($from, [ &$e ]);
-
-        return $instance;
-    }
-
-
-    /**
      * @return static|bool|null
      */
     public static function fromInstance($from, array $refs = [])

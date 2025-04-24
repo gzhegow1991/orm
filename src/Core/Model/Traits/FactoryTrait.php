@@ -20,6 +20,30 @@ trait FactoryTrait
 {
     /**
      * @return static
+     *
+     * @deprecated
+     * @internal
+     */
+    public function newInstance($attributes = [], $exists = false)
+    {
+        /** @see Model::newInstance() */
+
+        $attributes = Lib::php()->to_array($attributes);
+        $exists = boolval($exists ?? false);
+
+        $instance = $this->newInstanceWithState(
+            $attributes,
+            [
+                'connection' => $this->getConnectionName(),
+                'exists'     => $exists,
+            ]
+        );
+
+        return $instance;
+    }
+
+    /**
+     * @return static
      */
     public function newInstanceWithState(array $attributes = [], array $state = [])
     {
@@ -43,7 +67,7 @@ trait FactoryTrait
     /**
      * @return static
      */
-    public function newInstanceWithStateClosure(array $attributes = [], \Closure $fnSetState = null)
+    public function newInstanceWithSetState(array $attributes = [], \Closure $fnSetState = null)
     {
         $instance = new static($attributes);
 
@@ -54,6 +78,27 @@ trait FactoryTrait
         return $instance;
     }
 
+
+    /**
+     * @return static
+     *
+     * @deprecated
+     * @internal
+     */
+    protected function newRelatedInstance($class)
+    {
+        /** @see HasRelationships::newRelatedInstance() */
+
+        $instance = $this->newModelWithState(
+            $class,
+            [],
+            [
+                'connection' => $this->getConnectionName(),
+            ]
+        );
+
+        return $instance;
+    }
 
     /**
      * @param class-string<EloquentModel> $modelClass
@@ -91,7 +136,7 @@ trait FactoryTrait
      *
      * @return static
      */
-    public function newModelWithStateClosure(
+    public function newModelWithSetState(
         string $modelClass,
         array $attributes = [], \Closure $fnSetState = null
     )
@@ -111,50 +156,6 @@ trait FactoryTrait
         return $instance;
     }
 
-
-    /**
-     * @return static
-     *
-     * @deprecated
-     * @internal
-     */
-    public function newInstance($attributes = [], $exists = false)
-    {
-        /** @see Model::newInstance() */
-
-        $_attributes = Lib::php()->to_array($attributes);
-        $_exists = (bool) ($exists ?? false);
-
-        $instance = $this->newInstanceWithState(
-            $_attributes,
-            [
-                'connection' => $this->getConnectionName(),
-                'exists'     => $_exists,
-            ]
-        );
-
-        return $instance;
-    }
-
-    /**
-     * @return static
-     *
-     * @deprecated
-     * @internal
-     */
-    public function newRelatedInstance($class)
-    {
-        /** @see HasRelationships::newRelatedInstance() */
-
-        $instance = $this->newModelWithState(
-            $class,
-            [
-                'connection' => $this->getConnectionName(),
-            ]
-        );
-
-        return $instance;
-    }
 
     /**
      * @return static

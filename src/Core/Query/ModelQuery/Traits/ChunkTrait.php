@@ -20,7 +20,7 @@ trait ChunkTrait
      */
     public function chunks() : ChunksBuilder
     {
-        $builder = ChunksBuilder::from($this);
+        $builder = ChunksBuilder::fromModelQuery($this);
 
         return $builder;
     }
@@ -34,7 +34,7 @@ trait ChunkTrait
         int $offset = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::from($this);
+        $builder = ChunksBuilder::fromModelQuery($this);
 
         $builder
             ->chunksModelNativeForeach(
@@ -56,7 +56,7 @@ trait ChunkTrait
         string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::from($this);
+        $builder = ChunksBuilder::fromModelQuery($this);
 
         $builder
             ->chunksModelAfterForeach(
@@ -79,7 +79,7 @@ trait ChunkTrait
         int $offset = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::from($this);
+        $builder = ChunksBuilder::fromModelQuery($this);
 
         $builder
             ->chunksPdoNativeForeach(
@@ -101,7 +101,7 @@ trait ChunkTrait
         string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::from($this);
+        $builder = ChunksBuilder::fromModelQuery($this);
 
         $builder
             ->chunksPdoAfterForeach(
@@ -121,7 +121,7 @@ trait ChunkTrait
         int $offset = null
     ) : ChunksBuilder
     {
-        $builder = ChunksBuilder::from($this);
+        $builder = ChunksBuilder::fromModelQuery($this);
 
         $builder
             ->paginateModelNativeForeach(
@@ -138,7 +138,7 @@ trait ChunkTrait
         string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
     ) : ChunksBuilder
     {
-        $builder = ChunksBuilder::from($this);
+        $builder = ChunksBuilder::fromModelQuery($this);
 
         $builder
             ->paginateModelAfterForeach(
@@ -156,7 +156,7 @@ trait ChunkTrait
         int $offset = null
     ) : ChunksBuilder
     {
-        $builder = ChunksBuilder::from($this);
+        $builder = ChunksBuilder::fromModelQuery($this);
 
         $builder
             ->paginatePdoNativeForeach(
@@ -173,7 +173,7 @@ trait ChunkTrait
         string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
     ) : ChunksBuilder
     {
-        $builder = ChunksBuilder::from($this);
+        $builder = ChunksBuilder::fromModelQuery($this);
 
         $builder
             ->paginatePdoAfterForeach(

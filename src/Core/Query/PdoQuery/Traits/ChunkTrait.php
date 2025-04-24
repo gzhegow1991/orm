@@ -17,7 +17,7 @@ trait ChunkTrait
      */
     public function chunks() : ChunksBuilder
     {
-        $builder = ChunksBuilder::from($this);
+        $builder = ChunksBuilder::fromPdoQuery($this);
 
         return $builder;
     }
@@ -31,7 +31,7 @@ trait ChunkTrait
         int $offset = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::from($this);
+        $builder = ChunksBuilder::fromPdoQuery($this);
 
         $builder
             ->chunksPdoNativeForeach(
@@ -53,7 +53,7 @@ trait ChunkTrait
         string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::from($this);
+        $builder = ChunksBuilder::fromPdoQuery($this);
 
         $builder
             ->chunksPdoAfterForeach(
@@ -73,7 +73,7 @@ trait ChunkTrait
         int $offset = null
     ) : ChunksBuilder
     {
-        $builder = ChunksBuilder::from($this);
+        $builder = ChunksBuilder::fromPdoQuery($this);
 
         $builder
             ->paginatePdoNativeForeach(
@@ -90,7 +90,7 @@ trait ChunkTrait
         string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
     ) : ChunksBuilder
     {
-        $builder = ChunksBuilder::from($this);
+        $builder = ChunksBuilder::fromPdoQuery($this);
 
         $builder
             ->paginatePdoAfterForeach(
