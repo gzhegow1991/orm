@@ -156,7 +156,7 @@ abstract class EloquentModel extends EloquentModelBase
     /**
      * @return static|bool|null
      */
-    public static function tryFromStatic($from, ?\Closure $fnSetState = null, array $refs = []) // : ?static
+    public static function fromStatic($from, ?\Closure $fnSetState = null, array $refs = [])
     {
         if (! ($from instanceof static)) {
             return Lib::refsError(
@@ -185,7 +185,7 @@ abstract class EloquentModel extends EloquentModelBase
     /**
      * @return static|bool|null
      */
-    public static function tryFromArray($from, ?\Closure $fnSetState = null, array $refs = []) // : ?static
+    public static function fromArray($from, ?\Closure $fnSetState = null, array $refs = [])
     {
         if (! is_array($from)) {
             return Lib::refsError(
@@ -204,7 +204,7 @@ abstract class EloquentModel extends EloquentModelBase
     /**
      * @return static|bool|null
      */
-    public static function tryFromStdClass($from, ?\Closure $fnSetState = null, array $refs = []) : ?self
+    public static function fromStdClass($from, ?\Closure $fnSetState = null, array $refs = []) : ?self
     {
         if (! ($from instanceof \stdClass)) {
             return Lib::refsError(

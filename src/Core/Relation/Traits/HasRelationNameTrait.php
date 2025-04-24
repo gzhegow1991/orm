@@ -27,7 +27,7 @@ trait HasRelationNameTrait
     /**
      * @return static
      */
-    public function setRelationName(?string $relationName) // : static
+    public function setRelationName(?string $relationName)
     {
         if ('' === $relationName) {
             throw new \LogicException(

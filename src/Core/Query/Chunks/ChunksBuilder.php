@@ -124,6 +124,10 @@ class ChunksBuilder
      * @var int|null
      */
     protected $limit = [];
+    /**
+     * @var null
+     */
+    private $limitDefault = null;
 
     /**
      * @var int
@@ -182,7 +186,16 @@ class ChunksBuilder
     /**
      * @var int
      */
+    private $pageDefault = 1;
+
+    /**
+     * @var int
+     */
     protected $pagesDelta = [];
+    /**
+     * @var int
+     */
+    private $pagesDeltaDefault = 0;
 
     /**
      * @var int|null
@@ -191,7 +204,8 @@ class ChunksBuilder
     /**
      * @var int|null
      */
-    private $totalDefault = null;
+    private $totalItemsDefault = null;
+
     /**
      * @var int|null
      */
@@ -199,7 +213,7 @@ class ChunksBuilder
     /**
      * @var int|null
      */
-    private $pagesTotalDefault = null;
+    private $totalPagesDefault = null;
 
 
     private function __construct()
@@ -207,6 +221,7 @@ class ChunksBuilder
         $this->modeSelectCount = static::MODE_SELECT_COUNT_NULL;
 
         $this->limitChunk = $this->limitChunkDefault;
+        $this->limit = $this->limitDefault;
 
         $this->offset = $this->offsetDefault;
 
@@ -215,9 +230,11 @@ class ChunksBuilder
         $this->includeOffsetValue = $this->includeOffsetValueDefault;
 
         $this->perPage = $this->perPageDefault;
+        $this->page = $this->pageDefault;
+        $this->pagesDelta = $this->pagesDeltaDefault;
 
-        $this->totalItems = $this->totalDefault;
-        $this->totalPages = $this->pagesTotalDefault;
+        $this->totalItems = $this->totalItemsDefault;
+        $this->totalPages = $this->totalPagesDefault;
 
         $this->processor = Orm::newChunkProcessor();
     }
@@ -392,19 +409,21 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function setModeOffset(string $modeOffset) // : static
+    public function setModeOffset(?string $modeOffset)
     {
-        if (! isset(static::LIST_MODE_OFFSET[ $modeOffset ])) {
-            throw new LogicException(
-                [
-                    'The `modeOffset` should be one of: '
-                    . implode('|', array_keys(static::LIST_MODE_OFFSET)),
-                    $modeOffset,
-                ]
-            );
+        if (null !== $modeOffset) {
+            if (! isset(static::LIST_MODE_OFFSET[ $modeOffset ])) {
+                throw new LogicException(
+                    [
+                        'The `modeOffset` should be one of: '
+                        . implode('|', array_keys(static::LIST_MODE_OFFSET)),
+                        $modeOffset,
+                    ]
+                );
+            }
         }
 
-        $this->modeOffset = $modeOffset;
+        $this->modeOffset = $modeOffset ?? [];
 
         return $this;
     }
@@ -412,19 +431,21 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function setModeFetch(string $modeFetch) // : static
+    public function setModeFetch(?string $modeFetch)
     {
-        if (! isset(static::LIST_MODE_FETCH[ $modeFetch ])) {
-            throw new LogicException(
-                [
-                    'The `modeFetch` should be one of: '
-                    . implode('|', array_keys(static::LIST_MODE_FETCH)),
-                    $modeFetch,
-                ]
-            );
+        if (null !== $modeFetch) {
+            if (! isset(static::LIST_MODE_FETCH[ $modeFetch ])) {
+                throw new LogicException(
+                    [
+                        'The `modeFetch` should be one of: '
+                        . implode('|', array_keys(static::LIST_MODE_FETCH)),
+                        $modeFetch,
+                    ]
+                );
+            }
         }
 
-        $this->modeFetch = $modeFetch;
+        $this->modeFetch = $modeFetch ?? [];
 
         return $this;
     }
@@ -432,19 +453,21 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function setModeSelectCount(string $modeSelectCount) // : static
+    public function setModeSelectCount(?string $modeSelectCount)
     {
-        if (! isset(static::LIST_MODE_SELECT_COUNT[ $modeSelectCount ])) {
-            throw new LogicException(
-                [
-                    'The `modeSelectCount` should be one of: '
-                    . implode('|', array_keys(static::LIST_MODE_SELECT_COUNT)),
-                    $modeSelectCount,
-                ]
-            );
+        if (null !== $modeSelectCount) {
+            if (! isset(static::LIST_MODE_SELECT_COUNT[ $modeSelectCount ])) {
+                throw new LogicException(
+                    [
+                        'The `modeSelectCount` should be one of: '
+                        . implode('|', array_keys(static::LIST_MODE_SELECT_COUNT)),
+                        $modeSelectCount,
+                    ]
+                );
+            }
         }
 
-        $this->modeSelectCount = $modeSelectCount;
+        $this->modeSelectCount = $modeSelectCount ?? [];
 
         return $this;
     }
@@ -452,19 +475,21 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function setModeResult(string $modeResult) // : static
+    public function setModeResult(?string $modeResult)
     {
-        if (! isset(static::LIST_MODE_RESULT[ $modeResult ])) {
-            throw new LogicException(
-                [
-                    'The `mode` should be one of: '
-                    . implode('|', array_keys(static::LIST_MODE_RESULT)),
-                    $modeResult,
-                ]
-            );
+        if (null !== $modeResult) {
+            if (! isset(static::LIST_MODE_RESULT[ $modeResult ])) {
+                throw new LogicException(
+                    [
+                        'The `mode` should be one of: '
+                        . implode('|', array_keys(static::LIST_MODE_RESULT)),
+                        $modeResult,
+                    ]
+                );
+            }
         }
 
-        $this->modeResult = $modeResult;
+        $this->modeResult = $modeResult ?? [];
 
         return $this;
     }
@@ -494,9 +519,17 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function setLimitChunk(int $limitChunk) // : static
+    public function setLimitChunk(?int $limitChunk)
     {
-        $this->limitChunk = ($limitChunk > 0) ? $limitChunk : $this->limitChunkDefault;
+        if (null !== $limitChunk) {
+            if ($limitChunk <= 0) {
+                throw new LogicException(
+                    [ 'The `limitChunk` should be greater than 0', $limitChunk ]
+                );
+            }
+        }
+
+        $this->limitChunk = $limitChunk ?? $this->limitChunkDefault;
 
         return $this;
     }
@@ -504,9 +537,17 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function setLimit(?int $limit) // : static
+    public function setLimit(?int $limit)
     {
-        $this->limit = ($limit > 0) ? $limit : null;
+        if (null !== $limit) {
+            if ($limit <= 0) {
+                throw new LogicException(
+                    [ 'The `limit` should be greater than 0', $limit ]
+                );
+            }
+        }
+
+        $this->limit = $limit ?? $this->limitDefault;
 
         return $this;
     }
@@ -532,9 +573,17 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function setOffset(int $offset) // : static
+    public function setOffset(?int $offset)
     {
-        $this->offset = ($offset > 0) ? $offset : 0;
+        if (null !== $offset) {
+            if ($offset <= 0) {
+                throw new LogicException(
+                    [ 'The `offset` should be greater than 0', $offset ]
+                );
+            }
+        }
+
+        $this->offset = $offset ?? $this->offsetDefault;
 
         return $this;
     }
@@ -542,9 +591,9 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function setOffsetValue(array $offsetValue = []) // : static
+    public function setOffsetValue(array $offsetValue = [])
     {
-        $this->offsetValue = count($offsetValue)
+        $this->offsetValue = ([] !== $offsetValue)
             ? $offsetValue
             : [];
 
@@ -554,9 +603,9 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function setIncludeOffsetValue(bool $includeOffsetValue) // : static
+    public function setIncludeOffsetValue(?bool $includeOffsetValue)
     {
-        $this->includeOffsetValue = $includeOffsetValue;
+        $this->includeOffsetValue = $includeOffsetValue ?? $this->includeOffsetValueDefault;
 
         return $this;
     }
@@ -566,7 +615,7 @@ class ChunksBuilder
     {
         $result = null;
 
-        if (count($this->offsetValue)) {
+        if ([] !== $this->offsetValue) {
             [ $result ] = $this->offsetValue;
 
             return true;
@@ -581,7 +630,7 @@ class ChunksBuilder
         return $this->offset;
     }
 
-    public function getOffsetValue() // : mixed
+    public function getOffsetValue()
     {
         if (! $this->hasOffsetValue($result)) {
             throw new RuntimeException(
@@ -601,17 +650,19 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function setOffsetColumn(string $offsetColumn) // : static
+    public function setOffsetColumn(?string $offsetColumn)
     {
-        if ('' === $offsetColumn) {
-            throw new LogicException(
-                [
-                    'The `offsetColumn` should be non-empty string',
-                ]
-            );
+        if (null !== $offsetColumn) {
+            if ('' === $offsetColumn) {
+                throw new LogicException(
+                    [
+                        'The `offsetColumn` should be non-empty string',
+                    ]
+                );
+            }
         }
 
-        $this->offsetColumn = $offsetColumn;
+        $this->offsetColumn = $offsetColumn ?? $this->offsetColumnDefault;
 
         return $this;
     }
@@ -619,18 +670,20 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function setOffsetOperator(string $offsetOperator) // : static
+    public function setOffsetOperator(?string $offsetOperator)
     {
-        if (! isset(static::LIST_OFFSET_OPERATOR[ $offsetOperator ])) {
-            throw new LogicException(
-                [
-                    'The `offsetOperator` should be one of: '
-                    . implode('|', array_keys(static::LIST_OFFSET_OPERATOR)),
-                ]
-            );
+        if (null !== $offsetOperator) {
+            if (! isset(static::LIST_OFFSET_OPERATOR[ $offsetOperator ])) {
+                throw new LogicException(
+                    [
+                        'The `offsetOperator` should be one of: '
+                        . implode('|', array_keys(static::LIST_OFFSET_OPERATOR)),
+                    ]
+                );
+            }
         }
 
-        $this->offsetOperator = $offsetOperator;
+        $this->offsetOperator = $offsetOperator ?? $this->offsetOperatorDefault;
 
         return $this;
     }
@@ -650,9 +703,17 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function setPerPage(int $perPage) // : static
+    public function setPerPage(?int $perPage)
     {
-        $this->perPage = ($perPage > 0) ? $perPage : $this->perPageDefault;
+        if (null !== $perPage) {
+            if ($perPage <= 0) {
+                throw new LogicException(
+                    [ 'The `perPage` should be greater than 0', $perPage ]
+                );
+            }
+        }
+
+        $this->perPage = $perPage ?? $this->perPageDefault;
 
         return $this;
     }
@@ -660,9 +721,17 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function setPage(int $page) // : static
+    public function setPage(?int $page)
     {
-        $this->page = ($page > 0) ? $page : 1;
+        if (null !== $page) {
+            if ($page <= 0) {
+                throw new LogicException(
+                    [ 'The `page` should be greater than 0', $page ]
+                );
+            }
+        }
+
+        $this->page = $page ?? $this->pageDefault;
 
         return $this;
     }
@@ -670,9 +739,17 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function setPagesDelta(?int $pagesDelta) // : static
+    public function setPagesDelta(?int $pagesDelta)
     {
-        $this->pagesDelta = ($pagesDelta > 0) ? $pagesDelta : 0;
+        if (null !== $pagesDelta) {
+            if ($pagesDelta <= 0) {
+                throw new LogicException(
+                    [ 'The `pagesDelta` should be greater than 0', $pagesDelta ]
+                );
+            }
+        }
+
+        $this->pagesDelta = $pagesDelta ?? $this->pagesDeltaDefault;
 
         return $this;
     }
@@ -703,23 +780,20 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function setTotalItems(?int $totalItems) // : static
+    public function setTotalItems(?int $totalItems)
     {
-        $this->totalItems = ($totalItems > 0) ? $totalItems : null;
+        if (null !== $totalItems) {
+            if ($totalItems <= 0) {
+                throw new LogicException(
+                    [ 'The `totalItems` should be greater than 0', $totalItems ]
+                );
+            }
+        }
+
+        $this->totalItems = $totalItems ?? $this->totalItemsDefault;
 
         return $this;
     }
-
-    /**
-     * @return static
-     */
-    public function setTotalPages(?int $totalPages) // : static
-    {
-        $this->totalPages = ($totalPages > 0) ? $totalPages : null;
-
-        return $this;
-    }
-
 
     public function hasTotalItems() : ?int
     {
@@ -729,6 +803,25 @@ class ChunksBuilder
     public function getTotalItems() : int
     {
         return $this->totalItems;
+    }
+
+
+    /**
+     * @return static
+     */
+    public function setTotalPages(?int $totalPages)
+    {
+        if (null !== $totalPages) {
+            if ($totalPages <= 0) {
+                throw new LogicException(
+                    [ 'The `totalPages` should be greater than 0', $totalPages ]
+                );
+            }
+        }
+
+        $this->totalPages = $totalPages ?? $this->totalPagesDefault;
+
+        return $this;
     }
 
     public function hasTotalPages() : ?int
@@ -745,7 +838,7 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function withFetchModel() // : static
+    public function withFetchModel()
     {
         $this->setModeFetch(static::MODE_FETCH_MODEL);
 
@@ -755,7 +848,7 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function withFetchPdo() // : static
+    public function withFetchPdo()
     {
         $this->setModeFetch(static::MODE_FETCH_PDO);
 
@@ -767,8 +860,8 @@ class ChunksBuilder
      * @return static
      */
     public function withOffsetNative(
-        int $offset = null
-    ) // : static
+        ?int $offset = null
+    )
     {
         $this->setModeOffset(static::MODE_OFFSET_NATIVE);
 
@@ -781,11 +874,11 @@ class ChunksBuilder
      * @return static
      */
     public function withOffsetAfter(
-        string $offsetColumn = null,
-        string $offsetOperator = null,
+        ?string $offsetColumn = null,
+        ?string $offsetOperator = null,
         $offsetValue = null,
-        bool $includeOffsetValue = null
-    ) // : static
+        ?bool $includeOffsetValue = null
+    )
     {
         $this->setModeOffset(static::MODE_OFFSET_AFTER);
 
@@ -801,7 +894,7 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function withSelectCountNull() // : static
+    public function withSelectCountNull()
     {
         $this->setModeSelectCount(static::MODE_SELECT_COUNT_NULL);
 
@@ -811,7 +904,7 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function withSelectCountNative() // : static
+    public function withSelectCountNative()
     {
         $this->setModeSelectCount(static::MODE_SELECT_COUNT_NATIVE);
 
@@ -821,7 +914,7 @@ class ChunksBuilder
     /**
      * @return static
      */
-    public function withSelectCountExplain() // : static
+    public function withSelectCountExplain()
     {
         $this->setModeSelectCount(static::MODE_SELECT_COUNT_EXPLAIN);
 
@@ -833,9 +926,9 @@ class ChunksBuilder
      * @return static
      */
     public function withResultChunk(
-        int $limitChunk = null,
-        int $limit = null
-    ) // : static
+        ?int $limitChunk = null,
+        ?int $limit = null
+    )
     {
         $this->setModeResult(static::MODE_RESULT_CHUNK);
 
@@ -850,10 +943,10 @@ class ChunksBuilder
      * @return static
      */
     public function withResultPaginate(
-        int $perPage = null,
-        int $page = null,
-        int $pagesDelta = null
-    ) // : static
+        ?int $perPage = null,
+        ?int $page = null,
+        ?int $pagesDelta = null
+    )
     {
         $this->setModeResult(static::MODE_RESULT_PAGINATE);
 
@@ -870,9 +963,9 @@ class ChunksBuilder
      * @return static
      */
     public function chunksModelNativeForeach(
-        int $limitChunk, int $limit = null,
-        int $offset = null
-    ) // : static
+        ?int $limitChunk, ?int $limit = null,
+        ?int $offset = null
+    )
     {
         $this
             ->withFetchModel()
@@ -887,9 +980,9 @@ class ChunksBuilder
      * @return static
      */
     public function chunksModelAfterForeach(
-        int $limitChunk, int $limit = null,
-        string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
-    ) // : static
+        ?int $limitChunk, ?int $limit = null,
+        ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
+    )
     {
         $this
             ->withFetchModel()
@@ -905,9 +998,9 @@ class ChunksBuilder
      * @return static
      */
     public function chunksPdoNativeForeach(
-        int $limitChunk, int $limit = null,
-        int $offset = null
-    ) // : static
+        ?int $limitChunk, ?int $limit = null,
+        ?int $offset = null
+    )
     {
         $this
             ->withFetchPdo()
@@ -922,9 +1015,9 @@ class ChunksBuilder
      * @return static
      */
     public function chunksPdoAfterForeach(
-        int $limitChunk, int $limit = null,
-        string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
-    ) // : static
+        ?int $limitChunk, ?int $limit = null,
+        ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
+    )
     {
         $this
             ->withFetchPdo()
@@ -940,9 +1033,9 @@ class ChunksBuilder
      * @return static
      */
     public function paginateModelNativeForeach(
-        int $perPage = null, int $page = null, int $pagesDelta = null,
-        int $offset = null
-    ) // : static
+        ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
+        ?int $offset = null
+    )
     {
         $this
             ->withFetchModel()
@@ -957,9 +1050,9 @@ class ChunksBuilder
      * @return static
      */
     public function paginateModelAfterForeach(
-        int $perPage = null, int $page = null, int $pagesDelta = null,
-        string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
-    ) // : static
+        ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
+        ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
+    )
     {
         $this
             ->withFetchModel()
@@ -975,9 +1068,9 @@ class ChunksBuilder
      * @return static
      */
     public function paginatePdoNativeForeach(
-        int $perPage = null, int $page = null, int $pagesDelta = null,
-        int $offset = null
-    ) // : static
+        ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
+        ?int $offset = null
+    )
     {
         $this
             ->withFetchPdo()
@@ -992,9 +1085,9 @@ class ChunksBuilder
      * @return static
      */
     public function paginatePdoAfterForeach(
-        int $perPage = null, int $page = null, int $pagesDelta = null,
-        string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
-    ) // : static
+        ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
+        ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
+    )
     {
         $this
             ->withFetchPdo()

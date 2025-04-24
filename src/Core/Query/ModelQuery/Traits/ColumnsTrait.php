@@ -19,7 +19,7 @@ trait ColumnsTrait
     /**
      * @return static
      */
-    public function resetColumns(array $columnsDefault) // : static
+    public function resetColumns(array $columnsDefault)
     {
         $this->columnsDefaultAppend = [];
 
@@ -31,7 +31,7 @@ trait ColumnsTrait
     /**
      * @return static
      */
-    public function addColumns(array $columnsDefault) // : static
+    public function addColumns(array $columnsDefault)
     {
         foreach ( $columnsDefault as $column ) {
             $this->addColumn($column);
@@ -43,7 +43,7 @@ trait ColumnsTrait
     /**
      * @return static
      */
-    public function addColumn(string $column) // : static
+    public function addColumn(string $column)
     {
         $this->columnsDefaultAppend[] = $column;
 

@@ -115,7 +115,7 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
     /**
      * @return static
      */
-    public function wheresGroup() // : static
+    public function wheresGroup()
     {
         $this->wheresGroupStack[] = $this->wheres;
 
@@ -127,7 +127,7 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
     /**
      * @return static
      */
-    public function endWheresGroup() // : static
+    public function endWheresGroup()
     {
         if (! count($this->wheresGroupStack)) {
             throw new LogicException(
