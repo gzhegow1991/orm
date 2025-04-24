@@ -243,7 +243,7 @@ class ChunksBuilder
     /**
      * @return static|bool|null
      */
-    public static function fromInstance($from, array $refs = [])
+    public static function fromStatic($from, array $refs = [])
     {
         if ($from instanceof static) {
             return Lib::refsResult($refs, $from);
