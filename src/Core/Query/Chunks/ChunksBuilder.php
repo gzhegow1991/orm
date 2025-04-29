@@ -2,9 +2,9 @@
 
 namespace Gzhegow\Orm\Core\Query\Chunks;
 
-use Gzhegow\Lib\Lib;
 use Gzhegow\Orm\Core\Orm;
 use Gzhegow\Orm\Exception\LogicException;
+use Gzhegow\Lib\Modules\Php\Result\Result;
 use Gzhegow\Orm\Exception\RuntimeException;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
@@ -243,31 +243,29 @@ class ChunksBuilder
     /**
      * @return static|bool|null
      */
-    public static function fromStatic($from, array $refs = [])
+    public static function fromStatic($from, $ctx = null)
     {
         if ($from instanceof static) {
-            return Lib::refsResult($refs, $from);
+            return Result::ok($ctx, $from);
         }
 
-        return Lib::refsError(
-            $refs,
-            new LogicException(
-                [ 'The `from` should be instance of: ' . static::class, $from ]
-            )
+        return Result::err(
+            $ctx,
+            [ 'The `from` should be instance of: ' . static::class, $from ],
+            [ __FILE__, __LINE__ ]
         );
     }
 
     /**
      * @return static|bool|null
      */
-    public static function fromModelQuery($from, array $refs = [])
+    public static function fromModelQuery($from, $ctx = null)
     {
         if (! ($from instanceof EloquentModelQueryBuilder)) {
-            return Lib::refsError(
-                $refs,
-                new LogicException(
-                    [ 'The `from` should be instance of: ' . EloquentModelQueryBuilder::class, $from ]
-                )
+            return Result::err(
+                $ctx,
+                [ 'The `from` should be instance of: ' . EloquentModelQueryBuilder::class, $from ],
+                [ __FILE__, __LINE__ ]
             );
         }
 
@@ -284,20 +282,19 @@ class ChunksBuilder
 
         $instance->offsetColumnDefault = $model->getKeyName();
 
-        return Lib::refsResult($refs, $instance);
+        return Result::ok($ctx, $instance);
     }
 
     /**
      * @return static|bool|null
      */
-    public static function fromPdoQuery($from, array $refs = [])
+    public static function fromPdoQuery($from, $ctx = null)
     {
         if (! ($from instanceof EloquentPdoQueryBuilder)) {
-            return Lib::refsError(
-                $refs,
-                new LogicException(
-                    [ 'The `from` should be instance of: ' . EloquentPdoQueryBuilder::class, $from ]
-                )
+            return Result::err(
+                $ctx,
+                [ 'The `from` should be instance of: ' . EloquentPdoQueryBuilder::class, $from ],
+                [ __FILE__, __LINE__ ]
             );
         }
 
@@ -306,20 +303,19 @@ class ChunksBuilder
         $instance = new static();
         $instance->pdoQuery = $pdoQuery;
 
-        return Lib::refsResult($refs, $instance);
+        return Result::ok($ctx, $instance);
     }
 
     /**
      * @return static|bool|null
      */
-    public static function fromModel($from, array $refs = [])
+    public static function fromModel($from, $ctx = null)
     {
         if (! ($from instanceof EloquentModel)) {
-            return Lib::refsError(
-                $refs,
-                new LogicException(
-                    [ 'The `from` should be instance of: ' . EloquentModel::class, $from ]
-                )
+            return Result::err(
+                $ctx,
+                [ 'The `from` should be instance of: ' . EloquentModel::class, $from ],
+                [ __FILE__, __LINE__ ]
             );
         }
 
@@ -336,29 +332,27 @@ class ChunksBuilder
 
         $instance->offsetColumnDefault = $model->getKeyName();
 
-        return Lib::refsResult($refs, $instance);
+        return Result::ok($ctx, $instance);
     }
 
     /**
      * @return static|bool|null
      */
-    public static function fromModelClass($from, array $refs = [])
+    public static function fromModelClass($from, $ctx = null)
     {
         if (! (is_string($from) && ('' !== $from))) {
-            return Lib::refsError(
-                $refs,
-                new LogicException(
-                    [ 'The `from` should be non-empty string', $from ]
-                )
+            return Result::err(
+                $ctx,
+                [ 'The `from` should be non-empty string', $from ],
+                [ __FILE__, __LINE__ ]
             );
         }
 
         if (! is_subclass_of($from, EloquentModel::class)) {
-            return Lib::refsError(
-                $refs,
-                new LogicException(
-                    [ 'The `from` should be class-string of: ' . EloquentModel::class, $from ]
-                )
+            return Result::err(
+                $ctx,
+                [ 'The `from` should be class-string of: ' . EloquentModel::class, $from ],
+                [ __FILE__, __LINE__ ]
             );
         }
 
@@ -375,7 +369,7 @@ class ChunksBuilder
 
         $instance->offsetColumnDefault = $model->getKeyName();
 
-        return Lib::refsResult($refs, $instance);
+        return Result::ok($ctx, $instance);
     }
 
 

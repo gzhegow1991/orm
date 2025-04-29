@@ -4,6 +4,7 @@ namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent;
 
 use Gzhegow\Lib\Lib;
 use Gzhegow\Orm\Exception\LogicException;
+use Gzhegow\Lib\Modules\Php\Result\Result;
 use Gzhegow\Orm\Exception\RuntimeException;
 use Gzhegow\Orm\Core\Model\Traits\LoadTrait;
 use Gzhegow\Orm\Core\Model\Traits\TableTrait;
@@ -156,14 +157,13 @@ abstract class EloquentModel extends EloquentModelBase
     /**
      * @return static|bool|null
      */
-    public static function fromStatic($from, ?\Closure $fnSetState = null, array $refs = [])
+    public static function fromStatic($from, ?\Closure $fnSetState = null, $ctx = null)
     {
         if (! ($from instanceof static)) {
-            return Lib::refsError(
-                $refs,
-                new LogicException(
-                    [ 'The `from` should be instance of: ' . static::class, $from ]
-                )
+            return Result::err(
+                $ctx,
+                [ 'The `from` should be instance of: ' . static::class, $from ],
+                [ __FILE__, __LINE__ ]
             );
         }
 
@@ -179,45 +179,43 @@ abstract class EloquentModel extends EloquentModelBase
 
         $instance = static::new($rawAttributes, $fnSetState);
 
-        return Lib::refsResult($refs, $instance);
+        return Result::ok($ctx, $instance);
     }
 
     /**
      * @return static|bool|null
      */
-    public static function fromArray($from, ?\Closure $fnSetState = null, array $refs = [])
+    public static function fromArray($from, ?\Closure $fnSetState = null, $ctx = null)
     {
         if (! is_array($from)) {
-            return Lib::refsError(
-                $refs,
-                new LogicException(
-                    [ 'The `from` should be array', $from ]
-                )
+            return Result::err(
+                $ctx,
+                [ 'The `from` should be array', $from ],
+                [ __FILE__, __LINE__ ]
             );
         }
 
         $instance = static::new($from, $fnSetState);
 
-        return Lib::refsResult($refs, $instance);
+        return Result::ok($ctx, $instance);
     }
 
     /**
      * @return static|bool|null
      */
-    public static function fromStdClass($from, ?\Closure $fnSetState = null, array $refs = []) : ?self
+    public static function fromStdClass($from, ?\Closure $fnSetState = null, $ctx = null)
     {
         if (! ($from instanceof \stdClass)) {
-            return Lib::refsError(
-                $refs,
-                new LogicException(
-                    [ 'The `from` should be \stdClass', $from ]
-                )
+            return Result::err(
+                $ctx,
+                [ 'The `from` should be \stdClass', $from ],
+                [ __FILE__, __LINE__ ]
             );
         }
 
         $instance = static::new((array) $from, $fnSetState);
 
-        return Lib::refsResult($refs, $instance);
+        return Result::ok($ctx, $instance);
     }
 
 
