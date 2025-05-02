@@ -3,16 +3,15 @@
 namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent;
 
 use Gzhegow\Lib\Lib;
-use Gzhegow\Orm\Exception\LogicException;
 use Gzhegow\Lib\Modules\Php\Result\Result;
 use Gzhegow\Orm\Exception\RuntimeException;
 use Gzhegow\Orm\Core\Model\Traits\LoadTrait;
+use Gzhegow\Orm\Core\Model\Traits\DateTrait;
 use Gzhegow\Orm\Core\Model\Traits\TableTrait;
 use Gzhegow\Orm\Core\Model\Traits\QueryTrait;
 use Gzhegow\Orm\Core\Model\Traits\ChunkTrait;
 use Gzhegow\Orm\Core\Model\Traits\FactoryTrait;
 use Gzhegow\Orm\Core\Model\Traits\ColumnsTrait;
-use Gzhegow\Orm\Core\Model\Traits\CalendarTrait;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Gzhegow\Orm\Core\Model\Traits\AttributeTrait;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -25,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 use Gzhegow\Orm\Core\Model\Traits\Relation\RelationFactoryTrait;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Gzhegow\Orm\Exception\Exception\Resource\ResourceNotFoundException;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\RelationInterface;
 
 
 abstract class EloquentModel extends EloquentModelBase
@@ -40,7 +40,7 @@ abstract class EloquentModel extends EloquentModelBase
     use QueryTrait;
     use TableTrait;
 
-    use CalendarTrait;
+    use DateTrait;
     use PersistenceTrait;
 
 
@@ -99,11 +99,11 @@ abstract class EloquentModel extends EloquentModelBase
     protected $visibleLoaded = false;
 
     // >>> state
-    /** > SELECT был сделан в рамках этого скрипта, чтобы создать сущность и наполнить её из БД */
+    /** > ТИП: SELECT был сделан в рамках этого скрипта, чтобы создать сущность и наполнить её из БД */
     public $exists = false;
-    /** > gzhegow, модель создана, чтобы выполнить INSERT в рамках текущего скрипта */
+    /** > ТИП: модель создана, чтобы выполнить INSERT в рамках текущего скрипта */
     public $recentlyCreated = false;
-    /** > INSERT/UPDATE был сделан в рамках этого скрипта, т.е. модель создана "недавно", `exists` тоже будет true */
+    /** > ТИП: INSERT/UPDATE был сделан в рамках этого скрипта, т.е. модель создана "недавно", `exists` тоже будет true */
     public $wasRecentlyCreated = false;
 
 
@@ -317,16 +317,6 @@ abstract class EloquentModel extends EloquentModelBase
     }
 
 
-    /**
-     * @deprecated
-     * @internal
-     */
-    public static function clearBootedModels()
-    {
-        parent::clearBootedModels();
-    }
-
-
     public function getKey()
     {
         /** @see parent::getKey(); */
@@ -466,7 +456,7 @@ abstract class EloquentModel extends EloquentModelBase
 
         $graph[ $splHash ] = $this;
 
-        // > gzhegow, this will remove cross-links for garbage collector
+        // > с помощью этого массива будем удалять кросс-ссылки, чтобы сборщик мусора очищал память
         $relationsToUnset = [];
 
         foreach ( $this->relations as $relationName => $relationValue ) {
@@ -520,7 +510,7 @@ abstract class EloquentModel extends EloquentModelBase
             }
         }
 
-        // > gzhegow, remove cross-links for garbage collector
+        // > удаляем кросс-ссылки
         foreach ( $relationsToUnset as $relationName => $bool ) {
             unset($this->relations[ $relationName ]);
         }
@@ -610,7 +600,7 @@ abstract class EloquentModel extends EloquentModelBase
 
 
     /**
-     * > gzhegow, немного измененный вывод объекта в json, чтобы свойства со связями не перемешивались
+     * > немного измененный вывод объекта в json, чтобы свойства со связями не перемешивались
      */
     public function jsonSerialize()
     {
@@ -706,6 +696,30 @@ abstract class EloquentModel extends EloquentModelBase
 
         return $this;
     }
+
+
+    /**
+     * > метод помечен internal и deprecated
+     *
+     * @deprecated
+     * @internal
+     */
+    public static function clearBootedModels()
+    {
+        parent::clearBootedModels();
+    }
+
+
+    /**
+     * @return array<string, class-string<RelationInterface>>
+     */
+    abstract protected static function relationClasses() : array;
+    // abstract protected static function relationClasses() : array
+    // {
+    //     return [
+    //         '_relation' => BelongsTo::class,
+    //     ];
+    // }
 
 
     /**

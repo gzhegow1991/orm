@@ -116,7 +116,7 @@ trait TableTrait
 
     public function tableThis(string $alias = null) : string
     {
-        // > gzhegow, Eloquent при подстановке в запрос оборачивает alias согласно Grammar
+        // > Eloquent при подстановке в запрос оборачивает alias согласно Grammar
         // > а вот если пишете RAW запрос, передавайте $alias вместе с кавычками
 
         $table =
@@ -133,7 +133,7 @@ trait TableTrait
 
     public function tableNoPrefixThis(string $alias = null) : string
     {
-        // > gzhegow, Eloquent при подстановке в запрос оборачивает alias согласно Grammar
+        // > Eloquent при подстановке в запрос оборачивает alias согласно Grammar
         // > а вот если пишете RAW запрос, передавайте $alias вместе с кавычками
 
         $tableNoPrefix =
@@ -149,7 +149,7 @@ trait TableTrait
 
     protected function tableDefaultThis(string $alias = null) : string
     {
-        // > gzhegow, Eloquent при подстановке в запрос оборачивает alias согласно Grammar
+        // > Eloquent при подстановке в запрос оборачивает alias согласно Grammar
         // > а вот если пишете RAW запрос, передавайте $alias вместе с кавычками
 
         $theStr = Lib::str();
@@ -184,7 +184,7 @@ trait TableTrait
 
     public function tableMorphedByManyThis(string $morphTypeName, string $alias = null) : string
     {
-        // > gzhegow, Eloquent при подстановке в запрос оборачивает alias согласно Grammar
+        // > Eloquent при подстановке в запрос оборачивает alias согласно Grammar
         // > а вот если пишете RAW запрос, передавайте $alias вместе с кавычками
 
         $table = $this->tablePrefix . $this->tableMorphedByManyDefaultThis($morphTypeName);
@@ -198,7 +198,7 @@ trait TableTrait
 
     public function tableMorphedByManyNoPrefixThis(string $morphTypeName, string $alias = null) : string
     {
-        // > gzhegow, Eloquent при подстановке в запрос оборачивает alias согласно Grammar
+        // > Eloquent при подстановке в запрос оборачивает alias согласно Grammar
         // > а вот если пишете RAW запрос, передавайте $alias вместе с кавычками
 
         $tableNoPrefix = $this->tableMorphedByManyDefaultThis($morphTypeName);
@@ -212,7 +212,7 @@ trait TableTrait
 
     protected function tableMorphedByManyDefaultThis(string $morphTypeName, string $alias = null) : string
     {
-        // > gzhegow, Eloquent при подстановке в запрос оборачивает alias согласно Grammar
+        // > Eloquent при подстановке в запрос оборачивает alias согласно Grammar
         // > а вот если пишете RAW запрос, передавайте $alias вместе с кавычками
 
         $tableDefault = $morphTypeName;

@@ -370,7 +370,7 @@ trait RelationFactoryTrait
 
     protected function guessBelongsToRelation()
     {
-        /** > gzhegow, method replacement made due to no-use-case and increase performance */
+        /** > замена метода произведена, поскольку метод не имеет практической пользы, в целях повышения производительности */
 
         /** @see HasRelationships::guessBelongsToRelation */
 
@@ -379,7 +379,7 @@ trait RelationFactoryTrait
 
     protected function guessBelongsToManyRelation()
     {
-        /** > gzhegow, method replacement made due to no-use-case and increase performance */
+        /** > замена метода произведена, поскольку метод не имеет практической пользы, в целях повышения производительности */
 
         /** @see HasRelationships::guessBelongsToManyRelation */
 

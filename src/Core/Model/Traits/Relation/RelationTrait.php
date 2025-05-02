@@ -46,15 +46,15 @@ trait RelationTrait
      */
     protected static $cacheRelationClasses = [];
 
-    /**
-     * @return array<string, class-string<RelationInterface>>
-     */
-    abstract protected static function relationClasses() : array;
-
     public function getRelationClass($key) : ?string
     {
         return static::$cacheRelationClasses[ static::class ][ $key ];
     }
+
+    /**
+     * @return array<string, class-string<RelationInterface>>
+     */
+    abstract protected static function relationClasses() : array;
 
 
     public function getRelationValue($key)
@@ -68,28 +68,28 @@ trait RelationTrait
 
     private function doGetRelationValue(string $key)
     {
-        // > gzhegow, если имя свойства не является связью - то бросаем исключение
+        // > если имя свойства не является связью - то бросаем исключение
         if (! $this->isRelation($key)) {
             throw new LogicException(
                 'Missing relation: ' . $key
             );
         }
 
-        // > gzhegow, значение связи ранее было загружено - возвращаем его и на этом всё
+        // > значение связи ранее было загружено - возвращаем его и на этом всё
         if ($this->relationLoaded($key)) {
             if ($result = $this->relations[ $key ]) {
                 return $result;
             }
         }
 
-        // > gzhegow, модель только что создана и еще не сохранена в БД
+        // > модель только что создана и еще не сохранена в БД
         if (! $this->exists) {
             $result = $this->doGetRelationValueDefault($key);
 
             return $result;
         }
 
-        // > gzhegow, если флаг в модели запрещает делать под капотом запрос
+        // > если флаг в модели запрещает делать под капотом запрос
         if (true === $this->preventsLazyLoading) {
             throw new RuntimeException(
                 [
@@ -102,20 +102,20 @@ trait RelationTrait
             );
 
         } elseif (false === $this->preventsLazyLoading) {
-            // > gzhegow, если флаг в модели разрешает делать ленивый запрос
+            // > если флаг в модели разрешает делать ленивый запрос
 
             $result = null
-                // > gzhegow, делаем запрос в БД, чтобы получить данные по связи
+                // > делаем запрос в БД, чтобы получить данные по связи
                 ?? $this->getRelationshipFromMethod($key)
                 ?? $this->doGetRelationValueDefault($key);
 
             return $result;
 
         } else {
-            // > gzhegow, если флаг в модели не предполагает запрос
+            // > если флаг в модели не предполагает запрос
 
             $result = null
-                // > gzhegow, не делаем запрос в БД
+                // > не делаем запрос в БД
                 ?? $this->doGetRelationValueDefault($key);
 
             return $result;
@@ -125,7 +125,7 @@ trait RelationTrait
     private function doGetRelationValueDefault(string $key) : ?EloquentCollection
     {
         if ($relationship = $this->hasRelationshipMany($key)) {
-            // > gzhegow, создаем пустую коллекцию
+            // > создаем пустую коллекцию
 
             $model = $relationship->newModelInstance();
 
@@ -138,7 +138,7 @@ trait RelationTrait
         } else {
             // } elseif ($relation = $this->hasRelationshipOne($key)) {
 
-            // > gzhegow, возвращаем NULL в качестве значения по-умолчанию
+            // > возвращаем NULL в качестве значения по-умолчанию
 
             $default = null;
         }

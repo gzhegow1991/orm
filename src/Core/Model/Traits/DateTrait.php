@@ -11,7 +11,7 @@ use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 /**
  * @mixin EloquentModel
  */
-trait CalendarTrait
+trait DateTrait
 {
     protected function asDate($value)
     {

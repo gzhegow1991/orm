@@ -665,7 +665,7 @@ trait AttributeTrait
 
     public function mergeGuarded(array $guarded)
     {
-        /** > gzhegow, method replacement made due to no-use-case and increase performance */
+        /** > замена метода произведена, поскольку метод не имеет практической пользы, в целях повышения производительности */
         /** @see GuardsAttributes::mergeGuarded() */
 
         throw new BadMethodCallException('Please, don`t use dynamic guards, define guarded field in model class source code');
