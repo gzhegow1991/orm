@@ -134,9 +134,13 @@ class Orm
     }
 
 
-    public static function setFacade(OrmFacadeInterface $facade) : void
+    public static function setFacade(?OrmFacadeInterface $facade) : ?OrmFacadeInterface
     {
+        $last = static::$facade;
+
         static::$facade = $facade;
+
+        return $last;
     }
 
     /**
