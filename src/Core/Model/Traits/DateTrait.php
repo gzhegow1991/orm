@@ -42,7 +42,7 @@ trait DateTrait
 
         $status = Lib::type()->idate_formatted(
             $dateTimeImmutable,
-            $formats, $value
+            $value, $formats
         );
 
         if (! $status) {
@@ -60,7 +60,7 @@ trait DateTrait
 
         $status = Lib::type()->idate_formatted(
             $dateTimeImmutable,
-            $formats, $value
+            $value, $formats
         );
 
         if (! $status) {
