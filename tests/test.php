@@ -8,10 +8,12 @@ ini_set('memory_limit', '32M');
 
 
 // > настраиваем обработку ошибок
-\Gzhegow\Lib\Lib::errorHandler()
+\Gzhegow\Lib\Lib::entrypoint()
     ->setDirRoot(__DIR__ . '/..')
     //
     ->useErrorReporting()
+    ->useMemoryLimit()
+    ->useTimeLimit()
     ->useErrorHandler()
     ->useExceptionHandler()
 ;
@@ -69,20 +71,17 @@ $ffn = new class {
     }
 
 
-    function assert_stdout(
-        \Closure $fn, array $fnArgs = [],
-        string $expectedStdout = null
-    ) : void
+    function test(\Closure $fn, array $args = []) : \Gzhegow\Lib\Modules\Test\TestRunner\TestRunner
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
 
-        \Gzhegow\Lib\Lib::test()->assertStdout(
-            $trace,
-            $fn, $fnArgs,
-            $expectedStdout
-        );
+        return \Gzhegow\Lib\Lib::test()->test()
+            ->fn($fn, $args)
+            ->trace($trace)
+        ;
     }
 };
+
 
 
 // >>> ЗАПУСКАЕМ!
@@ -328,6 +327,9 @@ $schema->create(
 );
 
 
+
+// >>> ТЕСТЫ
+
 // >>> TEST
 // > используем рекурсивное сохранение для того, чтобы сохранить модели вместе со связями
 $fn = function () use (
@@ -394,7 +396,8 @@ $fn = function () use (
     $ffn->print($bazCollection[ 0 ]->id, $bazCollection[ 0 ]->demo_bar_id);
     $ffn->print($bazCollection[ 1 ]->id, $bazCollection[ 1 ]->demo_bar_id);
 };
-$ffn->assert_stdout($fn, [], '
+$test = $ffn->test($fn);
+$test->expectStdout('
 "[ TEST 1 ]"
 
 { object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
@@ -406,6 +409,7 @@ $ffn->assert_stdout($fn, [], '
 "1" | "1"
 "2" | "2"
 ');
+$test->run();
 
 
 // >>> TEST
@@ -478,7 +482,8 @@ $fn = function () use (
     $ffn->print($bazCollection[ 0 ]->id, $bazCollection[ 0 ]->demo_bar_id);
     $ffn->print($bazCollection[ 1 ]->id, $bazCollection[ 1 ]->demo_bar_id);
 };
-$ffn->assert_stdout($fn, [], '
+$test = $ffn->test($fn);
+$test->expectStdout('
 "[ TEST 2 ]"
 
 { object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
@@ -490,6 +495,7 @@ $ffn->assert_stdout($fn, [], '
 "1" | "1"
 "2" | "2"
 ');
+$test->run();
 
 
 // >>> TEST
@@ -637,7 +643,8 @@ $fn = function () use (
     $ffn->print($userCollection);
     $ffn->print($userCollection[ 1 ], $userCollection[ 1 ]->_demoTags[ 0 ], $userCollection[ 1 ]->_demoTags[ 1 ]);
 };
-$ffn->assert_stdout($fn, [], '
+$test = $ffn->test($fn);
+$test->expectStdout('
 "[ TEST 3 ]"
 
 { object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
@@ -659,6 +666,7 @@ $ffn->assert_stdout($fn, [], '
 { object(countable(2) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 { object(stringable) # Gzhegow\Orm\Demo\Model\DemoUserModel } | { object(stringable) # Gzhegow\Orm\Demo\Model\DemoTagModel } | { object(stringable) # Gzhegow\Orm\Demo\Model\DemoTagModel }
 ');
+$test->run();
 
 
 // >>> TEST
@@ -692,12 +700,14 @@ $fn = function () use (
     $cnt = $query->countExplain();
     $ffn->print($cnt > 1, $cnt <= 100);
 };
-$ffn->assert_stdout($fn, [], '
+$test = $ffn->test($fn);
+$test->expectStdout('
 "[ TEST 4 ]"
 
 1 | TRUE
 TRUE | TRUE
 ');
+$test->run();
 
 
 // >>> TEST
@@ -746,7 +756,8 @@ $fn = function () use (
         $ffn->print($chunk);
     }
 };
-$ffn->assert_stdout($fn, [], '
+$test = $ffn->test($fn);
+$test->expectStdout('
 "[ TEST 5 ]"
 
 "chunkModelNativeForeach"
@@ -761,6 +772,7 @@ $ffn->assert_stdout($fn, [], '
 { object(countable(25) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 { object(countable(25) iterable stringable) # Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection }
 ');
+$test->run();
 
 
 // >>> TEST
@@ -826,7 +838,8 @@ $fn = function () use (
     $ffn->print_array_multiline($result->pagesAbsolute);
     $ffn->print_array_multiline($result->pagesRelative);
 };
-$ffn->assert_stdout($fn, [], '
+$test = $ffn->test($fn);
+$test->expectStdout('
 "[ TEST 6 ]"
 
 "paginateModelNativeForeach"
@@ -897,6 +910,7 @@ $ffn->assert_stdout($fn, [], '
 ]
 ###
 ');
+$test->run();
 
 
 // >>> TEST
@@ -980,7 +994,8 @@ $fn = function () use (
     //     $bar_hasMany_bazs  => static function ($query) { },
     // ]);
 };
-$ffn->assert_stdout($fn, [], '
+$test = $ffn->test($fn);
+$test->expectStdout('
 "[ TEST 7 ]"
 
 "_demoBars._demoBazs"
@@ -989,6 +1004,7 @@ $ffn->assert_stdout($fn, [], '
 "_demoFoo:id"
 "_demoBazs:id"
 ');
+$test->run();
 
 
 // > удаляем таблицы после тестов
