@@ -8,7 +8,7 @@ use Illuminate\Database\Query\Processors\Processor;
 use Gzhegow\Orm\Core\Query\Chunks\ChunksProcessorInterface;
 use Gzhegow\Orm\Core\Persistence\EloquentPersistenceInterface;
 use Illuminate\Database\Schema\Builder as EloquentSchemaBuilder;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 use Gzhegow\Orm\Package\Illuminate\Database\Capsule\EloquentInterface;
 use Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint;
@@ -36,7 +36,7 @@ class Orm
 
     public static function newEloquentSchemaBlueprint(
         $table,
-        \Closure $callback = null,
+        ?\Closure $callback = null,
         $prefix = ''
     ) : EloquentSchemaBlueprint
     {
@@ -50,8 +50,8 @@ class Orm
 
     public static function newEloquentPdoQueryBuilder(
         ConnectionInterface $connection,
-        Grammar $grammar = null,
-        Processor $processor = null
+        ?Grammar $grammar = null,
+        ?Processor $processor = null
     ) : EloquentPdoQueryBuilder
     {
         return static::$facade->newEloquentPdoQueryBuilder(
@@ -126,8 +126,8 @@ class Orm
      * @return T
      */
     public static function relationDot(
-        array $relationFn = null,
-        string $fields = null
+        ?array $relationFn = null,
+        ?string $fields = null
     )
     {
         return static::$facade->fnEloquentRelationDotnameCurry($relationFn, $fields);

@@ -27,8 +27,8 @@ trait ChunkTrait
      * @return \Generator<EloquentSupportCollection<\stdClass>
      */
     public function chunksNativeForeach(
-        int $limitChunk, int $limit = null,
-        int $offset = null
+        int $limitChunk, ?int $limit = null,
+        ?int $offset = null
     ) : \Generator
     {
         $builder = ChunksBuilder::fromPdoQuery($this);
@@ -49,8 +49,8 @@ trait ChunkTrait
      * @return \Generator<int, EloquentSupportCollection<\stdClass>
      */
     public function chunksAfterForeach(
-        int $limitChunk, int $limit = null,
-        string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
+        ?int $limitChunk, ?int $limit = null,
+        ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
     ) : \Generator
     {
         $builder = ChunksBuilder::fromPdoQuery($this);
@@ -69,8 +69,8 @@ trait ChunkTrait
 
 
     public function paginateNativeForeach(
-        int $perPage = null, int $page = null, int $pagesDelta = null,
-        int $offset = null
+        ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
+        ?int $offset = null
     ) : ChunksBuilder
     {
         $builder = ChunksBuilder::fromPdoQuery($this);
@@ -86,8 +86,8 @@ trait ChunkTrait
     }
 
     public function paginateAfterForeach(
-        int $perPage = null, int $page = null, int $pagesDelta = null,
-        string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
+        ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
+        ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
     ) : ChunksBuilder
     {
         $builder = ChunksBuilder::fromPdoQuery($this);

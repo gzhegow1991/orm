@@ -2,7 +2,7 @@
 
 namespace Gzhegow\Orm\Core\Model\Traits;
 
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 /**

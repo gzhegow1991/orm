@@ -5,6 +5,7 @@ namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent;
 use Gzhegow\Orm\Exception\LogicException;
 use Gzhegow\Orm\Exception\RuntimeException;
 use Gzhegow\Orm\Exception\Runtime\DeprecatedException;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Illuminate\Database\Eloquent\Collection as EloquentModelCollectionBase;
 
 
@@ -119,7 +120,7 @@ class EloquentModelCollection extends EloquentModelCollectionBase
     }
 
 
-    protected function assertLoadAllowed(string $function = null) : void
+    protected function assertLoadAllowed(?string $function = null) : void
     {
         $function = $function ?? __FUNCTION__;
 

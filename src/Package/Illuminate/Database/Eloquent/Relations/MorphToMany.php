@@ -5,7 +5,7 @@ namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations;
 use Gzhegow\Orm\Core\Orm;
 use Gzhegow\Orm\Core\Relation\Traits\HasRelationNameTrait;
 use Gzhegow\Orm\Core\Persistence\EloquentPersistenceInterface;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Illuminate\Database\Eloquent\Relations\MorphToMany as MorphToManyBase;
 
 

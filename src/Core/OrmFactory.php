@@ -8,7 +8,7 @@ use Gzhegow\Orm\Core\Query\Chunks\ChunksProcessor;
 use Illuminate\Database\Query\Processors\Processor;
 use Gzhegow\Orm\Core\Query\Chunks\ChunksProcessorInterface;
 use Illuminate\Database\Schema\Builder as EloquentSchemaBuilder;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 use Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
@@ -30,11 +30,14 @@ class OrmFactory implements OrmFactoryInterface
         $schema = $connection->getSchemaBuilder();
 
         $schema->blueprintResolver(
-            function ($table, \Closure $callback = null, string $prefix = '') {
+            function (...$arguments) use ($connection) {
+                $options = [
+                    'connection' => $connection,
+                ];
+
                 $blueprint = $this->newEloquentSchemaBlueprint(
-                    $table,
-                    $callback,
-                    $prefix
+                    $arguments,
+                    $options
                 );
 
                 return $blueprint;
@@ -45,25 +48,23 @@ class OrmFactory implements OrmFactoryInterface
     }
 
     public function newEloquentSchemaBlueprint(
-        $table,
-        \Closure $callback = null,
-        $prefix = ''
+        array $arguments,
+        array $options = []
     ) : EloquentSchemaBlueprint
     {
         return new EloquentSchemaBlueprint(
             $this,
             //
-            $table,
-            $callback,
-            $prefix
+            $arguments,
+            $options
         );
     }
 
 
     public function newEloquentPdoQueryBuilder(
         ConnectionInterface $connection,
-        Grammar $grammar = null,
-        Processor $processor = null
+        ?Grammar $grammar = null,
+        ?Processor $processor = null
     ) : EloquentPdoQueryBuilder
     {
         return new EloquentPdoQueryBuilder(

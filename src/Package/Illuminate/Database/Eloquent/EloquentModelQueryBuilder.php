@@ -8,12 +8,13 @@ use Illuminate\Database\Eloquent\Scope;
 use Gzhegow\Orm\Exception\LogicException;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Gzhegow\Orm\Core\Query\ModelQuery\Traits\ChunkTrait;
-use Illuminate\Support\Collection as EloquentSupportCollection;
 use Gzhegow\Orm\Core\Query\ModelQuery\Traits\ColumnsTrait;
-use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilder;
+use Illuminate\Support\Collection as EloquentSupportCollection;
 use Gzhegow\Orm\Core\Query\ModelQuery\Traits\PersistenceTrait;
+use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentQueryBuilderBase;
 use Gzhegow\Orm\Exception\Exception\Resource\ResourceNotFoundException;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 /**

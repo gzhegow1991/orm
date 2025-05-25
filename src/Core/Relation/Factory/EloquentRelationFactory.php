@@ -15,7 +15,7 @@ use Gzhegow\Orm\Core\Relation\Spec\BelongsToManySpec;
 use Gzhegow\Orm\Core\Relation\Spec\HasOneThroughSpec;
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Gzhegow\Orm\Core\Relation\Spec\HasManyThroughSpec;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\HasOne;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\HasMany;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -199,7 +199,7 @@ class EloquentRelationFactory implements EloquentRelationFactoryInterface
     public function belongsTo(
         string $relationName,
         string $remoteModelClassOrTableName,
-        string $thisTableRightKey = null, string $remoteTableLeftKey = null
+        ?string $thisTableRightKey = null, ?string $remoteTableLeftKey = null
     ) : BelongsTo
     {
         /** @see HasRelationships::belongsTo() */
@@ -244,7 +244,7 @@ class EloquentRelationFactory implements EloquentRelationFactoryInterface
     public function hasOne(
         string $relationName,
         string $remoteModelClassOrTableName,
-        string $remoteTableLeftKey = null, string $thisTableRightKey = null
+        ?string $remoteTableLeftKey = null, ?string $thisTableRightKey = null
     ) : HasOne
     {
         /** @see HasRelationships::hasOne() */
@@ -292,7 +292,7 @@ class EloquentRelationFactory implements EloquentRelationFactoryInterface
     public function hasMany(
         string $relationName,
         string $remoteModelClassOrTableName,
-        string $remoteTableLeftKey = null, string $thisTableRightKey = null
+        ?string $remoteTableLeftKey = null, ?string $thisTableRightKey = null
     ) : HasMany
     {
         /** @see HasRelationships::hasMany() */
@@ -341,9 +341,9 @@ class EloquentRelationFactory implements EloquentRelationFactoryInterface
     public function belongsToMany(
         string $relationName,
         string $remoteModelClassOrTableName,
-        string $pivotModelClass = null,
-        string $pivotTableLeftKey = null, string $pivotTableRightKey = null,
-        string $thisTableRightKey = null, string $remoteTableLeftKey = null
+        ?string $pivotModelClass = null,
+        ?string $pivotTableLeftKey = null, ?string $pivotTableRightKey = null,
+        ?string $thisTableRightKey = null, ?string $remoteTableLeftKey = null
     ) : BelongsToMany
     {
         /** @see HasRelationships::belongsToMany() */
@@ -406,8 +406,8 @@ class EloquentRelationFactory implements EloquentRelationFactoryInterface
     public function hasOneThrough(
         string $relationName,
         string $remoteModelClassOrTableName, string $throughModelClass,
-        string $throughTableLeftKey = null, string $remoteTableLeftKey = null,
-        string $thisTableRightKey = null, string $throughTableRightKey = null
+        ?string $throughTableLeftKey = null, ?string $remoteTableLeftKey = null,
+        ?string $thisTableRightKey = null, ?string $throughTableRightKey = null
     ) : HasOneThrough
     {
         /** @see HasRelationships::hasOneThrough() */
@@ -473,8 +473,8 @@ class EloquentRelationFactory implements EloquentRelationFactoryInterface
     public function hasManyThrough(
         string $relationName,
         string $remoteModelClassOrTableName, string $throughModelClass,
-        string $throughTableLeftKey = null, string $remoteTableLeftKey = null,
-        string $thisTableRightKey = null, string $throughTableRightKey = null
+        ?string $throughTableLeftKey = null, ?string $remoteTableLeftKey = null,
+        ?string $thisTableRightKey = null, ?string $throughTableRightKey = null
     ) : HasManyThrough
     {
         /** @see HasRelationships::hasManyThrough() */
@@ -541,8 +541,8 @@ class EloquentRelationFactory implements EloquentRelationFactoryInterface
     public function morphOne(
         string $relationName,
         string $remoteModelClassOrTableName,
-        string $morphType, string $morphTypeKey = null, string $morphIdKey = null,
-        string $thisTableRightKey = null
+        string $morphType, ?string $morphTypeKey = null, ?string $morphIdKey = null,
+        ?string $thisTableRightKey = null
     ) : MorphOne
     {
         /** @see HasRelationships::morphOne() */
@@ -595,8 +595,8 @@ class EloquentRelationFactory implements EloquentRelationFactoryInterface
     public function morphMany(
         string $relationName,
         string $remoteModelClassOrTableName,
-        string $morphType, string $morphTypeKey = null, string $morphIdKey = null,
-        string $thisTableRightKey = null
+        string $morphType, ?string $morphTypeKey = null, ?string $morphIdKey = null,
+        ?string $thisTableRightKey = null
     ) : MorphMany
     {
         /** @see HasRelationships::morphMany() */
@@ -649,8 +649,8 @@ class EloquentRelationFactory implements EloquentRelationFactoryInterface
 
     public function morphTo(
         string $relationName,
-        string $morphType = null, string $morphTypeKey = null, string $morphIdKey = null,
-        string $remoteTableLeftKey = null
+        ?string $morphType = null, ?string $morphTypeKey = null, ?string $morphIdKey = null,
+        ?string $remoteTableLeftKey = null
     ) : MorphTo
     {
         /** @see HasRelationships::morphTo() */
@@ -704,10 +704,10 @@ class EloquentRelationFactory implements EloquentRelationFactoryInterface
 
     public function morphToMany(
         string $relationName,
-        string $remoteModelClassOrTableName, string $morphTypeName, string $morphTable = null,
-        string $pivotTableLeftKey = null, string $pivotTableRightKey = null,
-        string $thisTableRightKey = null, string $remoteTableLeftKey = null,
-        bool $inverse = null
+        string $remoteModelClassOrTableName, string $morphTypeName, ?string $morphTable = null,
+        ?string $pivotTableLeftKey = null, ?string $pivotTableRightKey = null,
+        ?string $thisTableRightKey = null, ?string $remoteTableLeftKey = null,
+        ?bool $inverse = null
     ) : MorphToMany
     {
         /** @see HasRelationships::morphToMany() */
@@ -767,10 +767,10 @@ class EloquentRelationFactory implements EloquentRelationFactoryInterface
 
     public function morphedByMany(
         string $relationName,
-        string $remoteModelClassOrTableName, string $morphTypeName, string $morphTable = null,
-        string $pivotTableLeftKey = null, string $pivotTableRightKey = null,
-        string $thisTableRightKey = null, string $remoteTableLeftKey = null,
-        bool $inverse = null
+        string $remoteModelClassOrTableName, string $morphTypeName, ?string $morphTable = null,
+        ?string $pivotTableLeftKey = null, ?string $pivotTableRightKey = null,
+        ?string $thisTableRightKey = null, ?string $remoteTableLeftKey = null,
+        ?bool $inverse = null
     ) : MorphToMany
     {
         /** @see HasRelationships::morphedByMany() */

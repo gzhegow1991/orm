@@ -6,7 +6,7 @@ use Gzhegow\Orm\Core\Orm;
 use Gzhegow\Orm\Core\Relation\Traits\HasRelationNameTrait;
 use Gzhegow\Orm\Core\Persistence\EloquentPersistenceInterface;
 use Illuminate\Database\Eloquent\Relations\HasMany as HasManyBase;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 class HasMany extends HasManyBase implements

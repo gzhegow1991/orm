@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilder;
 use Gzhegow\Orm\Package\Illuminate\Database\Capsule\Eloquent;
 use Illuminate\Database\Eloquent\Builder as EloquentModelQueryBuilder;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 class EloquentPersistence implements EloquentPersistenceInterface
@@ -169,7 +169,7 @@ class EloquentPersistence implements EloquentPersistenceInterface
 
     public function persistBelongsToManyForSave(
         BelongsToMany $relation,
-        EloquentModel $model, array $pivotAttributes = [], bool $touch = null
+        EloquentModel $model, array $pivotAttributes = [], ?bool $touch = null
     ) : void
     {
         $touch = $touch ?? true;
@@ -203,7 +203,7 @@ class EloquentPersistence implements EloquentPersistenceInterface
 
     public function persistBelongsToManyForSync(
         BelongsToMany $relation,
-        $ids, bool $detaching = null
+        $ids, ?bool $detaching = null
     ) : void
     {
         $detaching = $detaching ?? true;

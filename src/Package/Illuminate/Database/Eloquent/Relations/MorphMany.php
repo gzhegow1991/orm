@@ -6,7 +6,7 @@ use Gzhegow\Orm\Core\Orm;
 use Gzhegow\Orm\Core\Relation\Traits\HasRelationNameTrait;
 use Gzhegow\Orm\Core\Persistence\EloquentPersistenceInterface;
 use Illuminate\Database\Eloquent\Relations\MorphMany as MorphManyBase;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 class MorphMany extends MorphManyBase implements

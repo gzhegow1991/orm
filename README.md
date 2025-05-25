@@ -186,7 +186,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
     //
     ->useErrorReporting()
     ->useMemoryLimit()
-    ->useTimeLimit()
     ->useUmask()
     ->useErrorHandler()
     ->useExceptionHandler()
@@ -201,12 +200,12 @@ $ffn = new class {
     }
 
 
-    function value_array($value, int $maxLevel = null, array $options = []) : string
+    function value_array($value, ?int $maxLevel = null, array $options = []) : string
     {
         return \Gzhegow\Lib\Lib::debug()->value_array($value, $maxLevel, $options);
     }
 
-    function value_array_multiline($value, int $maxLevel = null, array $options = []) : string
+    function value_array_multiline($value, ?int $maxLevel = null, array $options = []) : string
     {
         return \Gzhegow\Lib\Lib::debug()->value_array_multiline($value, $maxLevel, $options);
     }
@@ -234,27 +233,31 @@ $ffn = new class {
     }
 
 
-    function print_array($value, int $maxLevel = null, array $options = []) : void
+    function print_array($value, ?int $maxLevel = null, array $options = []) : void
     {
         echo $this->value_array($value, $maxLevel, $options) . PHP_EOL;
     }
 
-    function print_array_multiline($value, int $maxLevel = null, array $options = []) : void
+    function print_array_multiline($value, ?int $maxLevel = null, array $options = []) : void
     {
         echo $this->value_array_multiline($value, $maxLevel, $options) . PHP_EOL;
     }
 
 
-    function test(\Closure $fn, array $args = []) : \Gzhegow\Lib\Modules\Test\TestRunner\TestRunner
+    function test(\Closure $fn, array $args = []) : \Gzhegow\Lib\Modules\Test\Test
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
 
-        return \Gzhegow\Lib\Lib::test()->test()
+        return \Gzhegow\Lib\Lib::test()->newTest()
             ->fn($fn, $args)
             ->trace($trace)
         ;
     }
 };
+
+
+
+\Gzhegow\Lib\Lib::require_composer_global();
 
 
 
@@ -1108,17 +1111,17 @@ $fn = function () use (
     ();
     $ffn->print($bar_belongsTo_foo);
 
-    $bar_hasMany_bazs = \Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
+    $bar_hasMany_bazs = \Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel::relationDot()
     ([ \Gzhegow\Orm\Demo\Model\DemoBarModel::class, '_demoBazs' ])
     ();
     $ffn->print($bar_hasMany_bazs);
 
-    $bar_belongsTo_foo_only_id = \Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
+    $bar_belongsTo_foo_only_id = \Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel::relationDot()
     ([ \Gzhegow\Orm\Demo\Model\DemoBarModel::class, '_demoFoo' ], 'id')
     ();
     $ffn->print($bar_belongsTo_foo_only_id);
 
-    $bar_hasMany_bazs_only_id = \Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel::relationDot()
+    $bar_hasMany_bazs_only_id = \Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel::relationDot()
     ([ \Gzhegow\Orm\Demo\Model\DemoBarModel::class, '_demoBazs' ], 'id')
     ();
     $ffn->print($bar_hasMany_bazs_only_id);

@@ -4,7 +4,7 @@ namespace Gzhegow\Orm\Core\Model\Traits\Has;
 
 use Gzhegow\Lib\Lib;
 use Gzhegow\Orm\Exception\RuntimeException;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 /**
@@ -17,17 +17,21 @@ trait HasPrimaryKeyTrait
      */
     public function getPrimaryKey()
     {
+        $theType = Lib::type();
+
         $field = $this->getKeyName();
 
-        $pk = null
-            ?? Lib::parse()->int_positive($this->attributes[ $field ] ?? null)
-            ?? Lib::parse()->string_not_empty($this->attributes[ $field ] ?? null);
+        $pk = $this->attributes[ $field ] ?? null;
 
-        if (null === $pk) {
+        $status = false
+            || $theType->int_positive($pkValid, $pk)
+            || $theType->string_not_empty($pkValid, $pk);
+
+        if (! $status) {
             throw new RuntimeException("The `{$field}` is empty");
         }
 
-        return $pk;
+        return $pkValid;
     }
 
     /**
@@ -35,16 +39,20 @@ trait HasPrimaryKeyTrait
      */
     public function hasPrimaryKey()
     {
+        $theType = Lib::type();
+
         $field = $this->getKeyName();
 
-        $pk = null
-            ?? Lib::parse()->int_positive($this->attributes[ $field ] ?? null)
-            ?? Lib::parse()->string_not_empty($this->attributes[ $field ] ?? null);
+        $pk = $this->attributes[ $field ] ?? null;
 
-        if (null === $pk) {
+        $status = false
+            || $theType->int_positive($pkValid, $pk)
+            || $theType->string_not_empty($pkValid, $pk);
+
+        if (! $status) {
             return null;
         }
 
-        return $pk;
+        return $pkValid;
     }
 }

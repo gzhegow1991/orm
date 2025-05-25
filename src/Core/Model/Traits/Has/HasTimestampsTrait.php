@@ -4,7 +4,7 @@ namespace Gzhegow\Orm\Core\Model\Traits\Has;
 
 use Gzhegow\Lib\Lib;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 /**

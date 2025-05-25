@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations\RelationInterface;
 

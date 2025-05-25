@@ -10,11 +10,11 @@ class Base64JsonCast implements CastsAttributes
 {
     public function get($model, $key, $value, $attributes)
     {
-        return Lib::json()->json_decode(base64_decode($value), null, []);
+        return Lib::format()->json()->json_decode(base64_decode($value));
     }
 
     public function set($model, $key, $value, $attributes)
     {
-        return base64_encode(Lib::json()->json_encode($value, []));
+        return base64_encode(Lib::format()->json()->json_encode($value));
     }
 }

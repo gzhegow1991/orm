@@ -9,7 +9,7 @@ use Gzhegow\Orm\Exception\Runtime\BadMethodCallException;
 use Illuminate\Database\Eloquent\Concerns\HidesAttributes;
 use Illuminate\Database\Eloquent\Concerns\GuardsAttributes;
 use Gzhegow\Orm\Package\Illuminate\Database\Capsule\Eloquent;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 /**

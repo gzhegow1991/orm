@@ -3,11 +3,12 @@
 namespace Gzhegow\Orm\Core\Query\Chunks;
 
 use Gzhegow\Orm\Core\Orm;
+use Gzhegow\Lib\Modules\Php\Result\Ret;
 use Gzhegow\Orm\Exception\LogicException;
 use Gzhegow\Lib\Modules\Php\Result\Result;
 use Gzhegow\Orm\Exception\RuntimeException;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
 
@@ -241,29 +242,33 @@ class ChunksBuilder
 
 
     /**
+     * @param Ret $ret
+     *
      * @return static|bool|null
      */
-    public static function fromStatic($from, $ctx = null)
+    public static function fromStatic($from, $ret = null)
     {
         if ($from instanceof static) {
-            return Result::ok($ctx, $from);
+            return Result::ok($ret, $from);
         }
 
         return Result::err(
-            $ctx,
+            $ret,
             [ 'The `from` should be instance of: ' . static::class, $from ],
             [ __FILE__, __LINE__ ]
         );
     }
 
     /**
+     * @param Ret $ret
+     *
      * @return static|bool|null
      */
-    public static function fromModelQuery($from, $ctx = null)
+    public static function fromModelQuery($from, $ret = null)
     {
         if (! ($from instanceof EloquentModelQueryBuilder)) {
             return Result::err(
-                $ctx,
+                $ret,
                 [ 'The `from` should be instance of: ' . EloquentModelQueryBuilder::class, $from ],
                 [ __FILE__, __LINE__ ]
             );
@@ -282,17 +287,19 @@ class ChunksBuilder
 
         $instance->offsetColumnDefault = $model->getKeyName();
 
-        return Result::ok($ctx, $instance);
+        return Result::ok($ret, $instance);
     }
 
     /**
+     * @param Ret $ret
+     *
      * @return static|bool|null
      */
-    public static function fromPdoQuery($from, $ctx = null)
+    public static function fromPdoQuery($from, $ret = null)
     {
         if (! ($from instanceof EloquentPdoQueryBuilder)) {
             return Result::err(
-                $ctx,
+                $ret,
                 [ 'The `from` should be instance of: ' . EloquentPdoQueryBuilder::class, $from ],
                 [ __FILE__, __LINE__ ]
             );
@@ -303,17 +310,19 @@ class ChunksBuilder
         $instance = new static();
         $instance->pdoQuery = $pdoQuery;
 
-        return Result::ok($ctx, $instance);
+        return Result::ok($ret, $instance);
     }
 
     /**
+     * @param Ret $ret
+     *
      * @return static|bool|null
      */
-    public static function fromModel($from, $ctx = null)
+    public static function fromModel($from, $ret = null)
     {
         if (! ($from instanceof EloquentModel)) {
             return Result::err(
-                $ctx,
+                $ret,
                 [ 'The `from` should be instance of: ' . EloquentModel::class, $from ],
                 [ __FILE__, __LINE__ ]
             );
@@ -332,17 +341,19 @@ class ChunksBuilder
 
         $instance->offsetColumnDefault = $model->getKeyName();
 
-        return Result::ok($ctx, $instance);
+        return Result::ok($ret, $instance);
     }
 
     /**
+     * @param Ret $ret
+     *
      * @return static|bool|null
      */
-    public static function fromModelClass($from, $ctx = null)
+    public static function fromModelClass($from, $ret = null)
     {
         if (! (is_string($from) && ('' !== $from))) {
             return Result::err(
-                $ctx,
+                $ret,
                 [ 'The `from` should be non-empty string', $from ],
                 [ __FILE__, __LINE__ ]
             );
@@ -350,7 +361,7 @@ class ChunksBuilder
 
         if (! is_subclass_of($from, EloquentModel::class)) {
             return Result::err(
-                $ctx,
+                $ret,
                 [ 'The `from` should be class-string of: ' . EloquentModel::class, $from ],
                 [ __FILE__, __LINE__ ]
             );
@@ -369,7 +380,7 @@ class ChunksBuilder
 
         $instance->offsetColumnDefault = $model->getKeyName();
 
-        return Result::ok($ctx, $instance);
+        return Result::ok($ret, $instance);
     }
 
 

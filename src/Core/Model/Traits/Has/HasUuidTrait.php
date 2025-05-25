@@ -5,7 +5,7 @@ namespace Gzhegow\Orm\Core\Model\Traits\Has;
 use Gzhegow\Lib\Lib;
 use Gzhegow\Orm\Exception\LogicException;
 use Gzhegow\Orm\Exception\RuntimeException;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 /**

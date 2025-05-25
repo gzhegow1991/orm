@@ -3,7 +3,7 @@
 namespace Gzhegow\Orm\Core\Query\Chunks;
 
 use Illuminate\Support\Collection as EloquentSupportCollection;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 
 

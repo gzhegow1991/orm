@@ -4,7 +4,7 @@ namespace Gzhegow\Orm\Core\Model\Traits;
 
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilder;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
 

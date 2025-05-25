@@ -6,7 +6,7 @@ use Gzhegow\Lib\Lib;
 use Gzhegow\Orm\Core\Orm;
 use Gzhegow\Orm\Exception\LogicException;
 use Illuminate\Database\Schema\Builder as EloquentSchemaBuilder;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 /**
@@ -114,7 +114,7 @@ trait TableTrait
     }
 
 
-    public function tableThis(string $alias = null) : string
+    public function tableThis(?string $alias = null) : string
     {
         // > Eloquent при подстановке в запрос оборачивает alias согласно Grammar
         // > а вот если пишете RAW запрос, передавайте $alias вместе с кавычками
@@ -131,7 +131,7 @@ trait TableTrait
         return $table;
     }
 
-    public function tableNoPrefixThis(string $alias = null) : string
+    public function tableNoPrefixThis(?string $alias = null) : string
     {
         // > Eloquent при подстановке в запрос оборачивает alias согласно Grammar
         // > а вот если пишете RAW запрос, передавайте $alias вместе с кавычками
@@ -147,7 +147,7 @@ trait TableTrait
         return $tableNoPrefix;
     }
 
-    protected function tableDefaultThis(string $alias = null) : string
+    protected function tableDefaultThis(?string $alias = null) : string
     {
         // > Eloquent при подстановке в запрос оборачивает alias согласно Grammar
         // > а вот если пишете RAW запрос, передавайте $alias вместе с кавычками
@@ -167,14 +167,14 @@ trait TableTrait
         return $tableDefault;
     }
 
-    public static function table(string $alias = null) : string
+    public static function table(?string $alias = null) : string
     {
         $model = static::getModel();
 
         return $model->tableThis($alias);
     }
 
-    public static function tableNoPrefix(string $alias = null) : string
+    public static function tableNoPrefix(?string $alias = null) : string
     {
         $model = static::getModel();
 
@@ -182,7 +182,7 @@ trait TableTrait
     }
 
 
-    public function tableMorphedByManyThis(string $morphTypeName, string $alias = null) : string
+    public function tableMorphedByManyThis(string $morphTypeName, ?string $alias = null) : string
     {
         // > Eloquent при подстановке в запрос оборачивает alias согласно Grammar
         // > а вот если пишете RAW запрос, передавайте $alias вместе с кавычками
@@ -196,7 +196,7 @@ trait TableTrait
         return $table;
     }
 
-    public function tableMorphedByManyNoPrefixThis(string $morphTypeName, string $alias = null) : string
+    public function tableMorphedByManyNoPrefixThis(string $morphTypeName, ?string $alias = null) : string
     {
         // > Eloquent при подстановке в запрос оборачивает alias согласно Grammar
         // > а вот если пишете RAW запрос, передавайте $alias вместе с кавычками
@@ -210,7 +210,7 @@ trait TableTrait
         return $tableNoPrefix;
     }
 
-    protected function tableMorphedByManyDefaultThis(string $morphTypeName, string $alias = null) : string
+    protected function tableMorphedByManyDefaultThis(string $morphTypeName, ?string $alias = null) : string
     {
         // > Eloquent при подстановке в запрос оборачивает alias согласно Grammar
         // > а вот если пишете RAW запрос, передавайте $alias вместе с кавычками
@@ -224,14 +224,14 @@ trait TableTrait
         return $tableDefault;
     }
 
-    public static function tableMorphedByMany(string $morphTypeName, string $alias = null) : string
+    public static function tableMorphedByMany(string $morphTypeName, ?string $alias = null) : string
     {
         $model = static::getModel();
 
         return $model->tableMorphedByManyThis($morphTypeName, $alias);
     }
 
-    public static function tableNoPrefixMorphedByMany(string $morphTypeName, string $alias = null) : string
+    public static function tableNoPrefixMorphedByMany(string $morphTypeName, ?string $alias = null) : string
     {
         $model = static::getModel();
 

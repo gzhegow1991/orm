@@ -7,7 +7,7 @@ use Gzhegow\Orm\Core\Orm;
 use Illuminate\Database\Eloquent\Model;
 use Gzhegow\Orm\Exception\LogicException;
 use Gzhegow\Orm\Exception\RuntimeException;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
@@ -67,7 +67,7 @@ trait FactoryTrait
     /**
      * @return static
      */
-    public function newInstanceWithSetState(array $attributes = [], \Closure $fnSetState = null)
+    public function newInstanceWithSetState(array $attributes = [], ?\Closure $fnSetState = null)
     {
         $instance = new static($attributes);
 
@@ -138,7 +138,7 @@ trait FactoryTrait
      */
     public function newModelWithSetState(
         string $modelClass,
-        array $attributes = [], \Closure $fnSetState = null
+        array $attributes = [], ?\Closure $fnSetState = null
     )
     {
         if (! is_subclass_of($modelClass, EloquentModel::class)) {

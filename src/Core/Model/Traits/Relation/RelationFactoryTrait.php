@@ -25,8 +25,8 @@ trait RelationFactoryTrait
      * @return string|callable
      */
     public static function relationDot(
-        array $relationFn = null,
-        string $fields = null
+        ?array $relationFn = null,
+        ?string $fields = null
     )
     {
         $relationDot = Orm::relationDot(
@@ -342,7 +342,7 @@ trait RelationFactoryTrait
         $related, $name, $table = null,
         $foreignPivotKey = null, $relatedPivotKey = null,
         $parentKey = null, $relatedKey = null,
-        $inverse = false
+        $relation = null, $inverse = false
     )
     {
         /**
@@ -356,7 +356,7 @@ trait RelationFactoryTrait
     public function morphedByMany(
         $related, $name, $table = null,
         $foreignPivotKey = null, $relatedPivotKey = null,
-        $parentKey = null, $relatedKey = null
+        $parentKey = null, $relatedKey = null, $relation = null
     )
     {
         /**

@@ -4,7 +4,7 @@ namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations;
 
 use Gzhegow\Orm\Core\Relation\Traits\HasRelationNameTrait;
 use Illuminate\Database\Eloquent\Relations\MorphTo as MorphToBase;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 class MorphTo extends MorphToBase implements

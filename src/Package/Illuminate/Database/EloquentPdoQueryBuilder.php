@@ -93,16 +93,17 @@ class EloquentPdoQueryBuilder extends EloquentPdoQueryBuilderBase
      * @return \stdClass
      * @throws ResourceNotFoundException
      */
-    public function firstOrFail($columns = [ '*' ])
+    public function firstOrFail($columns = [ '*' ], $message = null)
     {
+        /**
+         * @see parent::firstOrFail()
+         */
+
         $model = static::first($columns);
 
         if (null === $model) {
             throw new ResourceNotFoundException(
-                [
-                    'Resource not found',
-                    $this,
-                ]
+                [ $message ?? 'Resource not found', $this ]
             );
         }
 

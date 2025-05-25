@@ -3,7 +3,7 @@
 namespace Gzhegow\Orm\Core\Query\ModelQuery\Traits;
 
 use Gzhegow\Orm\Core\Query\Chunks\ChunksBuilder;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
@@ -30,8 +30,8 @@ trait ChunkTrait
      * @return \Generator<EloquentModelCollection<T>>
      */
     public function chunksModelNativeForeach(
-        int $limitChunk, int $limit = null,
-        int $offset = null
+        int $limitChunk, ?int $limit = null,
+        ?int $offset = null
     ) : \Generator
     {
         $builder = ChunksBuilder::fromModelQuery($this);
@@ -52,8 +52,8 @@ trait ChunkTrait
      * @return \Generator<EloquentModelCollection<T>>
      */
     public function chunksModelAfterForeach(
-        int $limitChunk, int $limit = null,
-        string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
+        int $limitChunk, ?int $limit = null,
+        ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
     ) : \Generator
     {
         $builder = ChunksBuilder::fromModelQuery($this);
@@ -75,8 +75,8 @@ trait ChunkTrait
      * @return \Generator<EloquentModelCollection<T>>
      */
     public function chunksPdoNativeForeach(
-        int $limitChunk, int $limit = null,
-        int $offset = null
+        int $limitChunk, ?int $limit = null,
+        ?int $offset = null
     ) : \Generator
     {
         $builder = ChunksBuilder::fromModelQuery($this);
@@ -97,8 +97,8 @@ trait ChunkTrait
      * @return \Generator<EloquentModelCollection<T>>
      */
     public function chunksPdoAfterForeach(
-        int $limitChunk, int $limit = null,
-        string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
+        int $limitChunk, ?int $limit = null,
+        ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
     ) : \Generator
     {
         $builder = ChunksBuilder::fromModelQuery($this);
@@ -117,8 +117,8 @@ trait ChunkTrait
 
 
     public function paginateModelNativeForeach(
-        int $perPage = null, int $page = null, int $pagesDelta = null,
-        int $offset = null
+        ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
+        ?int $offset = null
     ) : ChunksBuilder
     {
         $builder = ChunksBuilder::fromModelQuery($this);
@@ -134,8 +134,8 @@ trait ChunkTrait
     }
 
     public function paginateModelAfterForeach(
-        int $perPage = null, int $page = null, int $pagesDelta = null,
-        string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
+        ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
+        ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
     ) : ChunksBuilder
     {
         $builder = ChunksBuilder::fromModelQuery($this);
@@ -152,8 +152,8 @@ trait ChunkTrait
 
 
     public function paginatePdoNativeForeach(
-        int $perPage = null, int $page = null, int $pagesDelta = null,
-        int $offset = null
+        ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
+        ?int $offset = null
     ) : ChunksBuilder
     {
         $builder = ChunksBuilder::fromModelQuery($this);
@@ -169,8 +169,8 @@ trait ChunkTrait
     }
 
     public function paginatePdoAfterForeach(
-        int $perPage = null, int $page = null, int $pagesDelta = null,
-        string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
+        ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
+        ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
     ) : ChunksBuilder
     {
         $builder = ChunksBuilder::fromModelQuery($this);

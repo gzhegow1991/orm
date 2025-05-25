@@ -3,7 +3,7 @@
 namespace Gzhegow\Orm\Core\Model\Traits\Grammar;
 
 use Gzhegow\Orm\Core\Model\Scope\MariaDBGrammarScope;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 /**

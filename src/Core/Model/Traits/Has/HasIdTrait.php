@@ -4,7 +4,7 @@ namespace Gzhegow\Orm\Core\Model\Traits\Has;
 
 use Gzhegow\Lib\Lib;
 use Gzhegow\Orm\Exception\RuntimeException;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 /**
@@ -19,15 +19,19 @@ trait HasIdTrait
      */
     public function getId()
     {
-        $id = null
-            ?? Lib::parse()->int_positive($this->attributes[ 'id' ] ?? null)
-            ?? Lib::parse()->string_not_empty($this->attributes[ 'id' ] ?? null);
+        $theType = Lib::type();
 
-        if (null === $id) {
+        $id = $this->attributes[ 'id' ] ?? null;
+
+        $status = false
+            || $theType->int_positive($idValid, $id)
+            || $theType->string_not_empty($idValid, $id);
+
+        if (! $status) {
             throw new RuntimeException('The `id` is empty');
         }
 
-        return $id;
+        return $idValid;
     }
 
     /**
@@ -35,14 +39,18 @@ trait HasIdTrait
      */
     public function hasId()
     {
-        $id = null
-            ?? Lib::parse()->int_positive($this->attributes[ 'id' ] ?? null)
-            ?? Lib::parse()->string_not_empty($this->attributes[ 'id' ] ?? null);
+        $theType = Lib::type();
 
-        if (null === $id) {
+        $id = $this->attributes[ 'id' ] ?? null;
+
+        $status = false
+            || $theType->int_positive($idValid, $id)
+            || $theType->string_not_empty($idValid, $id);
+
+        if (! $status) {
             return null;
         }
 
-        return $id;
+        return $idValid;
     }
 }

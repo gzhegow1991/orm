@@ -3,8 +3,7 @@
 namespace Gzhegow\Orm\Core\Model\Traits\Has;
 
 use Gzhegow\Lib\Lib;
-use Gzhegow\Calendar\Calendar;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 /**

@@ -7,7 +7,7 @@ use Illuminate\Database\Query\Grammars\Grammar;
 use Illuminate\Database\Query\Processors\Processor;
 use Gzhegow\Orm\Core\Persistence\EloquentPersistenceInterface;
 use Illuminate\Database\Schema\Builder as EloquentSchemaBuilder;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 use Gzhegow\Orm\Package\Illuminate\Database\Capsule\EloquentInterface;
 use Gzhegow\Orm\Core\Relation\Factory\EloquentRelationFactoryInterface;
@@ -25,15 +25,15 @@ interface OrmFacadeInterface
 
     public function newEloquentSchemaBlueprint(
         $table,
-        \Closure $callback = null,
+        ?\Closure $callback = null,
         $prefix = ''
     ) : EloquentSchemaBlueprint;
 
 
     public function newEloquentPdoQueryBuilder(
         ConnectionInterface $connection,
-        Grammar $grammar = null,
-        Processor $processor = null
+        ?Grammar $grammar = null,
+        ?Processor $processor = null
     ) : EloquentPdoQueryBuilder;
 
     /**
@@ -79,5 +79,5 @@ interface OrmFacadeInterface
      *
      * @return T
      */
-    public function fnEloquentRelationDotnameCurry(array $relationFn = null, string $fields = null);
+    public function fnEloquentRelationDotnameCurry(?array $relationFn = null, ?string $fields = null);
 }

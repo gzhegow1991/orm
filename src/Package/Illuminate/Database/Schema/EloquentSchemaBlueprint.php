@@ -3,6 +3,7 @@
 namespace Gzhegow\Orm\Package\Illuminate\Database\Schema;
 
 use Gzhegow\Lib\Lib;
+use Illuminate\Database\Connection;
 use Gzhegow\Orm\Core\OrmFactoryInterface;
 use Illuminate\Database\Schema\Blueprint as EloquentSchemaBlueprintBase;
 
@@ -14,16 +15,25 @@ class EloquentSchemaBlueprint extends EloquentSchemaBlueprintBase
      */
     protected $factory;
 
+    /**
+     * @var Connection
+     */
+    protected $connection;
+
 
     public function __construct(
         OrmFactoryInterface $factory,
         //
-        $table, \Closure $callback = null, $prefix = ''
+        array $arguments, array $options = []
     )
     {
         $this->factory = $factory;
 
-        parent::__construct($table, $callback, $prefix);
+        if (isset($options[ 'connection' ])) {
+            $this->connection = $options[ 'connection' ];
+        }
+
+        parent::__construct(...$arguments);
     }
 
 
@@ -33,12 +43,18 @@ class EloquentSchemaBlueprint extends EloquentSchemaBlueprintBase
 
         $theStr = Lib::str();
 
-        $table = "{$this->prefix}{$this->table}";
+        $prefix = $this->connection->getTablePrefix();
 
-        $tableCut = implode('_', array_map([ $theStr, 'prefix' ], explode('_', $table)));
+        $table = "{$prefix}{$this->table}";
+
+        $tableCut = explode('_', $table);
+        $tableCut = array_map([ $theStr, 'prefix' ], $tableCut);
+        $tableCut = implode('_', $tableCut);
+
         $typeCut = $theStr->prefix($type);
+
         $columnsCut = crc32(serialize($columns));
 
-        return "{$tableCut}_{$typeCut}{$columnsCut}";
+        return "{$tableCut}_{$typeCut}_{$columnsCut}";
     }
 }

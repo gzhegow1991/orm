@@ -3,7 +3,7 @@
 namespace Gzhegow\Orm\Core\Model\Traits;
 
 use Gzhegow\Orm\Core\Query\Chunks\ChunksBuilder;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 
 
@@ -27,8 +27,8 @@ trait ChunkTrait
      * @return \Generator<EloquentModelCollection<static>>
      */
     public static function chunksModelNativeForeach(
-        int $limitChunk, int $limit = null,
-        int $offset = null
+        int $limitChunk, ?int $limit = null,
+        ?int $offset = null
     ) : \Generator
     {
         $builder = ChunksBuilder::fromModelClass(static::class);
@@ -49,8 +49,8 @@ trait ChunkTrait
      * @return \Generator<EloquentModelCollection<static>>
      */
     public static function chunksModelAfterForeach(
-        int $limitChunk, int $limit = null,
-        string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
+        int $limitChunk, ?int $limit = null,
+        ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
     ) : \Generator
     {
         $builder = ChunksBuilder::fromModelClass(static::class);
@@ -72,8 +72,8 @@ trait ChunkTrait
      * @return \Generator<EloquentModelCollection<static>>
      */
     public static function chunksPdoNativeForeach(
-        int $limitChunk, int $limit = null,
-        int $offset = null
+        int $limitChunk, ?int $limit = null,
+        ?int $offset = null
     ) : \Generator
     {
         $builder = ChunksBuilder::fromModelClass(static::class);
@@ -94,8 +94,8 @@ trait ChunkTrait
      * @return \Generator<EloquentModelCollection<static>>
      */
     public static function chunksPdoAfterForeach(
-        int $limitChunk, int $limit = null,
-        string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
+        int $limitChunk, ?int $limit = null,
+        ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
     ) : \Generator
     {
         $builder = ChunksBuilder::fromModelClass(static::class);
@@ -114,8 +114,8 @@ trait ChunkTrait
 
 
     public static function paginateModelNativeForeach(
-        int $perPage = null, int $page = null, int $pagesDelta = null,
-        int $offset = null
+        ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
+        ?int $offset = null
     ) : ChunksBuilder
     {
         $builder = ChunksBuilder::fromModelClass(static::class);
@@ -131,8 +131,8 @@ trait ChunkTrait
     }
 
     public static function paginateModelAfterForeach(
-        int $perPage = null, int $page = null, int $pagesDelta = null,
-        string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
+        ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
+        ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
     ) : ChunksBuilder
     {
         $builder = ChunksBuilder::fromModelClass(static::class);
@@ -149,8 +149,8 @@ trait ChunkTrait
 
 
     public static function paginatePdoNativeForeach(
-        int $perPage = null, int $page = null, int $pagesDelta = null,
-        int $offset = null
+        ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
+        ?int $offset = null
     ) : ChunksBuilder
     {
         $builder = ChunksBuilder::fromModelClass(static::class);
@@ -166,8 +166,8 @@ trait ChunkTrait
     }
 
     public static function paginatePdoAfterForeach(
-        int $perPage = null, int $page = null, int $pagesDelta = null,
-        string $offsetColumn = null, string $offsetOperator = null, $offsetValue = null, bool $includeOffsetValue = null
+        ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
+        ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
     ) : ChunksBuilder
     {
         $builder = ChunksBuilder::fromModelClass(static::class);

@@ -2,7 +2,7 @@
 
 namespace Gzhegow\Orm\Core\Model\Traits;
 
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 /**
@@ -15,7 +15,7 @@ trait ColumnsTrait
         return $this->columns ?? [ '#' ];
     }
 
-    public function prepareColumns(array $columns, bool $withTable = null)
+    public function prepareColumns(array $columns, ?bool $withTable = null)
     {
         $withTable = $withTable ?? false;
 

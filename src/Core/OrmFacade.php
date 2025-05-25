@@ -10,7 +10,7 @@ use Gzhegow\Orm\Core\Query\Chunks\ChunksProcessorInterface;
 use Gzhegow\Orm\Core\Relation\Factory\EloquentRelationFactory;
 use Gzhegow\Orm\Core\Persistence\EloquentPersistenceInterface;
 use Illuminate\Database\Schema\Builder as EloquentSchemaBuilder;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 use Gzhegow\Orm\Package\Illuminate\Database\Capsule\EloquentInterface;
 use Gzhegow\Orm\Core\Relation\Factory\EloquentRelationFactoryInterface;
@@ -68,7 +68,7 @@ class OrmFacade implements OrmFacadeInterface
 
     public function newEloquentSchemaBlueprint(
         $table,
-        \Closure $callback = null,
+        ?\Closure $callback = null,
         $prefix = ''
     ) : EloquentSchemaBlueprint
     {
@@ -82,8 +82,8 @@ class OrmFacade implements OrmFacadeInterface
 
     public function newEloquentPdoQueryBuilder(
         ConnectionInterface $connection,
-        Grammar $grammar = null,
-        Processor $processor = null
+        ?Grammar $grammar = null,
+        ?Processor $processor = null
     ) : EloquentPdoQueryBuilder
     {
         return $this->factory->newEloquentPdoQueryBuilder(
@@ -145,9 +145,9 @@ class OrmFacade implements OrmFacadeInterface
      *
      * @return T
      */
-    public function fnEloquentRelationDotnameCurry(array $relationFn = null, string $fields = null)
+    public function fnEloquentRelationDotnameCurry(?array $relationFn = null, ?string $fields = null)
     {
-        $fn = static function ($relationFn = null, string $fields = null) use (&$fn) {
+        $fn = static function ($relationFn = null, ?string $fields = null) use (&$fn) {
             static $current;
 
             if (null === $relationFn) {

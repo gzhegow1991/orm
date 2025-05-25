@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentModelQueryBuilder;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 interface EloquentPersistenceInterface
@@ -18,7 +18,7 @@ interface EloquentPersistenceInterface
 
     public function persistBelongsToManyForSave(
         BelongsToMany $relation,
-        EloquentModel $model, array $pivotAttributes = [], bool $touch = null
+        EloquentModel $model, array $pivotAttributes = [], ?bool $touch = null
     ) : void;
 
     public function persistBelongsToManyForSaveMany(
@@ -28,7 +28,7 @@ interface EloquentPersistenceInterface
 
     public function persistBelongsToManyForSync(
         BelongsToMany $relation,
-        $ids, bool $detaching = null
+        $ids, ?bool $detaching = null
     ) : void;
 
 

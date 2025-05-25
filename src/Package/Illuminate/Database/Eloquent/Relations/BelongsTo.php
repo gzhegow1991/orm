@@ -2,10 +2,9 @@
 
 namespace Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Relations;
 
-use Illuminate\Database\Eloquent\Model;
 use Gzhegow\Orm\Core\Relation\Traits\HasRelationNameTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo as BelongsToBase;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModel;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
 class BelongsTo extends BelongsToBase implements
