@@ -14,48 +14,120 @@ use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
  */
 trait TransactionTrait
 {
-    public function transaction(\Closure $fn, $attempts = 1)
+    /**
+     * @return mixed|false
+     */
+    public function transaction(\Closure $fn, $attempts = 1, array $refs = [])
     {
+        $withThrowable = array_key_exists(0, $refs);
+        if ($withThrowable) {
+            $refThrowable =& $refs[ 0 ];
+        }
+        $refThrowable = null;
+
         $conn = $this->getConnection();
 
         try {
             $result = $conn->transaction($fn, $attempts);
         }
         catch ( \Throwable $e ) {
-            throw new RuntimeException($e);
+            if ($withThrowable) {
+                $refThrowable = $e;
+
+                return false;
+            }
+
+            throw new RuntimeException('Unhandled exception on ' . __FUNCTION__, $e);
         }
 
         return $result;
     }
 
     /**
-     * @return void
+     * @return bool
      */
-    public function beginTransaction()
+    public function beginTransaction(array $refs = [])
     {
+        $withThrowable = array_key_exists(0, $refs);
+        if ($withThrowable) {
+            $refThrowable =& $refs[ 0 ];
+        }
+        $refThrowable = null;
+
         $conn = $this->getConnection();
 
-        $conn->beginTransaction();
+        try {
+            $conn->beginTransaction();
+        }
+        catch ( \Throwable $e ) {
+            if ($withThrowable) {
+                $refThrowable = $e;
+
+                return false;
+            }
+
+            throw new RuntimeException('Unhandled exception on ' . __FUNCTION__, $e);
+        }
+
+        return true;
     }
 
     /**
-     * @return void
+     * @return bool
      */
-    public function commit()
+    public function commit(array $refs = [])
     {
+        $withThrowable = array_key_exists(0, $refs);
+        if ($withThrowable) {
+            $refThrowable =& $refs[ 0 ];
+        }
+        $refThrowable = null;
+
         $conn = $this->getConnection();
 
-        $conn->commit();
+        try {
+            $conn->commit();
+        }
+        catch ( \Throwable $e ) {
+            if ($withThrowable) {
+                $refThrowable = $e;
+
+                return false;
+            }
+
+            throw new RuntimeException('Unhandled exception on ' . __FUNCTION__, $e);
+        }
+
+        return true;
     }
 
     /**
-     * @return void
+     * @return bool
      */
-    public function rollBack()
+    public function rollBack(array $refs = [])
     {
+        $withThrowable = array_key_exists(0, $refs);
+        if ($withThrowable) {
+            $refThrowable =& $refs[ 0 ];
+        }
+        $refThrowable = null;
+
         $conn = $this->getConnection();
 
-        $conn->rollBack();
+        try {
+            $conn->rollBack();
+        }
+        catch ( \Throwable $e ) {
+            if ($withThrowable) {
+                $refThrowable = $e;
+
+                return false;
+            }
+
+            throw new RuntimeException('Unhandled exception on ' . __FUNCTION__, $e);
+        }
+
+        return true;
     }
 
     /**
