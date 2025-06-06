@@ -10,7 +10,7 @@ use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 /**
  * @mixin EloquentModel
  */
-trait ChunkTrait
+trait ChunksTrait
 {
     /**
      * @return EloquentChunksBuilder

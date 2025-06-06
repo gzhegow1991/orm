@@ -38,6 +38,9 @@
 
         "illuminate/database": "~8.0"
     },
+    "suggest": {
+        "illuminate/events": "~8.0"
+    },
 
     "config": {
         "optimize-autoloader": true,

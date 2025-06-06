@@ -17,6 +17,9 @@ use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
 interface OrmFactoryInterface
 {
+    public function newBuilder() : OrmBuilderInterface;
+
+
     public function newEloquentChunkProcessor() : EloquentChunksProcessorInterface;
 
 

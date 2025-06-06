@@ -80,117 +80,99 @@ $ffn = new class {
 
 
 
-\Gzhegow\Lib\Lib::require_composer_global();
-
-
-
 // >>> ЗАПУСКАЕМ!
 
 // > сначала всегда фабрика
 $factory = new \Gzhegow\Orm\Core\OrmFactory();
 
-// > создаем контейнер для Eloquent (не обязательно)
-// $illuminateContainer = new \Illuminate\Container\Container();
-$illuminateContainer = null;
+// > создаем сборщик
+$builder = $factory->newBuilder();
+$builder
+    ->defaultStringLength(150)
+    //
+    // > добавить соединения с БД
+    ->fnInit(
+        static function ($eloquent) {
+            $eloquent->addConnection(
+                [
+                    'driver' => 'mysql',
 
-// > создаем экземпляр Eloquent
-$eloquent = new \Gzhegow\Orm\Package\Illuminate\Database\Capsule\Eloquent(
-    $illuminateContainer
-);
+                    'host' => 'localhost',
+                    'port' => 3306,
 
-// > добавляем соединение к БД
-$pdoCharset = 'utf8mb4';
-$pdoCollate = 'utf8mb4_unicode_ci';
-$eloquent->addConnection(
-    [
-        'driver' => 'mysql',
+                    'username' => 'root',
+                    'password' => '',
 
-        'host'     => 'localhost',
-        'port'     => 3306,
-        'username' => 'root',
-        'password' => '',
-        'database' => 'test',
+                    'database' => 'test',
 
-        'charset'   => $pdoCharset,
-        'collation' => $pdoCollate,
+                    'charset'   => 'utf8mb4',
+                    'collation' => 'utf8mb4_unicode_ci',
 
-        'options' => [
-            // > always throw an exception if any error occured
-            \PDO::ATTR_ERRMODE           => \PDO::ERRMODE_EXCEPTION,
-            //
-            // > calculate $pdo->prepare() on PHP level instead of sending it to MySQL as is
-            \PDO::ATTR_EMULATE_PREPARES  => true,
-            //
-            // > since (PHP_VERSION_ID > 80100) mysql integers return integer
-            // > setting ATTR_STRINGIFY_FETCHES flag to TRUE forces returning numeric string
-            \PDO::ATTR_STRINGIFY_FETCHES => true,
-        ],
-    ],
-    $connName = 'default'
-);
-
-// > устанавливаем длину строки для новых таблиц по-умолчанию
-\Illuminate\Database\Schema\Builder::$defaultStringLength = 150;
-
-// > запускаем внутренние загрузочные действия Eloquent
-$eloquent->bootEloquent();
-
-// // > включаем логирование Eloquent
-// // > создаем диспетчер для Eloquent (необходим для логирования, но не обязателен)
-// $illuminateDispatcher = new \Illuminate\Events\Dispatcher(
-//     $illuminateContainer
-// );
-// $eloquent->setEventDispatcher($illuminateDispatcher);
-//
-// $connection = $eloquent->getConnection();
-// $connection->enableQueryLog();
-// $connection->listen(static function ($query) {
-//     $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 7);
-//     $trace = array_slice($trace, 6);
-//
-//     $files = [];
-//     foreach ( $trace as $item ) {
-//         $traceFile = $item[ 'file' ] ?? '';
-//         $traceLine = $item[ 'line' ] ?? '';
-//
-//         if (! $traceFile) continue;
-//
-//         // > таким образом можно фильтровать список файлов при дебаге, в каком запросе ошибка
-//         // if (false !== strpos($traceFile, '/vendor/')) continue;
-//
-//         $files[] = "{$traceFile}: $traceLine";
-//     }
-//
-//     $sql = preg_replace('~\s+~', ' ', trim($query->sql));
-//     $bindings = $query->bindings;
-//
-//     $context = [
-//         'sql'      => $sql,
-//         'bindings' => $bindings,
-//         'files'    => $files,
-//     ];
-//
-//     echo '[ SQL ] ' . \Gzhegow\Lib\Lib::debug_array_multiline($context) . PHP_EOL;
-// });
-
-// > создаем Persistence для Eloquent
-// > с помощью него будем откладывать выполнение запросов в очередь, уменьшая время одной транзакции
-$eloquentPersistence = new \Gzhegow\Orm\Core\Persistence\EloquentPersistence(
-    $eloquent
-);
+                    'options' => [
+                        // > always throw an exception if any error occured
+                        \PDO::ATTR_ERRMODE           => \PDO::ERRMODE_EXCEPTION,
+                        //
+                        // > calculate $pdo->prepare() on PHP level instead of sending it to MySQL as is
+                        \PDO::ATTR_EMULATE_PREPARES  => true,
+                        //
+                        // > since (PHP_VERSION_ID > 80100) mysql integers return integer
+                        // > setting ATTR_STRINGIFY_FETCHES flag to TRUE forces returning numeric string
+                        \PDO::ATTR_STRINGIFY_FETCHES => true,
+                    ],
+                ],
+                $connName = 'default'
+            );
+        }
+    )
+    // //
+    // // > выполнить сразу после инициализации Eloquent
+    // ->fnBoot(
+    //     static function ($eloquent) {
+    //         //
+    //     }
+    // )
+    // //
+    // // > включаем логирование запросов
+    // ->fnLog(
+    //     static function ($query) use ($ffn) {
+    //         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 7);
+    //         $trace = array_slice($trace, 6);
+    //
+    //         $sql = preg_replace('~\s+~', ' ', trim($query->sql));
+    //         $bindings = $query->bindings;
+    //
+    //         $files = [];
+    //         foreach ( $trace as $item ) {
+    //             $traceFile = $item[ 'file' ] ?? '';
+    //             $traceLine = $item[ 'line' ] ?? '';
+    //
+    //             if (! $traceFile) continue;
+    //
+    //             // > таким образом можно фильтровать список файлов при дебаге, в каком запросе ошибка
+    //             // if (false !== strpos($traceFile, '/vendor/')) continue;
+    //
+    //             $files[] = "{$traceFile}: $traceLine";
+    //         }
+    //
+    //         $dump = [
+    //             'sql'      => $sql,
+    //             'bindings' => $bindings,
+    //             'files'    => $files,
+    //         ];
+    //
+    //         $ffn->print_array_multiline($dump);
+    //     }
+    // )
+;
 
 // > создаем фасад
-$facade = new \Gzhegow\Orm\Core\OrmFacade(
-    $factory,
-    //
-    $eloquent,
-    $eloquentPersistence
-);
+$facade = $builder->make();
 
 // > устанавливаем фасад
 \Gzhegow\Orm\Core\Orm::setFacade($facade);
 
 
+$eloquent = $facade->getEloquent();
 $conn = $eloquent->getConnection();
 $schema = $eloquent->getSchemaBuilder($conn);
 

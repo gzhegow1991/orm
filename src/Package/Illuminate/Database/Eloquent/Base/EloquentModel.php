@@ -10,7 +10,7 @@ use Gzhegow\Orm\Core\Model\Traits\LoadTrait;
 use Gzhegow\Orm\Core\Model\Traits\DateTrait;
 use Gzhegow\Orm\Core\Model\Traits\TableTrait;
 use Gzhegow\Orm\Core\Model\Traits\QueryTrait;
-use Gzhegow\Orm\Core\Model\Traits\ChunkTrait;
+use Gzhegow\Orm\Core\Model\Traits\ChunksTrait;
 use Gzhegow\Orm\Core\Model\Traits\FactoryTrait;
 use Gzhegow\Orm\Core\Model\Traits\ColumnsTrait;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -36,7 +36,7 @@ abstract class EloquentModel extends EloquentModelBase
     use RelationTrait;
 
     use AttributeTrait;
-    use ChunkTrait;
+    use ChunksTrait;
     use ColumnsTrait;
     use FactoryTrait;
     use LoadTrait;
