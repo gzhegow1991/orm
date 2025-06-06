@@ -7,8 +7,8 @@ use Gzhegow\Orm\Core\Orm;
 use Illuminate\Database\Eloquent\Model;
 use Gzhegow\Orm\Exception\LogicException;
 use Gzhegow\Orm\Exception\RuntimeException;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
@@ -197,7 +197,8 @@ trait FactoryTrait
     {
         /** @see Model::newCollection() */
 
-        $collection = Orm::newEloquentModelCollection($models);
+        $collection = Orm::factory()->newEloquentModelCollection($models);
+
         $collection->setModelClass($this);
 
         return $collection;
@@ -208,7 +209,7 @@ trait FactoryTrait
     {
         $connectionInstance = $this->getConnection();
 
-        $pdoQuery = Orm::newEloquentPdoQueryBuilder(
+        $pdoQuery = Orm::factory()->newEloquentPdoQueryBuilder(
             $connectionInstance,
             $connectionInstance->getQueryGrammar(),
             $connectionInstance->getPostProcessor()
@@ -238,7 +239,7 @@ trait FactoryTrait
      */
     public function newModelQueryBuilder(EloquentPdoQueryBuilder $query) : EloquentModelQueryBuilder
     {
-        $modelQuery = Orm::newEloquentModelQueryBuilder(
+        $modelQuery = Orm::factory()->newEloquentModelQueryBuilder(
             $query,
             $this
         );

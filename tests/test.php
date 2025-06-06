@@ -464,7 +464,7 @@ $fn = function () use (
     $foo4->persistForSaveRecursive();
 
 
-    \Gzhegow\Orm\Core\Orm::eloquentPersistence()->flush();
+    \Gzhegow\Orm\Core\Orm::persistence()->flush();
 
 
     $fooCollection = $modelClassDemoFoo::query()->get([ '*' ]);
@@ -545,7 +545,7 @@ $fn = function () use (
     $image1->persistForSaveRecursive();
     $image2->persistForSaveRecursive();
 
-    \Gzhegow\Orm\Core\Orm::eloquentPersistence()->flush();
+    \Gzhegow\Orm\Core\Orm::persistence()->flush();
 
 
     $imageQuery = $image1::query()
@@ -607,7 +607,7 @@ $fn = function () use (
         $tag2,
     ]);
 
-    \Gzhegow\Orm\Core\Orm::eloquentPersistence()->flush();
+    \Gzhegow\Orm\Core\Orm::persistence()->flush();
 
 
     $tagQuery = $modelClassDemoTag::query()

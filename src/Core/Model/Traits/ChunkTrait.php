@@ -2,7 +2,7 @@
 
 namespace Gzhegow\Orm\Core\Model\Traits;
 
-use Gzhegow\Orm\Core\Query\Chunks\ChunksBuilder;
+use Gzhegow\Orm\Core\Query\Chunks\EloquentChunksBuilder;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 
@@ -13,11 +13,11 @@ use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 trait ChunkTrait
 {
     /**
-     * @return ChunksBuilder
+     * @return EloquentChunksBuilder
      */
-    public static function chunks() : ChunksBuilder
+    public static function chunks() : EloquentChunksBuilder
     {
-        $builder = ChunksBuilder::fromModelClass(static::class);
+        $builder = EloquentChunksBuilder::fromModelClass(static::class);
 
         return $builder;
     }
@@ -31,7 +31,7 @@ trait ChunkTrait
         ?int $offset = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::fromModelClass(static::class);
+        $builder = EloquentChunksBuilder::fromModelClass(static::class);
 
         $builder
             ->chunksModelNativeForeach(
@@ -53,7 +53,7 @@ trait ChunkTrait
         ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::fromModelClass(static::class);
+        $builder = EloquentChunksBuilder::fromModelClass(static::class);
 
         $builder
             ->chunksModelAfterForeach(
@@ -76,7 +76,7 @@ trait ChunkTrait
         ?int $offset = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::fromModelClass(static::class);
+        $builder = EloquentChunksBuilder::fromModelClass(static::class);
 
         $builder
             ->chunksPdoNativeForeach(
@@ -98,7 +98,7 @@ trait ChunkTrait
         ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::fromModelClass(static::class);
+        $builder = EloquentChunksBuilder::fromModelClass(static::class);
 
         $builder
             ->chunksPdoAfterForeach(
@@ -116,9 +116,9 @@ trait ChunkTrait
     public static function paginateModelNativeForeach(
         ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
         ?int $offset = null
-    ) : ChunksBuilder
+    ) : EloquentChunksBuilder
     {
-        $builder = ChunksBuilder::fromModelClass(static::class);
+        $builder = EloquentChunksBuilder::fromModelClass(static::class);
 
         $builder
             ->paginateModelNativeForeach(
@@ -133,9 +133,9 @@ trait ChunkTrait
     public static function paginateModelAfterForeach(
         ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
         ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
-    ) : ChunksBuilder
+    ) : EloquentChunksBuilder
     {
-        $builder = ChunksBuilder::fromModelClass(static::class);
+        $builder = EloquentChunksBuilder::fromModelClass(static::class);
 
         $builder
             ->paginateModelAfterForeach(
@@ -151,9 +151,9 @@ trait ChunkTrait
     public static function paginatePdoNativeForeach(
         ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
         ?int $offset = null
-    ) : ChunksBuilder
+    ) : EloquentChunksBuilder
     {
-        $builder = ChunksBuilder::fromModelClass(static::class);
+        $builder = EloquentChunksBuilder::fromModelClass(static::class);
 
         $builder
             ->paginatePdoNativeForeach(
@@ -168,9 +168,9 @@ trait ChunkTrait
     public static function paginatePdoAfterForeach(
         ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
         ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
-    ) : ChunksBuilder
+    ) : EloquentChunksBuilder
     {
-        $builder = ChunksBuilder::fromModelClass(static::class);
+        $builder = EloquentChunksBuilder::fromModelClass(static::class);
 
         $builder
             ->paginatePdoAfterForeach(

@@ -6,11 +6,14 @@ use Gzhegow\Lib\Lib;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 use Gzhegow\Orm\Exception\LogicException;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Gzhegow\Orm\Core\Query\ModelQuery\Traits\ChunkTrait;
+use Gzhegow\Orm\Exception\Runtime\DatabaseException;
+use Gzhegow\Orm\Core\Query\ModelQuery\Traits\ChunksTrait;
 use Gzhegow\Orm\Core\Query\ModelQuery\Traits\ColumnsTrait;
 use Illuminate\Support\Collection as EloquentSupportCollection;
 use Gzhegow\Orm\Core\Query\ModelQuery\Traits\PersistenceTrait;
+use Gzhegow\Orm\Core\Query\ModelQuery\Traits\TransactionTrait;
 use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentQueryBuilderBase;
 use Gzhegow\Orm\Exception\Exception\Resource\ResourceNotFoundException;
@@ -22,9 +25,10 @@ use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
  */
 class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
 {
-    use ChunkTrait;
+    use ChunksTrait;
     use ColumnsTrait;
     use PersistenceTrait;
+    use TransactionTrait;
 
 
     /**
@@ -429,6 +433,108 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
         $rows = $conn->select($explainSql, $bindings);
 
         return $rows;
+    }
+
+
+    /**
+     * @return static
+     */
+    public function lockShared()
+    {
+        $this->lock('FOR SHARE');
+
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
+    public function lockForUpdate()
+    {
+        $this->lock('FOR UPDATE');
+
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
+    public function lockSharedNowait()
+    {
+        $useWaitIfNotSupported = $useWaitIfNotSupported ?? true;
+
+        if ($this->lockIsNowaitAvailable()) {
+            $this->lock('FOR SHARE NOWAIT');
+
+        } elseif ($useWaitIfNotSupported) {
+            $this->lock('FOR SHARE');
+
+        } else {
+            throw new DatabaseException(
+                [ 'Your DB driver or version is not support `NOWAIT` locking' ]
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
+    public function lockForUpdateNowait(?bool $useWaitIfNotSupported = null)
+    {
+        $useWaitIfNotSupported = $useWaitIfNotSupported ?? true;
+
+        if ($this->lockIsNowaitAvailable()) {
+            $this->lock('FOR UPDATE NOWAIT');
+
+        } elseif ($useWaitIfNotSupported) {
+            $this->lock('FOR UPDATE');
+
+        } else {
+            throw new DatabaseException(
+                [ 'Your DB driver or version is not support `NOWAIT` locking' ]
+            );
+        }
+
+        return $this;
+    }
+
+    protected function lockIsNowaitAvailable() : bool
+    {
+        $conn = $this->getConnection();
+
+        $fn = function () {
+            /** @var ConnectionInterface $this */
+
+            if (! isset($this->isNowaitAvailable)) {
+                $driver = $this->getDriverName();
+
+                if ('mysql' === $driver) {
+                    $version = $this
+                        ->getPdo()
+                        ->getAttribute(\PDO::ATTR_SERVER_VERSION)
+                    ;
+
+                    $this->isNowaitAvailable = version_compare($version, '8.0.0', '>=');
+
+                } elseif ('pgsql' === $driver) {
+                    $version = $this
+                        ->getPdo()
+                        ->getAttribute(\PDO::ATTR_SERVER_VERSION)
+                    ;
+
+                    $this->isNowaitAvailable = version_compare($version, '8.1.0', '>=');
+
+                } else {
+                    $this->isNowaitAvailable = false;
+                }
+            }
+
+            return $this->isNowaitAvailable;
+        };
+
+        return $fn->call($conn);
     }
 
 

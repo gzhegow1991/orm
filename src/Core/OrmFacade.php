@@ -3,23 +3,12 @@
 namespace Gzhegow\Orm\Core;
 
 use Gzhegow\Orm\Exception\LogicException;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\Query\Grammars\Grammar;
-use Illuminate\Database\Query\Processors\Processor;
-use Gzhegow\Orm\Core\Query\Chunks\ChunksProcessorInterface;
-use Gzhegow\Orm\Core\Relation\Factory\EloquentRelationFactory;
 use Gzhegow\Orm\Core\Persistence\EloquentPersistenceInterface;
-use Illuminate\Database\Schema\Builder as EloquentSchemaBuilder;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
-use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 use Gzhegow\Orm\Package\Illuminate\Database\Capsule\EloquentInterface;
-use Gzhegow\Orm\Core\Relation\Factory\EloquentRelationFactoryInterface;
-use Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
-class OrmFacade implements OrmFacadeInterface
+class OrmFacade implements OrmInterface
 {
     /**
      * @var OrmFactoryInterface
@@ -50,93 +39,22 @@ class OrmFacade implements OrmFacadeInterface
     }
 
 
-    public function newChunkProcessor() : ChunksProcessorInterface
+    public function getFactory() : OrmFactoryInterface
     {
-        return $this->factory->newChunkProcessor();
+        return $this->factory;
     }
 
 
-    public function newEloquentSchemaBuilder(
-        ConnectionInterface $connection
-    ) : EloquentSchemaBuilder
+    public function getEloquent() : EloquentInterface
     {
-        return $this->factory->newEloquentSchemaBuilder(
-            $connection
-        );
+        return $this->eloquent;
     }
 
-
-    public function newEloquentSchemaBlueprint(
-        $table,
-        ?\Closure $callback = null,
-        $prefix = ''
-    ) : EloquentSchemaBlueprint
+    public function getPersistence() : EloquentPersistenceInterface
     {
-        return $this->factory->newEloquentSchemaBlueprint(
-            $table,
-            $callback,
-            $prefix
-        );
+        return $this->eloquentPersistence;
     }
 
-
-    public function newEloquentPdoQueryBuilder(
-        ConnectionInterface $connection,
-        ?Grammar $grammar = null,
-        ?Processor $processor = null
-    ) : EloquentPdoQueryBuilder
-    {
-        return $this->factory->newEloquentPdoQueryBuilder(
-            $connection,
-            $grammar,
-            $processor
-        );
-    }
-
-    /**
-     * @template-covariant T of EloquentModel
-     *
-     * @param T $model
-     *
-     * @return EloquentModelQueryBuilder<T>
-     */
-    public function newEloquentModelQueryBuilder(
-        EloquentPdoQueryBuilder $query,
-        //
-        EloquentModel $model
-    ) : EloquentModelQueryBuilder
-    {
-        return $this->factory->newEloquentModelQueryBuilder(
-            $query,
-            //
-            $model
-        );
-    }
-
-
-    /**
-     * @template-covariant T of EloquentModel
-     *
-     * @param iterable<T> $models
-     *
-     * @return EloquentModelCollection<T>|T[]
-     */
-    public function newEloquentModelCollection(
-        iterable $models = []
-    ) : EloquentModelCollection
-    {
-        return $this->factory->newEloquentModelCollection(
-            $models
-        );
-    }
-
-
-    public function newEloquentRelationFactory(
-        EloquentModel $model
-    ) : EloquentRelationFactoryInterface
-    {
-        return new EloquentRelationFactory($model);
-    }
 
     /**
      * @template T of (\Closure(array|null $relationFn, string|null $fields) : T|string)
@@ -180,16 +98,5 @@ class OrmFacade implements OrmFacadeInterface
         return (null !== $relationFn)
             ? $fn($relationFn, $fields)
             : $fn;
-    }
-
-
-    public function getEloquent() : EloquentInterface
-    {
-        return $this->eloquent;
-    }
-
-    public function getEloquentPersistence() : EloquentPersistenceInterface
-    {
-        return $this->eloquentPersistence;
     }
 }

@@ -14,21 +14,21 @@ use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 /**
  * @template-covariant T of EloquentModel
  */
-class ChunksProcessor implements ChunksProcessorInterface
+class EloquentChunksProcessor implements EloquentChunksProcessorInterface
 {
     /**
      * @return \Generator<EloquentModelCollection<T>>
      */
-    public function chunksModelNativeForeach(ChunksBuilder $builder) : \Generator
+    public function chunksModelNativeForeach(EloquentChunksBuilder $builder) : \Generator
     {
-        if (ChunksBuilder::MODE_RESULT_CHUNK !== $builder->getModeResult()) {
-            throw new RuntimeException([ 'The `modeResult` should be: ' . ChunksBuilder::MODE_RESULT_CHUNK, $builder->getModeResult() ]);
+        if (EloquentChunksBuilder::MODE_RESULT_CHUNK !== $builder->getModeResult()) {
+            throw new RuntimeException([ 'The `modeResult` should be: ' . EloquentChunksBuilder::MODE_RESULT_CHUNK, $builder->getModeResult() ]);
         }
-        if (ChunksBuilder::MODE_FETCH_MODEL !== $builder->getModeFetch()) {
-            throw new RuntimeException([ 'The `modeFetch` should be: ' . ChunksBuilder::MODE_FETCH_MODEL, $builder->getModeFetch() ]);
+        if (EloquentChunksBuilder::MODE_FETCH_MODEL !== $builder->getModeFetch()) {
+            throw new RuntimeException([ 'The `modeFetch` should be: ' . EloquentChunksBuilder::MODE_FETCH_MODEL, $builder->getModeFetch() ]);
         }
-        if (ChunksBuilder::MODE_OFFSET_NATIVE !== $builder->getModeOffset()) {
-            throw new RuntimeException([ 'The `modeOffset` should be: ' . ChunksBuilder::MODE_OFFSET_NATIVE, $builder->getModeOffset() ]);
+        if (EloquentChunksBuilder::MODE_OFFSET_NATIVE !== $builder->getModeOffset()) {
+            throw new RuntimeException([ 'The `modeOffset` should be: ' . EloquentChunksBuilder::MODE_OFFSET_NATIVE, $builder->getModeOffset() ]);
         }
 
         $generator = $this->doChunksModelNativeForeach($builder);
@@ -39,7 +39,7 @@ class ChunksProcessor implements ChunksProcessorInterface
     /**
      * @return \Generator<EloquentModelCollection<T>>
      */
-    private function doChunksModelNativeForeach(ChunksBuilder $builder) : \Generator
+    private function doChunksModelNativeForeach(EloquentChunksBuilder $builder) : \Generator
     {
         $modelQuery = $builder->getModelQuery();
 
@@ -91,16 +91,16 @@ class ChunksProcessor implements ChunksProcessorInterface
     /**
      * @return \Generator<EloquentSupportCollection<\stdClass>
      */
-    public function chunksPdoNativeForeach(ChunksBuilder $builder) : \Generator
+    public function chunksPdoNativeForeach(EloquentChunksBuilder $builder) : \Generator
     {
-        if (ChunksBuilder::MODE_RESULT_CHUNK !== $builder->getModeResult()) {
-            throw new RuntimeException([ 'The `modeResult` should be: ' . ChunksBuilder::MODE_RESULT_CHUNK, $builder->getModeResult() ]);
+        if (EloquentChunksBuilder::MODE_RESULT_CHUNK !== $builder->getModeResult()) {
+            throw new RuntimeException([ 'The `modeResult` should be: ' . EloquentChunksBuilder::MODE_RESULT_CHUNK, $builder->getModeResult() ]);
         }
-        if (ChunksBuilder::MODE_FETCH_PDO !== $builder->getModeFetch()) {
-            throw new RuntimeException([ 'The `modeFetch` should be: ' . ChunksBuilder::MODE_FETCH_PDO, $builder->getModeFetch() ]);
+        if (EloquentChunksBuilder::MODE_FETCH_PDO !== $builder->getModeFetch()) {
+            throw new RuntimeException([ 'The `modeFetch` should be: ' . EloquentChunksBuilder::MODE_FETCH_PDO, $builder->getModeFetch() ]);
         }
-        if (ChunksBuilder::MODE_OFFSET_NATIVE !== $builder->getModeOffset()) {
-            throw new RuntimeException([ 'The `modeOffset` should be: ' . ChunksBuilder::MODE_OFFSET_NATIVE, $builder->getModeOffset() ]);
+        if (EloquentChunksBuilder::MODE_OFFSET_NATIVE !== $builder->getModeOffset()) {
+            throw new RuntimeException([ 'The `modeOffset` should be: ' . EloquentChunksBuilder::MODE_OFFSET_NATIVE, $builder->getModeOffset() ]);
         }
 
         $generator = $this->doChunksPdoNativeForeach($builder);
@@ -111,7 +111,7 @@ class ChunksProcessor implements ChunksProcessorInterface
     /**
      * @return \Generator<EloquentSupportCollection<\stdClass>
      */
-    private function doChunksPdoNativeForeach(ChunksBuilder $builder) : \Generator
+    private function doChunksPdoNativeForeach(EloquentChunksBuilder $builder) : \Generator
     {
         $pdoQuery = $builder->getPdoQuery();
 
@@ -163,16 +163,16 @@ class ChunksProcessor implements ChunksProcessorInterface
     /**
      * @return \Generator<EloquentModelCollection<T>>
      */
-    public function chunksModelAfterForeach(ChunksBuilder $builder) : \Generator
+    public function chunksModelAfterForeach(EloquentChunksBuilder $builder) : \Generator
     {
-        if (ChunksBuilder::MODE_RESULT_CHUNK !== $builder->getModeResult()) {
-            throw new RuntimeException([ 'The `modeResult` should be: ' . ChunksBuilder::MODE_RESULT_CHUNK, $builder->getModeResult() ]);
+        if (EloquentChunksBuilder::MODE_RESULT_CHUNK !== $builder->getModeResult()) {
+            throw new RuntimeException([ 'The `modeResult` should be: ' . EloquentChunksBuilder::MODE_RESULT_CHUNK, $builder->getModeResult() ]);
         }
-        if (ChunksBuilder::MODE_FETCH_MODEL !== $builder->getModeFetch()) {
-            throw new RuntimeException([ 'The `modeFetch` should be: ' . ChunksBuilder::MODE_FETCH_MODEL, $builder->getModeFetch() ]);
+        if (EloquentChunksBuilder::MODE_FETCH_MODEL !== $builder->getModeFetch()) {
+            throw new RuntimeException([ 'The `modeFetch` should be: ' . EloquentChunksBuilder::MODE_FETCH_MODEL, $builder->getModeFetch() ]);
         }
-        if (ChunksBuilder::MODE_OFFSET_AFTER !== $builder->getModeOffset()) {
-            throw new RuntimeException([ 'The `modeOffset` should be: ' . ChunksBuilder::MODE_OFFSET_AFTER, $builder->getModeOffset() ]);
+        if (EloquentChunksBuilder::MODE_OFFSET_AFTER !== $builder->getModeOffset()) {
+            throw new RuntimeException([ 'The `modeOffset` should be: ' . EloquentChunksBuilder::MODE_OFFSET_AFTER, $builder->getModeOffset() ]);
         }
 
         $generator = $this->doChunksModelAfterForeach($builder);
@@ -183,7 +183,7 @@ class ChunksProcessor implements ChunksProcessorInterface
     /**
      * @return \Generator<EloquentModelCollection<T>>
      */
-    private function doChunksModelAfterForeach(ChunksBuilder $builder) : \Generator
+    private function doChunksModelAfterForeach(EloquentChunksBuilder $builder) : \Generator
     {
         $modelQuery = $builder->getModelQuery();
         $pdoQuery = $builder->getPdoQuery();
@@ -241,18 +241,18 @@ class ChunksProcessor implements ChunksProcessorInterface
 
         $offsetOperatorFirst = $offsetOperator;
         if ($includeOffsetValueStart) {
-            if ($offsetOperator === ChunksBuilder::OFFSET_OPERATOR_GT) {
-                $offsetOperatorFirst = ChunksBuilder::OFFSET_OPERATOR_GTE;
+            if ($offsetOperator === EloquentChunksBuilder::OFFSET_OPERATOR_GT) {
+                $offsetOperatorFirst = EloquentChunksBuilder::OFFSET_OPERATOR_GTE;
             }
-            if ($offsetOperator === ChunksBuilder::OFFSET_OPERATOR_LT) {
-                $offsetOperatorFirst = ChunksBuilder::OFFSET_OPERATOR_LTE;
+            if ($offsetOperator === EloquentChunksBuilder::OFFSET_OPERATOR_LT) {
+                $offsetOperatorFirst = EloquentChunksBuilder::OFFSET_OPERATOR_LTE;
             }
         }
 
         $offsetOrder = 'asc';
         if (false
-            || ($offsetOperator === ChunksBuilder::OFFSET_OPERATOR_LT)
-            || ($offsetOperator === ChunksBuilder::OFFSET_OPERATOR_LTE)
+            || ($offsetOperator === EloquentChunksBuilder::OFFSET_OPERATOR_LT)
+            || ($offsetOperator === EloquentChunksBuilder::OFFSET_OPERATOR_LTE)
         ) {
             $offsetOrder = 'desc';
         }
@@ -324,16 +324,16 @@ class ChunksProcessor implements ChunksProcessorInterface
     /**
      * @return \Generator<EloquentSupportCollection<\stdClass>
      */
-    public function chunksPdoAfterForeach(ChunksBuilder $builder) : \Generator
+    public function chunksPdoAfterForeach(EloquentChunksBuilder $builder) : \Generator
     {
-        if (ChunksBuilder::MODE_RESULT_CHUNK !== $builder->getModeResult()) {
-            throw new RuntimeException([ 'The `modeResult` should be: ' . ChunksBuilder::MODE_RESULT_CHUNK, $builder->getModeResult() ]);
+        if (EloquentChunksBuilder::MODE_RESULT_CHUNK !== $builder->getModeResult()) {
+            throw new RuntimeException([ 'The `modeResult` should be: ' . EloquentChunksBuilder::MODE_RESULT_CHUNK, $builder->getModeResult() ]);
         }
-        if (ChunksBuilder::MODE_FETCH_PDO !== $builder->getModeFetch()) {
-            throw new RuntimeException([ 'The `modeFetch` should be: ' . ChunksBuilder::MODE_FETCH_PDO, $builder->getModeFetch() ]);
+        if (EloquentChunksBuilder::MODE_FETCH_PDO !== $builder->getModeFetch()) {
+            throw new RuntimeException([ 'The `modeFetch` should be: ' . EloquentChunksBuilder::MODE_FETCH_PDO, $builder->getModeFetch() ]);
         }
-        if (ChunksBuilder::MODE_OFFSET_AFTER !== $builder->getModeOffset()) {
-            throw new RuntimeException([ 'The `modeOffset` should be: ' . ChunksBuilder::MODE_OFFSET_AFTER, $builder->getModeOffset() ]);
+        if (EloquentChunksBuilder::MODE_OFFSET_AFTER !== $builder->getModeOffset()) {
+            throw new RuntimeException([ 'The `modeOffset` should be: ' . EloquentChunksBuilder::MODE_OFFSET_AFTER, $builder->getModeOffset() ]);
         }
 
         $generator = $this->doChunksPdoAfterForeach($builder);
@@ -344,7 +344,7 @@ class ChunksProcessor implements ChunksProcessorInterface
     /**
      * @return \Generator<EloquentSupportCollection<\stdClass>
      */
-    private function doChunksPdoAfterForeach(ChunksBuilder $builder) : \Generator
+    private function doChunksPdoAfterForeach(EloquentChunksBuilder $builder) : \Generator
     {
         $pdoQuery = $builder->getPdoQuery();
 
@@ -401,18 +401,18 @@ class ChunksProcessor implements ChunksProcessorInterface
 
         $offsetOperatorFirst = $offsetOperator;
         if ($includeOffsetValueStart) {
-            if ($offsetOperator === ChunksBuilder::OFFSET_OPERATOR_GT) {
-                $offsetOperatorFirst = ChunksBuilder::OFFSET_OPERATOR_GTE;
+            if ($offsetOperator === EloquentChunksBuilder::OFFSET_OPERATOR_GT) {
+                $offsetOperatorFirst = EloquentChunksBuilder::OFFSET_OPERATOR_GTE;
             }
-            if ($offsetOperator === ChunksBuilder::OFFSET_OPERATOR_LT) {
-                $offsetOperatorFirst = ChunksBuilder::OFFSET_OPERATOR_LTE;
+            if ($offsetOperator === EloquentChunksBuilder::OFFSET_OPERATOR_LT) {
+                $offsetOperatorFirst = EloquentChunksBuilder::OFFSET_OPERATOR_LTE;
             }
         }
 
         $offsetOrder = 'asc';
         if (false
-            || ($offsetOperator === ChunksBuilder::OFFSET_OPERATOR_LT)
-            || ($offsetOperator === ChunksBuilder::OFFSET_OPERATOR_LTE)
+            || ($offsetOperator === EloquentChunksBuilder::OFFSET_OPERATOR_LT)
+            || ($offsetOperator === EloquentChunksBuilder::OFFSET_OPERATOR_LTE)
         ) {
             $offsetOrder = 'desc';
         }
@@ -481,16 +481,16 @@ class ChunksProcessor implements ChunksProcessorInterface
     }
 
 
-    public function paginateModelNativeForeach(ChunksBuilder $builder) : ChunksPaginateResult
+    public function paginateModelNativeForeach(EloquentChunksBuilder $builder) : EloquentChunksPaginateResult
     {
-        if (ChunksBuilder::MODE_RESULT_PAGINATE !== $builder->getModeResult()) {
-            throw new RuntimeException([ 'The `modeResult` should be: ' . ChunksBuilder::MODE_RESULT_PAGINATE, $builder->getModeResult() ]);
+        if (EloquentChunksBuilder::MODE_RESULT_PAGINATE !== $builder->getModeResult()) {
+            throw new RuntimeException([ 'The `modeResult` should be: ' . EloquentChunksBuilder::MODE_RESULT_PAGINATE, $builder->getModeResult() ]);
         }
-        if (ChunksBuilder::MODE_FETCH_MODEL !== $builder->getModeFetch()) {
-            throw new RuntimeException([ 'The `modeFetch` should be: ' . ChunksBuilder::MODE_FETCH_MODEL, $builder->getModeFetch() ]);
+        if (EloquentChunksBuilder::MODE_FETCH_MODEL !== $builder->getModeFetch()) {
+            throw new RuntimeException([ 'The `modeFetch` should be: ' . EloquentChunksBuilder::MODE_FETCH_MODEL, $builder->getModeFetch() ]);
         }
-        if (ChunksBuilder::MODE_OFFSET_NATIVE !== $builder->getModeOffset()) {
-            throw new RuntimeException([ 'The `modeOffset` should be: ' . ChunksBuilder::MODE_OFFSET_NATIVE, $builder->getModeOffset() ]);
+        if (EloquentChunksBuilder::MODE_OFFSET_NATIVE !== $builder->getModeOffset()) {
+            throw new RuntimeException([ 'The `modeOffset` should be: ' . EloquentChunksBuilder::MODE_OFFSET_NATIVE, $builder->getModeOffset() ]);
         }
 
         $this->paginateCalculateLimits($builder);
@@ -502,16 +502,16 @@ class ChunksProcessor implements ChunksProcessorInterface
         return $result;
     }
 
-    public function paginatePdoNativeForeach(ChunksBuilder $builder) : ChunksPaginateResult
+    public function paginatePdoNativeForeach(EloquentChunksBuilder $builder) : EloquentChunksPaginateResult
     {
-        if (ChunksBuilder::MODE_RESULT_PAGINATE !== $builder->getModeResult()) {
-            throw new RuntimeException([ 'The `modeResult` should be: ' . ChunksBuilder::MODE_RESULT_PAGINATE, $builder->getModeResult() ]);
+        if (EloquentChunksBuilder::MODE_RESULT_PAGINATE !== $builder->getModeResult()) {
+            throw new RuntimeException([ 'The `modeResult` should be: ' . EloquentChunksBuilder::MODE_RESULT_PAGINATE, $builder->getModeResult() ]);
         }
-        if (ChunksBuilder::MODE_FETCH_PDO !== $builder->getModeFetch()) {
-            throw new RuntimeException([ 'The `modeFetch` should be: ' . ChunksBuilder::MODE_FETCH_PDO, $builder->getModeFetch() ]);
+        if (EloquentChunksBuilder::MODE_FETCH_PDO !== $builder->getModeFetch()) {
+            throw new RuntimeException([ 'The `modeFetch` should be: ' . EloquentChunksBuilder::MODE_FETCH_PDO, $builder->getModeFetch() ]);
         }
-        if (ChunksBuilder::MODE_OFFSET_NATIVE !== $builder->getModeOffset()) {
-            throw new RuntimeException([ 'The `modeOffset` should be: ' . ChunksBuilder::MODE_OFFSET_NATIVE, $builder->getModeOffset() ]);
+        if (EloquentChunksBuilder::MODE_OFFSET_NATIVE !== $builder->getModeOffset()) {
+            throw new RuntimeException([ 'The `modeOffset` should be: ' . EloquentChunksBuilder::MODE_OFFSET_NATIVE, $builder->getModeOffset() ]);
         }
 
         $this->paginateCalculateLimits($builder);
@@ -524,16 +524,16 @@ class ChunksProcessor implements ChunksProcessorInterface
     }
 
 
-    public function paginateModelAfterForeach(ChunksBuilder $builder) : ChunksPaginateResult
+    public function paginateModelAfterForeach(EloquentChunksBuilder $builder) : EloquentChunksPaginateResult
     {
-        if (ChunksBuilder::MODE_RESULT_PAGINATE !== $builder->getModeResult()) {
-            throw new RuntimeException([ 'The `modeResult` should be: ' . ChunksBuilder::MODE_RESULT_PAGINATE, $builder->getModeResult() ]);
+        if (EloquentChunksBuilder::MODE_RESULT_PAGINATE !== $builder->getModeResult()) {
+            throw new RuntimeException([ 'The `modeResult` should be: ' . EloquentChunksBuilder::MODE_RESULT_PAGINATE, $builder->getModeResult() ]);
         }
-        if (ChunksBuilder::MODE_FETCH_MODEL !== $builder->getModeFetch()) {
-            throw new RuntimeException([ 'The `modeFetch` should be: ' . ChunksBuilder::MODE_FETCH_MODEL, $builder->getModeFetch() ]);
+        if (EloquentChunksBuilder::MODE_FETCH_MODEL !== $builder->getModeFetch()) {
+            throw new RuntimeException([ 'The `modeFetch` should be: ' . EloquentChunksBuilder::MODE_FETCH_MODEL, $builder->getModeFetch() ]);
         }
-        if (ChunksBuilder::MODE_OFFSET_AFTER !== $builder->getModeOffset()) {
-            throw new RuntimeException([ 'The `modeOffset` should be: ' . ChunksBuilder::MODE_OFFSET_AFTER, $builder->getModeOffset() ]);
+        if (EloquentChunksBuilder::MODE_OFFSET_AFTER !== $builder->getModeOffset()) {
+            throw new RuntimeException([ 'The `modeOffset` should be: ' . EloquentChunksBuilder::MODE_OFFSET_AFTER, $builder->getModeOffset() ]);
         }
 
         $this->paginateCalculateLimits($builder);
@@ -545,16 +545,16 @@ class ChunksProcessor implements ChunksProcessorInterface
         return $result;
     }
 
-    public function paginatePdoAfterForeach(ChunksBuilder $builder) : ChunksPaginateResult
+    public function paginatePdoAfterForeach(EloquentChunksBuilder $builder) : EloquentChunksPaginateResult
     {
-        if (ChunksBuilder::MODE_RESULT_PAGINATE !== $builder->getModeResult()) {
-            throw new RuntimeException([ 'The `modeResult` should be: ' . ChunksBuilder::MODE_RESULT_PAGINATE, $builder->getModeResult() ]);
+        if (EloquentChunksBuilder::MODE_RESULT_PAGINATE !== $builder->getModeResult()) {
+            throw new RuntimeException([ 'The `modeResult` should be: ' . EloquentChunksBuilder::MODE_RESULT_PAGINATE, $builder->getModeResult() ]);
         }
-        if (ChunksBuilder::MODE_FETCH_PDO !== $builder->getModeFetch()) {
-            throw new RuntimeException([ 'The `modeFetch` should be: ' . ChunksBuilder::MODE_FETCH_PDO, $builder->getModeFetch() ]);
+        if (EloquentChunksBuilder::MODE_FETCH_PDO !== $builder->getModeFetch()) {
+            throw new RuntimeException([ 'The `modeFetch` should be: ' . EloquentChunksBuilder::MODE_FETCH_PDO, $builder->getModeFetch() ]);
         }
-        if (ChunksBuilder::MODE_OFFSET_AFTER !== $builder->getModeOffset()) {
-            throw new RuntimeException([ 'The `modeOffset` should be: ' . ChunksBuilder::MODE_OFFSET_AFTER, $builder->getModeOffset() ]);
+        if (EloquentChunksBuilder::MODE_OFFSET_AFTER !== $builder->getModeOffset()) {
+            throw new RuntimeException([ 'The `modeOffset` should be: ' . EloquentChunksBuilder::MODE_OFFSET_AFTER, $builder->getModeOffset() ]);
         }
 
         $this->paginateCalculateLimits($builder);
@@ -567,7 +567,7 @@ class ChunksProcessor implements ChunksProcessorInterface
     }
 
 
-    protected function paginateCalculateLimits(ChunksBuilder $builder) : void
+    protected function paginateCalculateLimits(EloquentChunksBuilder $builder) : void
     {
         $perPage = $builder->getPerPage();
         $page = $builder->getPage();
@@ -582,7 +582,7 @@ class ChunksProcessor implements ChunksProcessorInterface
         $builder->setOffset($offset);
     }
 
-    protected function paginateGenerateResult(ChunksBuilder $builder, \Generator $generator) : ChunksPaginateResult
+    protected function paginateGenerateResult(EloquentChunksBuilder $builder, \Generator $generator) : EloquentChunksPaginateResult
     {
         $modeFetch = $builder->getModeFetch();
         $modeSelectCount = $builder->getModeSelectCount();
@@ -596,19 +596,19 @@ class ChunksProcessor implements ChunksProcessorInterface
 
         $queryModel = null;
         $queryPdo = null;
-        if (ChunksBuilder::MODE_FETCH_MODEL === $modeFetch) {
+        if (EloquentChunksBuilder::MODE_FETCH_MODEL === $modeFetch) {
             $queryModel = $builder->getModelQuery();
         }
-        if (ChunksBuilder::MODE_FETCH_PDO === $modeFetch) {
+        if (EloquentChunksBuilder::MODE_FETCH_PDO === $modeFetch) {
             $queryPdo = $builder->getPdoQuery();
         }
 
         if (null === $totalItems) {
             $mapSelectCount = [];
-            $mapSelectCount[ ChunksBuilder::MODE_SELECT_COUNT_NATIVE ][ ChunksBuilder::MODE_FETCH_MODEL ] = [ $queryModel, 'count' ];
-            $mapSelectCount[ ChunksBuilder::MODE_SELECT_COUNT_NATIVE ][ ChunksBuilder::MODE_FETCH_PDO ] = [ $queryPdo, 'count' ];
-            $mapSelectCount[ ChunksBuilder::MODE_SELECT_COUNT_EXPLAIN ][ ChunksBuilder::MODE_FETCH_MODEL ] = [ $queryModel, 'countExplain' ];
-            $mapSelectCount[ ChunksBuilder::MODE_SELECT_COUNT_EXPLAIN ][ ChunksBuilder::MODE_FETCH_PDO ] = [ $queryPdo, 'countExplain' ];
+            $mapSelectCount[ EloquentChunksBuilder::MODE_SELECT_COUNT_NATIVE ][ EloquentChunksBuilder::MODE_FETCH_MODEL ] = [ $queryModel, 'count' ];
+            $mapSelectCount[ EloquentChunksBuilder::MODE_SELECT_COUNT_NATIVE ][ EloquentChunksBuilder::MODE_FETCH_PDO ] = [ $queryPdo, 'count' ];
+            $mapSelectCount[ EloquentChunksBuilder::MODE_SELECT_COUNT_EXPLAIN ][ EloquentChunksBuilder::MODE_FETCH_MODEL ] = [ $queryModel, 'countExplain' ];
+            $mapSelectCount[ EloquentChunksBuilder::MODE_SELECT_COUNT_EXPLAIN ][ EloquentChunksBuilder::MODE_FETCH_PDO ] = [ $queryPdo, 'countExplain' ];
 
             $fn = $mapSelectCount[ $modeSelectCount ][ $modeFetch ] ?? null;
             if (null !== $fn) {
@@ -735,7 +735,7 @@ class ChunksProcessor implements ChunksProcessorInterface
             $pagesRelative[ 'last' ] = null;
         }
 
-        $result = new ChunksPaginateResult();
+        $result = new EloquentChunksPaginateResult();
         $result->totalItems = $totalItems;
         $result->totalPages = $totalPages;
         $result->page = $page;

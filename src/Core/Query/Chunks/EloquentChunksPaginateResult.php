@@ -3,7 +3,7 @@
 namespace Gzhegow\Orm\Core\Query\Chunks;
 
 
-class ChunksPaginateResult
+class EloquentChunksPaginateResult
 {
     /**
      * @var int|null

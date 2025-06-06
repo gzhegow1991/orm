@@ -17,7 +17,7 @@ class HasMany extends HasManyBase implements
 
     public function persistence() : EloquentPersistenceInterface
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = Orm::persistence();
 
         return $persistence;
     }

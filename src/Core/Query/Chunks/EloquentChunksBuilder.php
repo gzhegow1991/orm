@@ -15,7 +15,7 @@ use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 /**
  * @template-covariant T of EloquentModel
  */
-class ChunksBuilder
+class EloquentChunksBuilder
 {
     const MODE_OFFSET_AFTER  = 'AFTER';
     const MODE_OFFSET_NATIVE = 'NATIVE';
@@ -65,7 +65,7 @@ class ChunksBuilder
 
 
     /**
-     * @var ChunksProcessor
+     * @var EloquentChunksProcessor
      */
     protected $processor;
 
@@ -237,7 +237,7 @@ class ChunksBuilder
         $this->totalItems = $this->totalItemsDefault;
         $this->totalPages = $this->totalPagesDefault;
 
-        $this->processor = Orm::newChunkProcessor();
+        $this->processor = Orm::factory()->newEloquentChunkProcessor();
     }
 
 
@@ -384,7 +384,7 @@ class ChunksBuilder
     }
 
 
-    protected function getProcessor() : ChunksProcessor
+    protected function getProcessor() : EloquentChunksProcessor
     {
         return $this->processor;
     }
@@ -1135,7 +1135,7 @@ class ChunksBuilder
     }
 
 
-    public function paginateResult() : ChunksPaginateResult
+    public function paginateResult() : EloquentChunksPaginateResult
     {
         /** @var array<string, array<string, array<string, callable>>> $map */
 

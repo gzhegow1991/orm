@@ -107,7 +107,7 @@ class BelongsToMany extends BelongsToManyBase implements
 
     public function persistence() : EloquentPersistenceInterface
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = Orm::persistence();
 
         return $persistence;
     }

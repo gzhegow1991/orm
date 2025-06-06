@@ -32,7 +32,7 @@ class Eloquent extends EloquentBase implements
             $_connection = $this->getConnection($connection);
         }
 
-        $schema = Orm::newEloquentSchemaBuilder($_connection);
+        $schema = Orm::factory()->newEloquentSchemaBuilder($_connection);
 
         return $schema;
     }

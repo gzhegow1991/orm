@@ -14,7 +14,7 @@ trait RelationFactoryTrait
 {
     protected function relation() : EloquentRelationFactory
     {
-        $factory = Orm::newEloquentRelationFactory($this);
+        $factory = Orm::factory()->newEloquentRelationFactory($this);
 
         return $factory;
     }

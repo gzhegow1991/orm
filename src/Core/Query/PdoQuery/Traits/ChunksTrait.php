@@ -2,7 +2,7 @@
 
 namespace Gzhegow\Orm\Core\Query\PdoQuery\Traits;
 
-use Gzhegow\Orm\Core\Query\Chunks\ChunksBuilder;
+use Gzhegow\Orm\Core\Query\Chunks\EloquentChunksBuilder;
 use Illuminate\Support\Collection as EloquentSupportCollection;
 use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 
@@ -10,14 +10,14 @@ use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 /**
  * @mixin EloquentPdoQueryBuilder
  */
-trait ChunkTrait
+trait ChunksTrait
 {
     /**
-     * @return ChunksBuilder
+     * @return EloquentChunksBuilder
      */
-    public function chunks() : ChunksBuilder
+    public function chunks() : EloquentChunksBuilder
     {
-        $builder = ChunksBuilder::fromPdoQuery($this);
+        $builder = EloquentChunksBuilder::fromPdoQuery($this);
 
         return $builder;
     }
@@ -31,7 +31,7 @@ trait ChunkTrait
         ?int $offset = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::fromPdoQuery($this);
+        $builder = EloquentChunksBuilder::fromPdoQuery($this);
 
         $builder
             ->chunksPdoNativeForeach(
@@ -53,7 +53,7 @@ trait ChunkTrait
         ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::fromPdoQuery($this);
+        $builder = EloquentChunksBuilder::fromPdoQuery($this);
 
         $builder
             ->chunksPdoAfterForeach(
@@ -71,9 +71,9 @@ trait ChunkTrait
     public function paginateNativeForeach(
         ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
         ?int $offset = null
-    ) : ChunksBuilder
+    ) : EloquentChunksBuilder
     {
-        $builder = ChunksBuilder::fromPdoQuery($this);
+        $builder = EloquentChunksBuilder::fromPdoQuery($this);
 
         $builder
             ->paginatePdoNativeForeach(
@@ -88,9 +88,9 @@ trait ChunkTrait
     public function paginateAfterForeach(
         ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
         ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
-    ) : ChunksBuilder
+    ) : EloquentChunksBuilder
     {
-        $builder = ChunksBuilder::fromPdoQuery($this);
+        $builder = EloquentChunksBuilder::fromPdoQuery($this);
 
         $builder
             ->paginatePdoAfterForeach(

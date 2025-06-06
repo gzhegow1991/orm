@@ -4,12 +4,14 @@ namespace Gzhegow\Orm\Core;
 
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Grammars\Grammar;
-use Gzhegow\Orm\Core\Query\Chunks\ChunksProcessor;
+use Gzhegow\Orm\Core\Query\Chunks\EloquentChunksProcessor;
 use Illuminate\Database\Query\Processors\Processor;
-use Gzhegow\Orm\Core\Query\Chunks\ChunksProcessorInterface;
+use Gzhegow\Orm\Core\Query\Chunks\EloquentChunksProcessorInterface;
+use Gzhegow\Orm\Core\Relation\Factory\EloquentRelationFactory;
 use Illuminate\Database\Schema\Builder as EloquentSchemaBuilder;
-use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
+use Gzhegow\Orm\Core\Relation\Factory\EloquentRelationFactoryInterface;
+use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\Schema\EloquentSchemaBlueprint;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
@@ -17,9 +19,15 @@ use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
 
 class OrmFactory implements OrmFactoryInterface
 {
-    public function newChunkProcessor() : ChunksProcessorInterface
+    public function newEloquentChunkProcessor() : EloquentChunksProcessorInterface
     {
-        return new ChunksProcessor();
+        return new EloquentChunksProcessor();
+    }
+
+
+    public function newEloquentRelationFactory(EloquentModel $model) : EloquentRelationFactoryInterface
+    {
+        return new EloquentRelationFactory($model);
     }
 
 

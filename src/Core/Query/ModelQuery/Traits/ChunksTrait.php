@@ -2,7 +2,7 @@
 
 namespace Gzhegow\Orm\Core\Query\ModelQuery\Traits;
 
-use Gzhegow\Orm\Core\Query\Chunks\ChunksBuilder;
+use Gzhegow\Orm\Core\Query\Chunks\EloquentChunksBuilder;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelCollection;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
@@ -13,14 +13,14 @@ use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\EloquentModelQueryBuilder;
  *
  * @mixin EloquentModelQueryBuilder
  */
-trait ChunkTrait
+trait ChunksTrait
 {
     /**
-     * @return ChunksBuilder
+     * @return EloquentChunksBuilder
      */
-    public function chunks() : ChunksBuilder
+    public function chunks() : EloquentChunksBuilder
     {
-        $builder = ChunksBuilder::fromModelQuery($this);
+        $builder = EloquentChunksBuilder::fromModelQuery($this);
 
         return $builder;
     }
@@ -34,7 +34,7 @@ trait ChunkTrait
         ?int $offset = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::fromModelQuery($this);
+        $builder = EloquentChunksBuilder::fromModelQuery($this);
 
         $builder
             ->chunksModelNativeForeach(
@@ -56,7 +56,7 @@ trait ChunkTrait
         ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::fromModelQuery($this);
+        $builder = EloquentChunksBuilder::fromModelQuery($this);
 
         $builder
             ->chunksModelAfterForeach(
@@ -79,7 +79,7 @@ trait ChunkTrait
         ?int $offset = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::fromModelQuery($this);
+        $builder = EloquentChunksBuilder::fromModelQuery($this);
 
         $builder
             ->chunksPdoNativeForeach(
@@ -101,7 +101,7 @@ trait ChunkTrait
         ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
     ) : \Generator
     {
-        $builder = ChunksBuilder::fromModelQuery($this);
+        $builder = EloquentChunksBuilder::fromModelQuery($this);
 
         $builder
             ->chunksPdoAfterForeach(
@@ -119,9 +119,9 @@ trait ChunkTrait
     public function paginateModelNativeForeach(
         ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
         ?int $offset = null
-    ) : ChunksBuilder
+    ) : EloquentChunksBuilder
     {
-        $builder = ChunksBuilder::fromModelQuery($this);
+        $builder = EloquentChunksBuilder::fromModelQuery($this);
 
         $builder
             ->paginateModelNativeForeach(
@@ -136,9 +136,9 @@ trait ChunkTrait
     public function paginateModelAfterForeach(
         ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
         ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
-    ) : ChunksBuilder
+    ) : EloquentChunksBuilder
     {
-        $builder = ChunksBuilder::fromModelQuery($this);
+        $builder = EloquentChunksBuilder::fromModelQuery($this);
 
         $builder
             ->paginateModelAfterForeach(
@@ -154,9 +154,9 @@ trait ChunkTrait
     public function paginatePdoNativeForeach(
         ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
         ?int $offset = null
-    ) : ChunksBuilder
+    ) : EloquentChunksBuilder
     {
-        $builder = ChunksBuilder::fromModelQuery($this);
+        $builder = EloquentChunksBuilder::fromModelQuery($this);
 
         $builder
             ->paginatePdoNativeForeach(
@@ -171,9 +171,9 @@ trait ChunkTrait
     public function paginatePdoAfterForeach(
         ?int $perPage = null, ?int $page = null, ?int $pagesDelta = null,
         ?string $offsetColumn = null, ?string $offsetOperator = null, $offsetValue = null, ?bool $includeOffsetValue = null
-    ) : ChunksBuilder
+    ) : EloquentChunksBuilder
     {
-        $builder = ChunksBuilder::fromModelQuery($this);
+        $builder = EloquentChunksBuilder::fromModelQuery($this);
 
         $builder
             ->paginatePdoAfterForeach(

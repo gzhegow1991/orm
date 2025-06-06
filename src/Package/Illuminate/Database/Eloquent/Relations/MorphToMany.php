@@ -114,7 +114,7 @@ class MorphToMany extends MorphToManyBase implements
 
     public function persistence() : EloquentPersistenceInterface
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = Orm::persistence();
 
         return $persistence;
     }

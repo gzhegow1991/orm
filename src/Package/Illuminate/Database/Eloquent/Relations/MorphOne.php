@@ -17,7 +17,7 @@ class MorphOne extends MorphOneBase implements
 
     public function persistence() : EloquentPersistenceInterface
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = Orm::persistence();
 
         return $persistence;
     }

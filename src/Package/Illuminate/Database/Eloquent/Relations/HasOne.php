@@ -19,7 +19,7 @@ class HasOne extends HasOneBase implements
      */
     public function persistForSave(EloquentModel $model)
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = Orm::persistence();
 
         $persistence->persistHasOneOrManyForSave($this, $model);
 
@@ -31,7 +31,7 @@ class HasOne extends HasOneBase implements
      */
     public function persistForSaveMany($models)
     {
-        $persistence = Orm::eloquentPersistence();
+        $persistence = Orm::persistence();
 
         $persistence->persistHasOneOrManyForSaveMany($this, $models);
 

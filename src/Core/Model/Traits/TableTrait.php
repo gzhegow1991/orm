@@ -18,7 +18,7 @@ trait TableTrait
     {
         $connection = $this->getConnection();
 
-        $schema = Orm::newEloquentSchemaBuilder($connection);
+        $schema = Orm::factory()->newEloquentSchemaBuilder($connection);
 
         return $schema;
     }
