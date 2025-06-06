@@ -7,7 +7,7 @@ use Gzhegow\Orm\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Gzhegow\Orm\Core\Relation\Factory\EloquentRelationFactory;
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
-use Illuminate\Database\Eloquent\Builder as EloquentQueryBuilder;
+use Illuminate\Database\Eloquent\Builder as EloquentQueryBuilderBase;
 
 
 trait RelationFactoryTrait
@@ -39,7 +39,7 @@ trait RelationFactoryTrait
 
 
     protected function newBelongsTo(
-        EloquentQueryBuilder $query,
+        EloquentQueryBuilderBase $query,
         EloquentModel $child,
         $foreignKey, $ownerKey, $relation
     )
@@ -54,7 +54,7 @@ trait RelationFactoryTrait
 
 
     protected function newHasOne(
-        EloquentQueryBuilder $query,
+        EloquentQueryBuilderBase $query,
         EloquentModel $parent,
         $foreignKey, $localKey
     )
@@ -68,7 +68,7 @@ trait RelationFactoryTrait
     }
 
     protected function newHasMany(
-        EloquentQueryBuilder $query,
+        EloquentQueryBuilderBase $query,
         EloquentModel $parent,
         $foreignKey, $localKey
     )
@@ -83,7 +83,7 @@ trait RelationFactoryTrait
 
 
     protected function newBelongsToMany(
-        EloquentQueryBuilder $query,
+        EloquentQueryBuilderBase $query,
         EloquentModel $parent,
         $table,
         $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey,
@@ -100,7 +100,7 @@ trait RelationFactoryTrait
 
 
     protected function newHasOneThrough(
-        EloquentQueryBuilder $query,
+        EloquentQueryBuilderBase $query,
         EloquentModel $farParent, EloquentModel $throughParent,
         $firstKey, $secondKey, $localKey, $secondLocalKey
     )
@@ -114,7 +114,7 @@ trait RelationFactoryTrait
     }
 
     protected function newHasManyThrough(
-        EloquentQueryBuilder $query,
+        EloquentQueryBuilderBase $query,
         EloquentModel $farParent, EloquentModel $throughParent,
         $firstKey, $secondKey, $localKey, $secondLocalKey
     )
@@ -129,7 +129,7 @@ trait RelationFactoryTrait
 
 
     protected function newMorphOne(
-        EloquentQueryBuilder $query,
+        EloquentQueryBuilderBase $query,
         EloquentModel $parent,
         $type, $id, $localKey
     )
@@ -143,7 +143,7 @@ trait RelationFactoryTrait
     }
 
     protected function newMorphMany(
-        EloquentQueryBuilder $query,
+        EloquentQueryBuilderBase $query,
         EloquentModel $parent,
         $type, $id, $localKey
     )
@@ -158,7 +158,7 @@ trait RelationFactoryTrait
 
 
     protected function newMorphTo(
-        EloquentQueryBuilder $query,
+        EloquentQueryBuilderBase $query,
         EloquentModel $parent,
         $foreignKey, $ownerKey, $type, $relation
     )
@@ -173,7 +173,7 @@ trait RelationFactoryTrait
 
 
     protected function newMorphToMany(
-        EloquentQueryBuilder $query,
+        EloquentQueryBuilderBase $query,
         EloquentModel $parent,
         $name, $table,
         $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey,
@@ -190,7 +190,7 @@ trait RelationFactoryTrait
     }
 
     protected function newMorphedByMany(
-        EloquentQueryBuilder $query,
+        EloquentQueryBuilderBase $query,
         EloquentModel $parent,
         $name, $table,
         $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey,

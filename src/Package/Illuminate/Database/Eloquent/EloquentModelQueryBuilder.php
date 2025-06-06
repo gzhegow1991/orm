@@ -11,19 +11,19 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Gzhegow\Orm\Exception\Runtime\DatabaseException;
 use Gzhegow\Orm\Core\Query\ModelQuery\Traits\ChunksTrait;
 use Gzhegow\Orm\Core\Query\ModelQuery\Traits\ColumnsTrait;
-use Illuminate\Support\Collection as EloquentSupportCollection;
 use Gzhegow\Orm\Core\Query\ModelQuery\Traits\PersistenceTrait;
 use Gzhegow\Orm\Core\Query\ModelQuery\Traits\TransactionTrait;
-use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilder;
-use Illuminate\Database\Eloquent\Builder as EloquentQueryBuilderBase;
+use Illuminate\Support\Collection as EloquentSupportCollectionBase;
+use Gzhegow\Orm\Package\Illuminate\Database\EloquentPdoQueryBuilder;
 use Gzhegow\Orm\Exception\Exception\Resource\ResourceNotFoundException;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
+use Illuminate\Database\Eloquent\Builder as EloquentModelQueryBuilderBase;
 
 
 /**
  * @template-covariant T of EloquentModel
  */
-class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
+class EloquentModelQueryBuilder extends EloquentModelQueryBuilderBase
 {
     use ChunksTrait;
     use ColumnsTrait;
@@ -38,8 +38,7 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
 
 
     /**
-     * @param EloquentPdoQueryBuilder $query
-     * @param T                       $model
+     * @param T $model
      */
     public function __construct(
         EloquentPdoQueryBuilder $query,
@@ -207,7 +206,7 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
     }
 
     /**
-     * @return EloquentSupportCollection<\stdClass>|\stdClass[]
+     * @return EloquentSupportCollectionBase<\stdClass>|\stdClass[]
      */
     public function getStd($columnsDefault = null)
     {
@@ -230,7 +229,7 @@ class EloquentModelQueryBuilder extends EloquentQueryBuilderBase
     }
 
     /**
-     * @return EloquentSupportCollection<int|string>|(int|string)[]
+     * @return EloquentSupportCollectionBase<int|string>|(int|string)[]
      */
     public function getKeys()
     {

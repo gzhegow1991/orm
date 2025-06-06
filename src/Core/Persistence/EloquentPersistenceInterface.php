@@ -2,13 +2,12 @@
 
 namespace Gzhegow\Orm\Core\Persistence;
 
-
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilder;
-use Illuminate\Database\Eloquent\Builder as EloquentModelQueryBuilder;
+use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilderBase;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
+use Illuminate\Database\Eloquent\Builder as EloquentModelQueryBuilderBase;
 
 
 interface EloquentPersistenceInterface
@@ -53,18 +52,18 @@ interface EloquentPersistenceInterface
     public function persistModelForDelete(EloquentModel $model) : void;
 
 
-    public function persistEloquentQueryForInsert(EloquentModelQueryBuilder $query, array $values) : void;
+    public function persistEloquentQueryForInsert(EloquentModelQueryBuilderBase $query, array $values) : void;
 
-    public function persistEloquentQueryForUpdate(EloquentModelQueryBuilder $query, array $values) : void;
+    public function persistEloquentQueryForUpdate(EloquentModelQueryBuilderBase $query, array $values) : void;
 
-    public function persistEloquentQueryForDelete(EloquentModelQueryBuilder $query) : void;
+    public function persistEloquentQueryForDelete(EloquentModelQueryBuilderBase $query) : void;
 
 
-    public function persistQueryForInsert(EloquentPdoQueryBuilder $query, array $values) : void;
+    public function persistQueryForInsert(EloquentPdoQueryBuilderBase $query, array $values) : void;
 
-    public function persistQueryForUpdate(EloquentPdoQueryBuilder $query, array $values) : void;
+    public function persistQueryForUpdate(EloquentPdoQueryBuilderBase $query, array $values) : void;
 
-    public function persistQueryForDelete(EloquentPdoQueryBuilder $query) : void;
+    public function persistQueryForDelete(EloquentPdoQueryBuilderBase $query) : void;
 
 
     public function persistSqlStatement(?Connection $conn, string $sql, array $bindings) : void;

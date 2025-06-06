@@ -5,12 +5,12 @@ namespace Gzhegow\Orm\Core\Persistence;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Gzhegow\Orm\Exception\Runtime\DatabaseException;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilder;
 use Gzhegow\Orm\Package\Illuminate\Database\Capsule\Eloquent;
-use Illuminate\Database\Eloquent\Builder as EloquentModelQueryBuilder;
+use Illuminate\Database\Query\Builder as EloquentPdoQueryBuilderBase;
+use Illuminate\Database\Eloquent\Builder as EloquentModelQueryBuilderBase;
 use Gzhegow\Orm\Package\Illuminate\Database\Eloquent\Base\EloquentModel;
 
 
@@ -409,7 +409,7 @@ class EloquentPersistence implements EloquentPersistenceInterface
     }
 
 
-    public function persistEloquentQueryForInsert(EloquentModelQueryBuilder $query, array $values) : void
+    public function persistEloquentQueryForInsert(EloquentModelQueryBuilderBase $query, array $values) : void
     {
         $idx = count($this->queue);
 
@@ -418,7 +418,7 @@ class EloquentPersistence implements EloquentPersistenceInterface
         $this->queueEloquentInsert[ $idx ] = true;
     }
 
-    public function persistEloquentQueryForUpdate(EloquentModelQueryBuilder $query, array $values) : void
+    public function persistEloquentQueryForUpdate(EloquentModelQueryBuilderBase $query, array $values) : void
     {
         $idx = count($this->queue);
 
@@ -427,7 +427,7 @@ class EloquentPersistence implements EloquentPersistenceInterface
         $this->queueEloquentUpdate[ $idx ] = true;
     }
 
-    public function persistEloquentQueryForDelete(EloquentModelQueryBuilder $query) : void
+    public function persistEloquentQueryForDelete(EloquentModelQueryBuilderBase $query) : void
     {
         $idx = count($this->queue);
 
@@ -437,7 +437,7 @@ class EloquentPersistence implements EloquentPersistenceInterface
     }
 
 
-    public function persistQueryForInsert(EloquentPdoQueryBuilder $query, array $values) : void
+    public function persistQueryForInsert(EloquentPdoQueryBuilderBase $query, array $values) : void
     {
         $idx = count($this->queue);
 
@@ -446,7 +446,7 @@ class EloquentPersistence implements EloquentPersistenceInterface
         $this->queueQueryInsert[ $idx ] = true;
     }
 
-    public function persistQueryForUpdate(EloquentPdoQueryBuilder $query, array $values) : void
+    public function persistQueryForUpdate(EloquentPdoQueryBuilderBase $query, array $values) : void
     {
         $idx = count($this->queue);
 
@@ -455,7 +455,7 @@ class EloquentPersistence implements EloquentPersistenceInterface
         $this->queueQueryUpdate[ $idx ] = true;
     }
 
-    public function persistQueryForDelete(EloquentPdoQueryBuilder $query) : void
+    public function persistQueryForDelete(EloquentPdoQueryBuilderBase $query) : void
     {
         $idx = count($this->queue);
 
@@ -582,7 +582,7 @@ class EloquentPersistence implements EloquentPersistenceInterface
                 || isset($this->queueEloquentUpdate[ $idx ])
                 || isset($this->queueEloquentDelete[ $idx ])
             ) {
-                /** @var EloquentModelQueryBuilder $query */
+                /** @var EloquentModelQueryBuilderBase $query */
 
                 [ $query ] = $this->queueArgs[ $idx ];
 
@@ -594,7 +594,7 @@ class EloquentPersistence implements EloquentPersistenceInterface
                 || isset($this->queueQueryUpdate[ $idx ])
                 || isset($this->queueQueryDelete[ $idx ])
             ) {
-                /** @var EloquentPdoQueryBuilder $query */
+                /** @var EloquentPdoQueryBuilderBase $query */
 
                 [ $query ] = $this->queue[ $idx ];
 
