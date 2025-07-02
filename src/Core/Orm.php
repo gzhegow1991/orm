@@ -8,6 +8,11 @@ use Gzhegow\Orm\Package\Illuminate\Database\Capsule\EloquentInterface;
 
 class Orm
 {
+    private function __construct()
+    {
+    }
+
+
     public static function factory() : OrmFactoryInterface
     {
         return static::$facade->getFactory();
