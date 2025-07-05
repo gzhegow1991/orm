@@ -632,13 +632,7 @@ class EloquentPersistence implements EloquentPersistenceInterface
         }
 
         if ($throwables) {
-            $ee = new DatabaseException();
-
-            foreach ( $throwables as $t ) {
-                $ee->addPrevious($t);
-            }
-
-            throw $ee;
+            throw new DatabaseException(...$throwables);
         }
     }
 
@@ -661,13 +655,7 @@ class EloquentPersistence implements EloquentPersistenceInterface
         }
 
         if ($throwables) {
-            $ee = new DatabaseException();
-
-            foreach ( $throwables as $t ) {
-                $ee->addPrevious($t);
-            }
-
-            throw $ee;
+            throw new DatabaseException(...$throwables);
         }
     }
 
@@ -690,13 +678,7 @@ class EloquentPersistence implements EloquentPersistenceInterface
         }
 
         if ($throwables) {
-            $ee = new DatabaseException();
-
-            foreach ( $throwables as $t ) {
-                $ee->addPrevious($t);
-            }
-
-            throw $ee;
+            throw new DatabaseException(...$throwables);
         }
     }
 }
